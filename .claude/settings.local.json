@@ -19,7 +19,8 @@
       "Bash(npm run)",
       "Bash(npx next:*)",
       "Bash(pkill:*)",
-      "Bash(npx ts-node:*)"
+      "Bash(npx ts-node:*)",
+      "Bash(kill:*)"
     ],
     "deny": [],
     "ask": [],
