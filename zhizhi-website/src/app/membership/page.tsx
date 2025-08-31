@@ -22,7 +22,7 @@ export default function Membership() {
   useEffect(() => {
     const fetchMembershipCards = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/membership')
+        const response = await fetch('http://localhost:3001/api/memberships')
         const data = await response.json()
         if (data.success) {
           setMembershipCards(data.data)

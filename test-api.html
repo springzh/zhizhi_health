@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .loading {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>API 连接测试</h1>
+        
+        <h2>测试会员卡 API</h2>
+        <button onclick="testMembershipAPI()">测试会员卡 API</button>
+        <div id="membership-status"></div>
+        <div id="membership-data"></div>
+        
+        <h2>测试医生 API</h2>
+        <button onclick="testDoctorsAPI()">测试医生 API</button>
+        <div id="doctors-status"></div>
+        <div id="doctors-data"></div>
+        
+        <h2>测试服务 API</h2>
+        <button onclick="testServicesAPI()">测试服务 API</button>
+        <div id="services-status"></div>
+        <div id="services-data"></div>
+    </div>
+
+    <script>
+        async function testAPI(url, statusDiv, dataDiv) {
+            statusDiv.innerHTML = '<div class="status loading">正在测试...</div>';
+            dataDiv.innerHTML = '';
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    statusDiv.innerHTML = '<div class="status success">✅ API 连接成功！</div>';
+                    dataDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                } else {
+                    statusDiv.innerHTML = '<div class="status error">❌ API 返回错误: ' + (data.message || '未知错误') + '</div>';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="status error">❌ 连接失败: ' + error.message + '</div>';
+                console.error('API 测试失败:', error);
+            }
+        }
+        
+        function testMembershipAPI() {
+            testAPI('http://localhost:3001/api/memberships', 
+                   document.getElementById('membership-status'), 
+                   document.getElementById('membership-data'));
+        }
+        
+        function testDoctorsAPI() {
+            testAPI('http://localhost:3001/api/doctors', 
+                   document.getElementById('doctors-status'), 
+                   document.getElementById('doctors-data'));
+        }
+        
+        function testServicesAPI() {
+            testAPI('http://localhost:3001/api/services', 
+                   document.getElementById('services-status'), 
+                   document.getElementById('services-data'));
+        }
+    </script>
+</body>
+</html>
