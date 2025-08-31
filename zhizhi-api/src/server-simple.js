@@ -59,6 +59,76 @@ const doctors = [
     service_types: ["牙齿修复", "美容修复", "全口义齿"],
     avatar_url: "https://via.placeholder.com/150",
     is_available: false
+  },
+  {
+    id: 4,
+    name: "刘医生",
+    title: "主任医师",
+    specialty: "牙周病治疗",
+    hospital: "知治口腔医院",
+    location: "北京市朝阳区",
+    rating: "4.8",
+    consultation_count: 950,
+    introduction: "专注牙周病治疗18年，擅长各种牙周疾病的系统治疗。",
+    service_types: ["牙周治疗", "牙龈护理", "口腔外科"],
+    avatar_url: "https://via.placeholder.com/150",
+    is_available: true
+  },
+  {
+    id: 5,
+    name: "陈医生",
+    title: "副主任医师",
+    specialty: "儿童牙科",
+    hospital: "知治口腔医院",
+    location: "北京市朝阳区",
+    rating: "4.9",
+    consultation_count: 1100,
+    introduction: "专业儿童牙科医生，擅长儿童牙齿预防和早期干预治疗。",
+    service_types: ["儿童牙科", "预防保健", "早期矫正"],
+    avatar_url: "https://via.placeholder.com/150",
+    is_available: true
+  },
+  {
+    id: 6,
+    name: "赵医生",
+    title: "主治医师",
+    specialty: "口腔内科",
+    hospital: "知治口腔医院",
+    location: "北京市朝阳区",
+    rating: "4.6",
+    consultation_count: 650,
+    introduction: "专业口腔内科治疗，擅长牙髓病和根管治疗。",
+    service_types: ["根管治疗", "牙体修复", "口腔内科"],
+    avatar_url: "https://via.placeholder.com/150",
+    is_available: true
+  },
+  {
+    id: 7,
+    name: "孙医生",
+    title: "主任医师",
+    specialty: "口腔颌面外科",
+    hospital: "知治口腔医院",
+    location: "北京市朝阳区",
+    rating: "4.8",
+    consultation_count: 880,
+    introduction: "从事口腔颌面外科工作16年，擅长复杂口腔外科手术。",
+    service_types: ["口腔外科", "颌面手术", "复杂拔牙"],
+    avatar_url: "https://via.placeholder.com/150",
+    is_available: false
+  },
+  {
+    id: 8,
+    name: "周医生",
+    title: "副主任医师",
+    specialty: "牙齿美学",
+    hospital: "知治口腔医院",
+    location: "北京市朝阳区",
+    rating: "4.9",
+    consultation_count: 1350,
+    introduction: "专业牙齿美学修复，擅长微笑设计和美容修复。",
+    service_types: ["牙齿美学", "微笑设计", "美容修复"],
+    avatar_url: "https://via.placeholder.com/150",
+    is_available: true
   }
 ];
 
