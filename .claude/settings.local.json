@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mv:*)",
+      "mcp__magic__21st_magic_component_builder",
+      "WebFetch(domain:zhizhi-health-tech.wegic.app)",
+      "Bash(npx create-next-app:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run dev)",
+      "Bash(npm run build)",
+      "Bash(mkdir:*)"
+    ],
+    "deny": [],
+    "ask": [],
+    "additionalDirectories": [
+      "/Users/spring/Dev/ai/ai_coding/zhizhi-website"
+    ]
+  }
+}
