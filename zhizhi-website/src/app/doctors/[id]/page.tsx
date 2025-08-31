@@ -60,7 +60,7 @@ export default function DoctorDetail() {
 
   const handleBookAppointment = () => {
     if (doctor) {
-      window.location.href = `/doctors/${doctor.id}/appointment?service=${encodeURIComponent(selectedService)}`
+      window.location.href = `/appointment/${doctor.id}?service=${encodeURIComponent(selectedService)}`
     }
   }
 

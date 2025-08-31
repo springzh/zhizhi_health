@@ -33,9 +33,9 @@ export default function Header() {
           </div>
           
           <div className="hidden md:flex items-center space-x-4">
-            <button className="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-dark transition-colors">
+            <a href="/appointment" className="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-dark transition-colors inline-block">
               立即预约
-            </button>
+            </a>
           </div>
 
           <div className="md:hidden">
@@ -68,9 +68,9 @@ export default function Header() {
               <a href="/doctors" className="text-gray-700 hover:text-primary block px-3 py-2 text-base font-medium">
                 医生资源
               </a>
-              <button className="w-full bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-dark transition-colors">
+              <a href="/appointment" className="w-full bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-dark transition-colors inline-block text-center">
                 立即预约
-              </button>
+              </a>
             </div>
           </div>
         )}

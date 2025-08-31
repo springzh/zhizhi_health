@@ -10,7 +10,7 @@ export default function Hero() {
             为您提供优质的口腔诊疗、医疗权益卡和细胞健康服务
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/doctors" className="bg-white text-primary px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-block text-center">
+            <a href="/appointment" className="bg-white text-primary px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-block text-center">
               立即预约
             </a>
             <a href="/services/dental" className="border-2 border-white text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-white hover:text-primary transition-colors inline-block text-center">

@@ -121,9 +121,9 @@ export default function DentalServices() {
                 提供全方位的口腔健康服务，从预防检查到复杂治疗，由资深牙科专家团队为您提供专业护理
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="bg-white text-blue-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors">
+                <a href="/appointment" className="bg-white text-blue-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-block text-center">
                   立即预约
-                </button>
+                </a>
                 <button className="border-2 border-white text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
                   咨询专家
                 </button>
@@ -166,9 +166,9 @@ export default function DentalServices() {
                           <p className="text-blue-600 font-medium">¥{service.price}</p>
                           <p>时长: {formatDuration(service.duration)}</p>
                         </div>
-                        <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                        <a href="/appointment" className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors inline-block text-center">
                           预约服务
-                        </button>
+                        </a>
                       </div>
                     ))}
                   </div>
@@ -223,9 +223,9 @@ export default function DentalServices() {
               专业团队为您服务，让健康笑容从这里开始
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-blue-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors">
+              <a href="/appointment" className="bg-white text-blue-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-block text-center">
                 立即预约
-              </button>
+              </a>
               <button className="border-2 border-white text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
                 了解更多
               </button>

@@ -88,9 +88,9 @@ export default function Doctors() {
                 汇聚资深口腔医学专家，为您提供专业、安全、贴心的口腔健康服务
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="bg-white text-blue-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors">
+                <a href="/appointment" className="bg-white text-blue-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-block text-center">
                   立即预约
-                </button>
+                </a>
                 <button className="border-2 border-white text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
                   在线咨询
                 </button>
@@ -187,12 +187,12 @@ export default function Doctors() {
                     </div>
 
                     <div className="space-y-2">
-                      <button 
-                        onClick={() => window.location.href = `/doctors/${doctor.id}/appointment`}
-                        className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                      <a 
+                        href={`/appointment/${doctor.id}`}
+                        className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors inline-block text-center"
                       >
                         预约咨询
-                      </button>
+                      </a>
                       <button 
                         onClick={() => window.location.href = `/doctors/${doctor.id}`}
                         className="w-full border border-blue-600 text-blue-600 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors"
@@ -241,9 +241,9 @@ export default function Doctors() {
               专业团队为您提供个性化的口腔健康解决方案
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-blue-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors">
+              <a href="/appointment" className="bg-white text-blue-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-block text-center">
                 立即预约
-              </button>
+              </a>
               <button className="border-2 border-white text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
                 咨询客服
               </button>
