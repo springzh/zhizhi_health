@@ -29,6 +29,9 @@ export default function Header() {
               <a href="/doctors" className="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
                 医生资源
               </a>
+              <a href="/consultation" className="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
+                在线咨询
+              </a>
             </nav>
           </div>
           
@@ -67,6 +70,9 @@ export default function Header() {
               </a>
               <a href="/doctors" className="text-gray-700 hover:text-primary block px-3 py-2 text-base font-medium">
                 医生资源
+              </a>
+              <a href="/consultation" className="text-gray-700 hover:text-primary block px-3 py-2 text-base font-medium">
+                在线咨询
               </a>
               <a href="/appointment" className="w-full bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-dark transition-colors inline-block text-center">
                 立即预约

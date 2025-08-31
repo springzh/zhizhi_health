@@ -142,9 +142,9 @@ export default function CellServices() {
                 运用前沿细胞技术，为您的健康提供长期保障，开创健康管理新纪元
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="bg-white text-teal-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors">
+                <a href="/consultation?category=cell" className="bg-white text-teal-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-block text-center">
                   咨询专家
-                </button>
+                </a>
                 <button className="border-2 border-white text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-white hover:text-teal-600 transition-colors">
                   了解更多
                 </button>

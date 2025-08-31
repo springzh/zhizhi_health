@@ -471,6 +471,231 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Consultation Routes
+app.post('/api/consultations', async (req, res) => {
+  const {
+    title,
+    content,
+    category,
+    priority,
+    doctor_id,
+    guest_name,
+    guest_phone,
+    guest_email,
+    is_public
+  } = req.body;
+  
+  try {
+    // Validate required fields
+    if (!title || !content || !category) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields: title, content, category",
+        timestamp: new Date()
+      });
+    }
+    
+    // Validate category
+    const validCategories = ['general', 'dental', 'cell', 'membership', 'appointment'];
+    if (!validCategories.includes(category)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid category. Must be one of: " + validCategories.join(', '),
+        timestamp: new Date()
+      });
+    }
+    
+    // Validate priority if provided
+    const validPriorities = ['low', 'normal', 'high', 'urgent'];
+    if (priority && !validPriorities.includes(priority)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid priority. Must be one of: " + validPriorities.join(', '),
+        timestamp: new Date()
+      });
+    }
+    
+    // Save consultation to database
+    console.log('Inserting consultation with data:', {
+      title, content, category, priority, doctor_id,
+      guest_name, guest_phone, guest_email, is_public
+    });
+    
+    const result = await pool.query(
+      `INSERT INTO consultations (
+        title, content, category, priority, doctor_id, 
+        guest_name, guest_phone, guest_email, is_public, status
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending') 
+      RETURNING *`,
+      [
+        title, content, category, priority || 'normal', 
+        doctor_id ? parseInt(doctor_id) : null,
+        guest_name, guest_phone, guest_email, is_public || false
+      ]
+    );
+    
+    const consultation = result.rows[0];
+    
+    res.status(201).json({
+      success: true,
+      message: "Consultation created successfully",
+      data: {
+        id: consultation.id,
+        title: consultation.title,
+        content: consultation.content,
+        category: consultation.category,
+        priority: consultation.priority,
+        doctor_id: consultation.doctor_id,
+        guest_name: consultation.guest_name,
+        guest_phone: consultation.guest_phone,
+        guest_email: consultation.guest_email,
+        is_public: consultation.is_public,
+        status: consultation.status,
+        created_at: consultation.created_at
+      },
+      timestamp: new Date()
+    });
+  } catch (error) {
+    console.error('Error creating consultation:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      code: error.code,
+      detail: error.detail
+    });
+    res.status(500).json({
+      success: false,
+      message: "Failed to create consultation",
+      error: error.message,
+      timestamp: new Date()
+    });
+  }
+});
+
+app.get('/api/consultations/my-consultations', async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+    
+    // For now, return empty consultations since we don't have user authentication
+    // In a real app, you would get the user ID from the session/token
+    const result = await pool.query(
+      `SELECT c.*, COUNT(cr.id) as reply_count, COUNT(ca.id) as attachment_count
+       FROM consultations c
+       LEFT JOIN consultation_replies cr ON c.id = cr.consultation_id
+       LEFT JOIN consultation_attachments ca ON c.id = ca.consultation_id
+       WHERE c.guest_email IS NOT NULL
+       GROUP BY c.id
+       ORDER BY c.created_at DESC
+       LIMIT $1 OFFSET $2`,
+      [limit, offset]
+    );
+    
+    const countResult = await pool.query(
+      'SELECT COUNT(*) FROM consultations WHERE guest_email IS NOT NULL'
+    );
+    
+    const consultations = result.rows;
+    const total = parseInt(countResult.rows[0].count);
+    const totalPages = Math.ceil(total / limit);
+    
+    res.json({
+      success: true,
+      message: "Consultations retrieved successfully",
+      data: {
+        consultations,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages
+        }
+      },
+      timestamp: new Date()
+    });
+  } catch (error) {
+    console.error('Error retrieving consultations:', error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve consultations",
+      error: error.message,
+      timestamp: new Date()
+    });
+  }
+});
+
+app.get('/api/consultations/:id', async (req, res) => {
+  try {
+    const consultationId = parseInt(req.params.id);
+    
+    const result = await pool.query(
+      `SELECT c.*, 
+        COUNT(cr.id) as reply_count,
+        COUNT(ca.id) as attachment_count,
+        COUNT(DISTINCT cv.id) as view_count
+       FROM consultations c
+       LEFT JOIN consultation_replies cr ON c.id = cr.consultation_id
+       LEFT JOIN consultation_attachments ca ON c.id = ca.consultation_id
+       LEFT JOIN consultation_views cv ON c.id = cv.consultation_id
+       WHERE c.id = $1
+       GROUP BY c.id`,
+      [consultationId]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Consultation not found",
+        timestamp: new Date()
+      });
+    }
+    
+    const consultation = result.rows[0];
+    
+    // Get replies
+    const repliesResult = await pool.query(
+      `SELECT * FROM consultation_replies 
+       WHERE consultation_id = $1 
+       ORDER BY created_at ASC`,
+      [consultationId]
+    );
+    
+    // Get attachments
+    const attachmentsResult = await pool.query(
+      `SELECT * FROM consultation_attachments 
+       WHERE consultation_id = $1 
+       ORDER BY uploaded_at ASC`,
+      [consultationId]
+    );
+    
+    // Record view (simplified - just increment counter)
+    await pool.query(
+      'UPDATE consultations SET view_count = COALESCE(view_count, 0) + 1 WHERE id = $1',
+      [consultationId]
+    );
+    
+    res.json({
+      success: true,
+      message: "Consultation retrieved successfully",
+      data: {
+        ...consultation,
+        replies: repliesResult.rows,
+        attachments: attachmentsResult.rows
+      },
+      timestamp: new Date()
+    });
+  } catch (error) {
+    console.error('Error retrieving consultation:', error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve consultation",
+      error: error.message,
+      timestamp: new Date()
+    });
+  }
+});
+
 // Root route
 app.get('/api', (req, res) => {
   res.json({
@@ -482,7 +707,10 @@ app.get('/api', (req, res) => {
       health: "/api/health",
       doctors: "/api/doctors",
       services: "/api/services",
-      memberships: "/api/memberships"
+      memberships: "/api/memberships",
+      consultations: "/api/consultations",
+      "my-consultations": "/api/consultations/my-consultations",
+      "consultation-detail": "/api/consultations/:id"
     }
   });
 });

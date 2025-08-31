@@ -6,6 +6,7 @@ export interface User {
   nickname?: string;
   avatar_url?: string;
   phone?: string;
+  role?: 'user' | 'admin' | 'doctor';
   created_at: Date;
   updated_at: Date;
 }

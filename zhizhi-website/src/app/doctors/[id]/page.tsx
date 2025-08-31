@@ -64,6 +64,12 @@ export default function DoctorDetail() {
     }
   }
 
+  const handleConsultation = () => {
+    if (doctor) {
+      window.location.href = `/consultation?doctor_id=${doctor.id}&category=dental`
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen">
@@ -153,7 +159,10 @@ export default function DoctorDetail() {
                     >
                       {doctor.is_available ? '立即预约' : '暂不可约'}
                     </button>
-                    <button className="border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                    <button 
+                      onClick={handleConsultation}
+                      className="border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
+                    >
                       在线咨询
                     </button>
                   </div>

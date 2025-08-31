@@ -5,6 +5,7 @@ import appointmentRoutes from './appointment.routes';
 import membershipRoutes from './membership.routes';
 import serviceRoutes from './service.routes';
 import healthRoutes from './health.routes';
+import consultationRoutes from './consultation.routes';
 
 const router = Router();
 
@@ -17,6 +18,7 @@ router.use('/doctors', doctorRoutes);
 router.use('/appointments', appointmentRoutes);
 router.use('/memberships', membershipRoutes);
 router.use('/services', serviceRoutes);
+router.use('/consultations', consultationRoutes);
 
 // API根路径
 router.get('/', (req, res) => {
@@ -32,6 +34,7 @@ router.get('/', (req, res) => {
       appointments: '/api/appointments',
       memberships: '/api/memberships',
       services: '/api/services',
+      consultations: '/api/consultations',
     },
   });
 });
