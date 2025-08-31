@@ -1,8 +1,28 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { Pool } from 'pg';
 
 dotenv.config();
+
+// Database connection
+const pool = new Pool({
+  user: process.env.DB_USER || 'postgres',
+  host: process.env.DB_HOST || 'localhost',
+  database: process.env.DB_NAME || 'zhizhi_health',
+  password: process.env.DB_PASSWORD || 'password',
+  port: process.env.DB_PORT || 5432,
+});
+
+// Test database connection
+pool.connect((err, client, release) => {
+  if (err) {
+    console.error('Database connection error:', err);
+    return;
+  }
+  console.log('Database connected successfully');
+  release();
+});
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -316,7 +336,7 @@ app.get('/api/doctors/:id', (req, res) => {
   });
 });
 
-app.post('/api/appointments', (req, res) => {
+app.post('/api/appointments', async (req, res) => {
   const {
     doctor_id,
     patient_name,
@@ -328,46 +348,94 @@ app.post('/api/appointments', (req, res) => {
     symptoms
   } = req.body;
   
-  // Validate required fields
-  if (!doctor_id || !patient_name || !patient_phone || !appointment_date || !appointment_time) {
-    return res.status(400).json({
+  try {
+    // Validate required fields
+    if (!doctor_id || !patient_name || !patient_phone || !appointment_date || !appointment_time) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields",
+        timestamp: new Date()
+      });
+    }
+    
+    // Check if doctor exists
+    const doctor = doctors.find(d => d.id === parseInt(doctor_id));
+    if (!doctor) {
+      return res.status(404).json({
+        success: false,
+        message: "Doctor not found",
+        timestamp: new Date()
+      });
+    }
+    
+    // Check if time slot is available
+    const availabilityCheck = await pool.query(
+      `SELECT COUNT(*) as count FROM appointments 
+       WHERE doctor_id = $1 
+       AND appointment_date = $2 
+       AND appointment_time = $3
+       AND status != 'cancelled'`,
+      [doctor_id, appointment_date, appointment_time]
+    );
+    
+    if (parseInt(availabilityCheck.rows[0].count) > 0) {
+      return res.status(409).json({
+        success: false,
+        message: "Time slot is already booked",
+        timestamp: new Date()
+      });
+    }
+    
+    // Save appointment to database
+    const params = [
+      parseInt(doctor_id), 
+      patient_name, 
+      patient_phone, 
+      service_type, 
+      appointment_date, 
+      appointment_time, 
+      symptoms
+    ];
+    console.log('Insert parameters:', params);
+    console.log('Parameters length:', params.length);
+    
+    const result = await pool.query('INSERT INTO appointments (doctor_id, patient_name, patient_phone, service_type, appointment_date, appointment_time, symptoms) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', params);
+    
+    const appointment = result.rows[0];
+    
+    res.status(201).json({
+      success: true,
+      message: "Appointment created successfully",
+      data: {
+        id: appointment.id,
+        doctor_id: appointment.doctor_id,
+        patient_name: appointment.patient_name,
+        patient_phone: appointment.patient_phone,
+        patient_email: appointment.patient_email,
+        service_type: appointment.service_type,
+        appointment_date: appointment.appointment_date,
+        appointment_time: appointment.appointment_time,
+        symptoms: appointment.symptoms,
+        status: appointment.status,
+        created_at: appointment.created_at
+      },
+      timestamp: new Date()
+    });
+  } catch (error) {
+    console.error('Error creating appointment:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      code: error.code,
+      detail: error.detail
+    });
+    res.status(500).json({
       success: false,
-      message: "Missing required fields",
+      message: "Failed to create appointment",
+      error: error.message,
       timestamp: new Date()
     });
   }
-  
-  // Check if doctor exists
-  const doctor = doctors.find(d => d.id === parseInt(doctor_id));
-  if (!doctor) {
-    return res.status(404).json({
-      success: false,
-      message: "Doctor not found",
-      timestamp: new Date()
-    });
-  }
-  
-  // Create appointment (in a real app, this would be saved to a database)
-  const appointment = {
-    id: Date.now(), // Simple ID generation for demo
-    doctor_id: parseInt(doctor_id),
-    patient_name,
-    patient_phone,
-    patient_email: patient_email || '',
-    service_type: service_type || '',
-    appointment_date,
-    appointment_time,
-    symptoms: symptoms || '',
-    status: 'pending',
-    created_at: new Date()
-  };
-  
-  res.status(201).json({
-    success: true,
-    message: "Appointment created successfully",
-    data: appointment,
-    timestamp: new Date()
-  });
 });
 
 app.get('/api/services', (req, res) => {
@@ -420,7 +488,7 @@ app.get('/api', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server is running on port ${PORT}`);
   console.log(`🔍 Health Check: http://localhost:${PORT}/api/health`);
   console.log(`📖 API Documentation: http://localhost:${PORT}/api`);
