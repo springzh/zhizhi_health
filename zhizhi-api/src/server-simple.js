@@ -30,7 +30,12 @@ const doctors = [
     introduction: "从事口腔临床工作20余年，擅长口腔种植、牙齿矫正等。",
     service_types: ["种植牙", "牙齿矫正", "口腔修复"],
     avatar_url: "https://via.placeholder.com/150",
-    is_available: true
+    is_available: true,
+    education: ["北京大学口腔医学院 博士", "哈佛大学牙医学院 访问学者"],
+    experience: "20年",
+    certifications: ["中华口腔医学会种植专业委员会 委员", "国际口腔种植学会 会员"],
+    languages: ["中文", "英文"],
+    consultation_price: 500.00
   },
   {
     id: 2,
@@ -44,7 +49,12 @@ const doctors = [
     introduction: "专业从事牙齿矫正工作15年，擅长各类错颌畸形的矫正。",
     service_types: ["牙齿矫正", "隐形矫正", "儿童矫正"],
     avatar_url: "https://via.placeholder.com/150",
-    is_available: true
+    is_available: true,
+    education: ["四川大学华西口腔医学院 硕士", "美国正畸学会 认证医师"],
+    experience: "15年",
+    certifications: ["中华口腔医学会正畸专业委员会 委员", "美国正畸学会 会员"],
+    languages: ["中文", "英文"],
+    consultation_price: 450.00
   },
   {
     id: 3,
@@ -58,7 +68,12 @@ const doctors = [
     introduction: "专注于口腔修复工作，擅长牙齿美容修复、全口义齿修复。",
     service_types: ["牙齿修复", "美容修复", "全口义齿"],
     avatar_url: "https://via.placeholder.com/150",
-    is_available: false
+    is_available: false,
+    education: ["第四军医大学口腔医学院 硕士", "中华口腔医学会修复专业委员会 会员"],
+    experience: "12年",
+    certifications: ["中华口腔医学会 会员", "口腔修复专业认证"],
+    languages: ["中文"],
+    consultation_price: 380.00
   },
   {
     id: 4,
@@ -72,7 +87,12 @@ const doctors = [
     introduction: "专注牙周病治疗18年，擅长各种牙周疾病的系统治疗。",
     service_types: ["牙周治疗", "牙龈护理", "口腔外科"],
     avatar_url: "https://via.placeholder.com/150",
-    is_available: true
+    is_available: true,
+    education: ["上海交通大学口腔医学院 博士", "香港大学牙医学院 访问学者"],
+    experience: "18年",
+    certifications: ["中华口腔医学会牙周病学专业委员会 委员", "国际牙科研究会 会员"],
+    languages: ["中文", "英文"],
+    consultation_price: 420.00
   },
   {
     id: 5,
@@ -272,6 +292,80 @@ app.get('/api/doctors', (req, res) => {
     success: true,
     message: "Doctors retrieved successfully",
     data: doctors,
+    timestamp: new Date()
+  });
+});
+
+app.get('/api/doctors/:id', (req, res) => {
+  const doctorId = parseInt(req.params.id);
+  const doctor = doctors.find(d => d.id === doctorId);
+  
+  if (!doctor) {
+    return res.status(404).json({
+      success: false,
+      message: "Doctor not found",
+      timestamp: new Date()
+    });
+  }
+  
+  res.json({
+    success: true,
+    message: "Doctor retrieved successfully",
+    data: doctor,
+    timestamp: new Date()
+  });
+});
+
+app.post('/api/appointments', (req, res) => {
+  const {
+    doctor_id,
+    patient_name,
+    patient_phone,
+    patient_email,
+    service_type,
+    appointment_date,
+    appointment_time,
+    symptoms
+  } = req.body;
+  
+  // Validate required fields
+  if (!doctor_id || !patient_name || !patient_phone || !appointment_date || !appointment_time) {
+    return res.status(400).json({
+      success: false,
+      message: "Missing required fields",
+      timestamp: new Date()
+    });
+  }
+  
+  // Check if doctor exists
+  const doctor = doctors.find(d => d.id === parseInt(doctor_id));
+  if (!doctor) {
+    return res.status(404).json({
+      success: false,
+      message: "Doctor not found",
+      timestamp: new Date()
+    });
+  }
+  
+  // Create appointment (in a real app, this would be saved to a database)
+  const appointment = {
+    id: Date.now(), // Simple ID generation for demo
+    doctor_id: parseInt(doctor_id),
+    patient_name,
+    patient_phone,
+    patient_email: patient_email || '',
+    service_type: service_type || '',
+    appointment_date,
+    appointment_time,
+    symptoms: symptoms || '',
+    status: 'pending',
+    created_at: new Date()
+  };
+  
+  res.status(201).json({
+    success: true,
+    message: "Appointment created successfully",
+    data: appointment,
     timestamp: new Date()
   });
 });

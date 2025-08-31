@@ -11,13 +11,13 @@ export class DoctorModel {
 
   // 创建医生
   static async create(doctorData: CreateDoctorRequest): Promise<Doctor> {
-    const { name, title, specialty, hospital, location, avatar_url, introduction, service_types } = doctorData;
+    const { name, title, specialty, hospital, location, avatar_url, introduction, service_types, education, experience, certifications, languages, consultation_price } = doctorData;
     
     const result = await query(`
-      INSERT INTO ${this.TABLE_NAME} (name, title, specialty, hospital, location, avatar_url, introduction, service_types)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      INSERT INTO ${this.TABLE_NAME} (name, title, specialty, hospital, location, avatar_url, introduction, service_types, education, experience, certifications, languages, consultation_price)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
       RETURNING *
-    `, [name, title, specialty, hospital, location, avatar_url, introduction, JSON.stringify(service_types || [])]);
+    `, [name, title, specialty, hospital, location, avatar_url, introduction, JSON.stringify(service_types || []), JSON.stringify(education || []), experience || '', JSON.stringify(certifications || []), JSON.stringify(languages || ['中文']), consultation_price || 100.00]);
 
     return this.mapRowToDoctor(result.rows[0]);
   }
@@ -287,6 +287,11 @@ export class DoctorModel {
       consultation_count: row.consultation_count,
       is_available: row.is_available,
       service_types: row.service_types || [],
+      education: row.education || [],
+      experience: row.experience || '',
+      certifications: row.certifications || [],
+      languages: row.languages || ['中文'],
+      consultation_price: parseFloat(row.consultation_price || 100.00),
       created_at: new Date(row.created_at),
       updated_at: new Date(row.updated_at),
     };

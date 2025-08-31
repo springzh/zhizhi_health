@@ -53,6 +53,89 @@ app.get('/api/doctors', async (req, res) => {
   }
 });
 
+// 获取单个医生详情
+app.get('/api/doctors/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query('SELECT * FROM doctors WHERE id = $1', [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Doctor not found',
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: result.rows[0],
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch doctor',
+      error: error.message,
+    });
+  }
+});
+
+// 创建预约
+app.post('/api/appointments', async (req, res) => {
+  try {
+    const {
+      doctor_id,
+      patient_name,
+      patient_phone,
+      patient_email,
+      service_type,
+      appointment_date,
+      appointment_time,
+      symptoms
+    } = req.body;
+    
+    // 验证必填字段
+    if (!doctor_id || !patient_name || !patient_phone || !appointment_date || !appointment_time) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required fields',
+      });
+    }
+    
+    // 检查时间段是否可用
+    const existingAppointment = await pool.query(
+      'SELECT * FROM appointments WHERE doctor_id = $1 AND appointment_date = $2 AND appointment_time = $3 AND status != $4',
+      [doctor_id, appointment_date, appointment_time, 'cancelled']
+    );
+    
+    if (existingAppointment.rows.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: 'Time slot is already booked',
+      });
+    }
+    
+    // 创建预约
+    const result = await pool.query(
+      `INSERT INTO appointments (doctor_id, patient_name, patient_phone, service_type, appointment_date, appointment_time, symptoms, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, 'pending')
+       RETURNING *`,
+      [doctor_id, patient_name, patient_phone, service_type, appointment_date, appointment_time, symptoms]
+    );
+    
+    res.status(201).json({
+      success: true,
+      message: 'Appointment created successfully',
+      data: result.rows[0],
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create appointment',
+      error: error.message,
+    });
+  }
+});
+
 // 获取服务列表
 app.get('/api/services', async (req, res) => {
   try {

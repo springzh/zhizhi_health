@@ -50,6 +50,11 @@ CREATE TABLE IF NOT EXISTS doctors (
     consultation_count INTEGER DEFAULT 0 CHECK (consultation_count >= 0),
     is_available BOOLEAN DEFAULT true,
     service_types JSONB DEFAULT '[]',
+    education JSONB DEFAULT '[]',
+    experience VARCHAR(100),
+    certifications JSONB DEFAULT '[]',
+    languages JSONB DEFAULT '["中文"]',
+    consultation_price DECIMAL(10,2) DEFAULT 100.00 CHECK (consultation_price >= 0),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

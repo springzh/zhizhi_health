@@ -38,6 +38,11 @@ export interface Doctor {
   consultation_count: number;
   is_available: boolean;
   service_types: string[];
+  education: string[];
+  experience: string;
+  certifications: string[];
+  languages: string[];
+  consultation_price: number;
   created_at: Date;
   updated_at: Date;
 }
@@ -51,6 +56,11 @@ export interface CreateDoctorRequest {
   avatar_url?: string;
   introduction?: string;
   service_types?: string[];
+  education?: string[];
+  experience?: string;
+  certifications?: string[];
+  languages?: string[];
+  consultation_price?: number;
 }
 
 export interface UpdateDoctorRequest {
@@ -65,6 +75,11 @@ export interface UpdateDoctorRequest {
   consultation_count?: number;
   is_available?: boolean;
   service_types?: string[];
+  education?: string[];
+  experience?: string;
+  certifications?: string[];
+  languages?: string[];
+  consultation_price?: number;
 }
 
 export interface DoctorQueryParams {

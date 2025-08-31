@@ -187,10 +187,16 @@ export default function Doctors() {
                     </div>
 
                     <div className="space-y-2">
-                      <button className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                      <button 
+                        onClick={() => window.location.href = `/doctors/${doctor.id}/appointment`}
+                        className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                      >
                         预约咨询
                       </button>
-                      <button className="w-full border border-blue-600 text-blue-600 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors">
+                      <button 
+                        onClick={() => window.location.href = `/doctors/${doctor.id}`}
+                        className="w-full border border-blue-600 text-blue-600 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors"
+                      >
                         查看详情
                       </button>
                     </div>
