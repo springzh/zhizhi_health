@@ -9,7 +9,17 @@
       "Bash(npm run dev)",
       "Bash(npm run build)",
       "Bash(mkdir:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(node:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(npx tsc:*)",
+      "Bash(curl:*)",
+      "Bash(npm start:*)",
+      "Bash(lsof:*)",
+      "Bash(npm run)",
+      "Bash(npx next:*)",
+      "Bash(pkill:*)",
+      "Bash(npx ts-node:*)"
     ],
     "deny": [],
     "ask": [],

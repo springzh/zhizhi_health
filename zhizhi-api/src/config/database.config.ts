@@ -1,5 +1,6 @@
 import { Pool, PoolClient } from 'pg';
-import { databaseConfig, getDatabaseConnectionString, logger } from '../utils/logger';
+import { databaseConfig, getDatabaseConnectionString } from './app.config';
+import { logger } from '../utils/logger';
 
 let pool: Pool;
 
@@ -15,7 +16,6 @@ export async function connectDatabase(): Promise<Pool> {
       max: databaseConfig.pool.max,
       min: databaseConfig.pool.min,
       idleTimeoutMillis: databaseConfig.pool.idle,
-      acquireTimeoutMillis: databaseConfig.pool.acquire,
       connectionTimeoutMillis: 5000,
     });
 
@@ -42,7 +42,7 @@ export async function disconnectDatabase(): Promise<void> {
   try {
     if (pool) {
       await pool.end();
-      pool = undefined;
+      pool = undefined as any;
       logger.info('Database connection pool closed');
     }
   } catch (error) {

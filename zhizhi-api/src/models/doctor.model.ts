@@ -195,7 +195,7 @@ export class DoctorModel {
       WHERE specialty ILIKE $1 AND is_available = true
       ORDER BY rating DESC
       LIMIT $2
-    », [`%${specialty}%`, limit]);
+    `, [`%${specialty}%`, limit]);
 
     return result.rows.map(this.mapRowToDoctor);
   }

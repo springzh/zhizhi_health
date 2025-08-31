@@ -54,7 +54,7 @@ class Application {
     this.app.use(compression());
     
     // 日志记录
-    this.app.use(morgan('combined', { stream: logger.stream }));
+    this.app.use(morgan('combined', { stream }));
     
     // 请求解析
     this.app.use(express.json({ limit: '10mb' }));

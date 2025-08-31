@@ -1,83 +1,111 @@
+'use client'
+
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
+import { useEffect, useState } from 'react'
+
+interface MembershipCard {
+  id: number
+  name: string
+  price: string
+  duration_days: number
+  description: string
+  benefits: Record<string, string | number | boolean>
+  is_available: boolean
+}
 
 export default function Membership() {
-  const membershipCards = [
-    {
-      name: "基础版",
-      price: "¥1,999",
-      duration: "1年",
-      description: "适合个人基础口腔护理需求",
-      features: [
-        "全面口腔检查 2次/年",
-        "专业洗牙 2次/年", 
-        "口腔拍片检查 1次/年",
-        "在线咨询服务",
-        "预约优先级 普通"
-      ],
-      popular: false,
-      color: "from-gray-400 to-gray-600"
-    },
-    {
-      name: "标准版",
-      price: "¥3,999",
-      duration: "1年",
-      description: "适合经常需要口腔护理的用户",
-      features: [
-        "全面口腔检查 4次/年",
-        "专业洗牙 4次/年",
-        "口腔拍片检查 2次/年",
-        "基础治疗 8折优惠",
-        "美容治疗 9折优惠",
-        "在线咨询服务",
-        "预约优先级 较高",
-        "专属客服通道"
-      ],
-      popular: true,
-      color: "from-blue-500 to-blue-700"
-    },
-    {
-      name: "尊享版",
-      price: "¥8,999",
-      duration: "1年",
-      description: "追求高品质服务的最佳选择",
-      features: [
-        "全面口腔检查 不限次数",
-        "专业洗牙 不限次数",
-        "口腔拍片检查 不限次数",
-        "基础治疗 7折优惠",
-        "美容治疗 8折优惠",
-        "种植牙治疗 9折优惠",
-        "专属医生团队",
-        "预约优先级 最高",
-        "24小时专属客服",
-        "免费上门服务",
-        "年度体检套餐"
-      ],
-      popular: false,
-      color: "from-purple-500 to-purple-700"
-    },
-    {
-      name: "家庭版",
-      price: "¥12,999",
-      duration: "1年",
-      description: "适合2-4人家庭共享",
-      features: [
-        "家庭全面口腔检查 不限次数",
-        "家庭专业洗牙 不限次数",
-        "家庭口腔拍片检查 不限次数",
-        "基础治疗 7.5折优惠",
-        "美容治疗 8.5折优惠",
-        "儿童牙科专项服务",
-        "家庭医生顾问",
-        "预约优先级 高",
-        "家庭健康档案",
-        "定期家庭回访"
-      ],
-      popular: false,
-      color: "from-green-500 to-green-700"
+  const [membershipCards, setMembershipCards] = useState<MembershipCard[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchMembershipCards = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/membership')
+        const data = await response.json()
+        if (data.success) {
+          setMembershipCards(data.data)
+        } else {
+          setError('Failed to fetch membership cards')
+        }
+      } catch (err) {
+        setError('Error fetching membership cards')
+        console.error('Error fetching membership cards:', err)
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
+
+    fetchMembershipCards()
+  }, [])
+
+  const formatBenefits = (benefits: Record<string, string | number | boolean>): string[] => {
+    const benefitMap: Record<string, string> = {
+      oral_exam: '全面口腔检查',
+      teeth_cleaning: '专业洗牙',
+      x_ray: '口腔拍片检查',
+      online_consultation: '在线咨询服务',
+      priority_level: '预约优先级',
+      basic_treatment_discount: '基础治疗优惠',
+      cosmetic_treatment_discount: '美容治疗优惠',
+      implant_discount: '种植牙优惠',
+      exclusive_service: '专属服务',
+      exclusive_doctor: '专属医生团队',
+      support_24h: '24小时专属客服',
+      home_service: '免费上门服务',
+      annual_checkup: '年度体检套餐',
+      family_doctor: '家庭医生顾问',
+      family_members: '家庭成员',
+      family_records: '家庭健康档案',
+      regular_followup: '定期家庭回访',
+      pediatric_dental: '儿童牙科专项服务'
+    }
+
+    return Object.entries(benefits).map(([key, value]) => {
+      const label = benefitMap[key] || key
+      if (typeof value === 'boolean' && value) {
+        return label
+      }
+      if (typeof value === 'number') {
+        if (key.includes('discount')) {
+          return `${label} ${value * 10}折`
+        }
+        return `${label} ${value}次/年`
+      }
+      if (value === 'unlimited') {
+        return `${label} 不限次数`
+      }
+      if (key === 'priority_level') {
+        return `${label} ${value === 'highest' ? '最高' : value === 'high' ? '高' : '普通'}`
+      }
+      return `${label} ${value}`
+    })
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <div className="flex items-center justify-center h-96">
+          <div className="text-xl">加载中...</div>
+        </div>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <div className="flex items-center justify-center h-96">
+          <div className="text-xl text-red-600">错误: {error}</div>
+        </div>
+        <Footer />
+      </div>
+    )
+  }
 
   const benefits = [
     {
@@ -143,23 +171,23 @@ export default function Membership() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {membershipCards.map((card, index) => (
-                <div key={index} className={`relative bg-white rounded-xl shadow-lg overflow-hidden ${card.popular ? 'ring-2 ring-blue-500 transform scale-105' : ''}`}>
-                  {card.popular && (
+                <div key={card.id} className={`relative bg-white rounded-xl shadow-lg overflow-hidden ${index === 1 ? 'ring-2 ring-blue-500 transform scale-105' : ''}`}>
+                  {index === 1 && (
                     <div className="bg-blue-500 text-white text-center py-2 text-sm font-semibold">
                       最受欢迎
                     </div>
                   )}
-                  <div className={`bg-gradient-to-r ${card.color} text-white p-6 text-center`}>
+                  <div className={`bg-gradient-to-r ${index === 0 ? 'from-gray-400 to-gray-600' : index === 1 ? 'from-blue-500 to-blue-700' : index === 2 ? 'from-purple-500 to-purple-700' : 'from-green-500 to-green-700'} text-white p-6 text-center`}>
                     <h3 className="text-2xl font-bold mb-2">{card.name}</h3>
-                    <div className="text-3xl font-bold mb-1">{card.price}</div>
-                    <div className="text-sm opacity-90">{card.duration}</div>
+                    <div className="text-3xl font-bold mb-1">¥{card.price}</div>
+                    <div className="text-sm opacity-90">1年</div>
                   </div>
                   <div className="p-6">
                     <p className="text-gray-600 text-center mb-6">
                       {card.description}
                     </p>
                     <ul className="space-y-3 mb-8">
-                      {card.features.map((feature, featureIndex) => (
+                      {formatBenefits(card.benefits).map((feature, featureIndex) => (
                         <li key={featureIndex} className="flex items-start">
                           <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -168,7 +196,7 @@ export default function Membership() {
                         </li>
                       ))}
                     </ul>
-                    <button className={`w-full py-3 rounded-lg font-semibold transition-colors ${card.popular ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}>
+                    <button className={`w-full py-3 rounded-lg font-semibold transition-colors ${index === 1 ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}>
                       选择此卡
                     </button>
                   </div>

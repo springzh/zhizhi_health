@@ -1,49 +1,109 @@
+'use client'
+
 import Header from '../../../components/Header'
 import Footer from '../../../components/Footer'
+import { useEffect, useState } from 'react'
+
+interface Service {
+  id: number
+  category_id: number
+  name: string
+  description: string
+  price: string
+  duration: number
+  images: string[]
+  content: string
+  is_recommended: boolean
+}
+
+interface ServiceCategory {
+  name: string
+  description: string
+  services: Service[]
+}
 
 export default function DentalServices() {
-  const categories = [
-    {
-      name: "口腔检查类",
-      description: "全面的口腔健康检查服务",
-      services: [
-        { name: "全面口腔检查", price: "¥200-500", duration: "30-60分钟" },
-        { name: "数字化口腔扫描", price: "¥300-800", duration: "45分钟" },
-        { name: "口腔CT检查", price: "¥500-1200", duration: "20分钟" },
-        { name: "牙齿拍片检查", price: "¥100-300", duration: "15分钟" }
-      ]
-    },
-    {
-      name: "治疗类服务",
-      description: "专业的口腔疾病治疗",
-      services: [
-        { name: "龋齿治疗", price: "¥300-1500", duration: "60-120分钟" },
-        { name: "根管治疗", price: "¥800-2500", duration: "90-180分钟" },
-        { name: "牙周治疗", price: "¥500-2000", duration: "60-90分钟" },
-        { name: "牙齿拔除", price: "¥200-1000", duration: "30-60分钟" }
-      ]
-    },
-    {
-      name: "美容类服务",
-      description: "提升笑容美观度",
-      services: [
-        { name: "牙齿美白", price: "¥800-3000", duration: "60-120分钟" },
-        { name: "牙齿贴面", price: "¥1500-5000/颗", duration: "120-180分钟" },
-        { name: "隐形矫正", price: "¥20000-50000", duration: "12-24个月" },
-        { name: "牙齿修复", price: "¥800-3000/颗", duration: "90-180分钟" }
-      ]
-    },
-    {
-      name: "修复类服务",
-      description: "恢复牙齿功能和美观",
-      services: [
-        { name: "种植牙", price: "¥8000-20000/颗", duration: "3-6个月" },
-        { name: "烤瓷牙", price: "¥1500-5000/颗", duration: "120-180分钟" },
-        { name: "活动义齿", price: "¥3000-15000", duration: "2-4周" },
-        { name: "全口修复", price: "¥10000-50000", duration: "1-3个月" }
-      ]
+  const [services, setServices] = useState<Service[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/services')
+        const data = await response.json()
+        if (data.success) {
+          // Filter only dental services (categories 1-9)
+          const dentalServices = data.data.filter((service: Service) => service.category_id >= 1 && service.category_id <= 9)
+          setServices(dentalServices)
+        } else {
+          setError('Failed to fetch services')
+        }
+      } catch (err) {
+        setError('Error fetching services')
+        console.error('Error fetching services:', err)
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
+
+    fetchServices()
+  }, [])
+
+  const formatDuration = (duration: number): string => {
+    if (duration === 0) return '预约咨询'
+    if (duration < 60) return `${duration}分钟`
+    if (duration < 1440) return `${Math.floor(duration / 60)}小时`
+    return `${Math.floor(duration / 1440)}天`
+  }
+
+  const groupServicesByCategory = (services: Service[]): ServiceCategory[] => {
+    const categoryMap: Record<number, ServiceCategory> = {
+      1: { name: "口腔检查类", description: "全面的口腔健康检查服务", services: [] },
+      2: { name: "治疗类服务", description: "专业的口腔疾病治疗", services: [] },
+      3: { name: "牙周治疗", description: "专业牙周疾病治疗和护理", services: [] },
+      4: { name: "美容类服务", description: "提升笑容美观度", services: [] },
+      5: { name: "修复类服务", description: "恢复牙齿功能和美观", services: [] },
+      6: { name: "根管治疗", description: "专业根管治疗，保存患牙", services: [] },
+      7: { name: "口腔外科", description: "口腔外科手术治疗", services: [] },
+      8: { name: "正畸服务", description: "牙齿矫正和排列", services: [] },
+      9: { name: "儿童牙科", description: "儿童专属口腔服务", services: [] }
+    }
+
+    services.forEach(service => {
+      if (categoryMap[service.category_id]) {
+        categoryMap[service.category_id].services.push(service)
+      }
+    })
+
+    return Object.values(categoryMap).filter(category => category.services.length > 0)
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <div className="flex items-center justify-center h-96">
+          <div className="text-xl">加载中...</div>
+        </div>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <div className="flex items-center justify-center h-96">
+          <div className="text-xl text-red-600">错误: {error}</div>
+        </div>
+        <Footer />
+      </div>
+    )
+  }
+
+  const categories = groupServicesByCategory(services)
 
   return (
     <div className="min-h-screen">
@@ -97,14 +157,14 @@ export default function DentalServices() {
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {category.services.map((service, serviceIndex) => (
-                      <div key={serviceIndex} className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+                    {category.services.map((service) => (
+                      <div key={service.id} className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
                         <h4 className="font-semibold text-gray-800 mb-2">
                           {service.name}
                         </h4>
                         <div className="space-y-1 text-sm text-gray-600">
-                          <p className="text-blue-600 font-medium">{service.price}</p>
-                          <p>时长: {service.duration}</p>
+                          <p className="text-blue-600 font-medium">¥{service.price}</p>
+                          <p>时长: {formatDuration(service.duration)}</p>
                         </div>
                         <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
                           预约服务

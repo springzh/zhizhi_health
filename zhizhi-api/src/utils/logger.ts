@@ -63,11 +63,14 @@ export const logger = winston.createLogger({
 });
 
 // 创建Morgan日志流
-logger.stream = {
+const stream = {
   write: (message: string) => {
     logger.http(message.trim());
   },
 };
+
+// 导出stream供其他模块使用
+export { stream };
 
 // HTTP请求日志中间件
 export const httpLogger = (req: any, res: any, next: any) => {

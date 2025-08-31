@@ -1,5 +1,6 @@
 import Redis from 'ioredis';
-import { redisConfig, logger } from '../utils/logger';
+import { redisConfig } from './app.config';
+import { logger } from '../utils/logger';
 
 let redisClient: Redis | null = null;
 
@@ -9,17 +10,20 @@ export async function connectRedis(): Promise<Redis> {
       return redisClient;
     }
 
-    redisClient = new Redis({
+    const redisOptions: any = {
       host: redisConfig.host,
       port: redisConfig.port,
-      password: redisConfig.password,
       db: redisConfig.db,
-      retryDelayOnFailover: 100,
       maxRetriesPerRequest: 3,
       lazyConnect: true,
       connectTimeout: 5000,
-      commandTimeout: 5000,
-    });
+    };
+
+    if (redisConfig.password) {
+      redisOptions.password = redisConfig.password;
+    }
+
+    redisClient = new Redis(redisOptions);
 
     // 监听连接事件
     redisClient.on('connect', () => {

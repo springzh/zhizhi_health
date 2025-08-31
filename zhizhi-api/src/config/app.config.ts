@@ -73,11 +73,11 @@ export interface AppConfig {
 }
 
 export const databaseConfig: DatabaseConfig = {
-  host: process.env.DATABASE_HOST || 'localhost',
-  port: parseInt(process.env.DATABASE_PORT || '5432'),
-  database: process.env.DATABASE_NAME || 'zhizhi_health',
-  username: process.env.DATABASE_USER || 'postgres',
-  password: process.env.DATABASE_PASSWORD || '',
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT || '5432'),
+  database: process.env.DB_NAME || 'zhizhi_health',
+  username: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || '',
   ssl: process.env.DATABASE_SSL === 'true' ? {
     rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false'
   } : false,
@@ -93,7 +93,7 @@ export const databaseConfig: DatabaseConfig = {
 export const redisConfig: RedisConfig = {
   host: process.env.REDIS_HOST || 'localhost',
   port: parseInt(process.env.REDIS_PORT || '6379'),
-  password: process.env.REDIS_PASSWORD || undefined,
+  password: process.env.REDIS_PASSWORD || '',
   db: parseInt(process.env.REDIS_DB || '0'),
 };
 
@@ -163,10 +163,10 @@ export function getDatabaseConnectionString(): string {
 // 验证必要配置
 export function validateConfig(): void {
   const requiredEnvVars = [
-    'DATABASE_HOST',
-    'DATABASE_NAME',
-    'DATABASE_USER',
-    'DATABASE_PASSWORD',
+    'DB_HOST',
+    'DB_NAME',
+    'DB_USER',
+    'DB_PASSWORD',
     'JWT_SECRET',
   ];
 

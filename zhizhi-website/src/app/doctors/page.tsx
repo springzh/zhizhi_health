@@ -1,129 +1,73 @@
+'use client'
+
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
+import { useEffect, useState } from 'react'
+
+interface Doctor {
+  id: number
+  name: string
+  title: string
+  specialty: string
+  hospital: string
+  location: string
+  rating: string
+  consultation_count: number
+  introduction: string
+  service_types: string[]
+  avatar_url: string
+  is_available: boolean
+}
 
 export default function Doctors() {
-  const doctors = [
-    {
-      id: 1,
-      name: "张建华",
-      title: "主任医师",
-      specialty: "口腔修复",
-      hospital: "广州口腔医院",
-      location: "广州",
-      rating: 4.9,
-      experience: "20年",
-      education: "中山大学口腔医学院博士",
-      avatar: "/api/placeholder/100/100",
-      description: "专注于口腔修复领域20年，擅长种植牙、烤瓷牙等修复治疗，临床经验丰富。",
-      services: ["种植牙", "烤瓷牙", "全口修复", "美学修复"],
-      appointments: 1500
-    },
-    {
-      id: 2,
-      name: "李明珠",
-      title: "副主任医师",
-      specialty: "牙周治疗",
-      hospital: "深圳人民医院",
-      location: "深圳",
-      rating: 4.8,
-      experience: "15年",
-      education: "华西口腔医学院硕士",
-      avatar: "/api/placeholder/100/100",
-      description: "牙周病治疗专家，在牙龈疾病治疗和口腔健康管理方面有深入研究。",
-      services: ["牙周治疗", "牙龈刮治", "口腔保健", "激光治疗"],
-      appointments: 1200
-    },
-    {
-      id: 3,
-      name: "王志强",
-      title: "主治医师",
-      specialty: "牙齿美容",
-      hospital: "广州协和医院",
-      location: "广州",
-      rating: 4.7,
-      experience: "12年",
-      education: "第四军医大学口腔医学院",
-      avatar: "/api/placeholder/100/100",
-      description: "牙齿美容和矫正专家，致力于为患者创造完美笑容。",
-      services: ["牙齿美白", "隐形矫正", "牙齿贴面", "美学设计"],
-      appointments: 900
-    },
-    {
-      id: 4,
-      name: "陈小玲",
-      title: "主任医师",
-      specialty: "儿童牙科",
-      hospital: "深圳儿童医院",
-      location: "深圳",
-      rating: 4.9,
-      experience: "18年",
-      education: "北京大学口腔医学院博士",
-      avatar: "/api/placeholder/100/100",
-      description: "儿童牙科专家，擅长儿童牙齿矫正和预防治疗，亲和力强。",
-      services: ["儿童牙齿矫正", "窝沟封闭", "儿童补牙", "口腔预防"],
-      appointments: 1100
-    },
-    {
-      id: 5,
-      name: "刘建国",
-      title: "主任医师",
-      specialty: "口腔外科",
-      hospital: "广州中山医院",
-      location: "广州",
-      rating: 4.8,
-      experience: "25年",
-      education: "上海交通大学口腔医学院",
-      avatar: "/api/placeholder/100/100",
-      description: "口腔外科资深专家，复杂牙齿拔除和口腔手术经验丰富。",
-      services: ["复杂拔牙", "口腔手术", "种植外科", "颌面外科"],
-      appointments: 1800
-    },
-    {
-      id: 6,
-      name: "赵美丽",
-      title: "副主任医师",
-      specialty: "根管治疗",
-      hospital: "深圳第二人民医院",
-      location: "深圳",
-      rating: 4.9,
-      experience: "16年",
-      education: "武汉大学口腔医学院硕士",
-      avatar: "/api/placeholder/100/100",
-      description: "根管治疗专家，显微根管治疗技术精湛，成功率高。",
-      services: ["根管治疗", "显微根管", "牙髓治疗", "牙齿保存"],
-      appointments: 1300
-    },
-    {
-      id: 7,
-      name: "孙大伟",
-      title: "主治医师",
-      specialty: "口腔正畸",
-      hospital: "广州口腔医院",
-      location: "广州",
-      rating: 4.6,
-      experience: "10年",
-      education: "南京医科大学口腔医学院",
-      avatar: "/api/placeholder/100/100",
-      description: "正畸专科医生，各类错颌畸形矫正经验丰富。",
-      services: ["传统矫正", "隐形矫正", "儿童矫正", "成人矫正"],
-      appointments: 800
-    },
-    {
-      id: 8,
-      name: "周雅琴",
-      title: "副主任医师",
-      specialty: "口腔综合",
-      hospital: "深圳北大医院",
-      location: "深圳",
-      rating: 4.8,
-      experience: "14年",
-      education: "中山大学口腔医学院硕士",
-      avatar: "/api/placeholder/100/100",
-      description: "综合口腔治疗专家，擅长常见口腔疾病的诊断和治疗。",
-      services: ["综合治疗", "预防保健", "常见病治疗", "口腔检查"],
-      appointments: 1000
+  const [doctors, setDoctors] = useState<Doctor[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/doctors')
+        const data = await response.json()
+        if (data.success) {
+          setDoctors(data.data)
+        } else {
+          setError('Failed to fetch doctors')
+        }
+      } catch (err) {
+        setError('Error fetching doctors')
+        console.error('Error fetching doctors:', err)
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
+
+    fetchDoctors()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <div className="flex items-center justify-center h-96">
+          <div className="text-xl">加载中...</div>
+        </div>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <div className="flex items-center justify-center h-96">
+          <div className="text-xl text-red-600">错误: {error}</div>
+        </div>
+        <Footer />
+      </div>
+    )
+  }
 
   const locations = ["全部", "广州", "深圳"]
   const specialties = ["全部", "口腔修复", "牙周治疗", "牙齿美容", "儿童牙科", "口腔外科", "根管治疗", "口腔正畸", "口腔综合"]
@@ -222,21 +166,21 @@ export default function Doctors() {
                       </div>
                       
                       <div className="text-xs text-gray-500 mb-4">
-                        {doctor.experience}经验 · {doctor.appointments}+预约
+                        {doctor.consultation_count}+ 咨询
                       </div>
                     </div>
 
                     <div className="space-y-2 mb-4">
                       <h4 className="text-sm font-semibold text-gray-800">擅长项目：</h4>
                       <div className="flex flex-wrap gap-1">
-                        {doctor.services.slice(0, 3).map((service, index) => (
+                        {doctor.service_types.slice(0, 3).map((service, index) => (
                           <span key={index} className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
                             {service}
                           </span>
                         ))}
-                        {doctor.services.length > 3 && (
+                        {doctor.service_types.length > 3 && (
                           <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                            +{doctor.services.length - 3}
+                            +{doctor.service_types.length - 3}
                           </span>
                         )}
                       </div>

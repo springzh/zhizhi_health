@@ -1,65 +1,99 @@
+'use client'
+
 import Header from '../../../components/Header'
 import Footer from '../../../components/Footer'
+import { useEffect, useState } from 'react'
+
+interface Service {
+  id: number
+  category_id: number
+  name: string
+  description: string
+  price: string
+  duration: number
+  images: string[]
+  content: string
+  is_recommended: boolean
+}
+
+interface CellServiceCategory {
+  name: string
+  description: string
+  icon: string
+  color: string
+  services: Service[]
+}
 
 export default function CellServices() {
-  const services = [
-    {
-      name: "干细胞存储",
-      description: "为未来健康投资，存储珍贵生命资源",
-      features: [
-        "脐带血干细胞存储",
-        "脂肪干细胞存储", 
-        "牙髓干细胞存储",
-        "外周血干细胞存储",
-        "长期安全保存",
-        "质量检测认证"
-      ],
-      icon: "🧬",
-      color: "from-teal-500 to-teal-700"
-    },
-    {
-      name: "免疫细胞存储",
-      description: "守护免疫系统，为健康保驾护航",
-      features: [
-        "NK细胞存储",
-        "T细胞存储",
-        "CAR-T细胞制备",
-        "细胞活性检测",
-        "冻存技术保障",
-        "快速复苏服务"
-      ],
-      icon: "🛡️",
-      color: "from-indigo-500 to-indigo-700"
-    },
-    {
-      name: "细胞治疗",
-      description: "前沿细胞技术，针对性治疗多种疾病",
-      features: [
-        "抗衰老治疗",
-        "免疫系统调节",
-        "慢性病辅助治疗",
-        "亚健康状态改善",
-        "个性化治疗方案",
-        "专业医疗团队"
-      ],
-      icon: "⚕️",
-      color: "from-emerald-500 to-emerald-700"
-    },
-    {
-      name: "健康管理",
-      description: "基于细胞技术的全方位健康管理",
-      features: [
-        "健康评估检测",
-        "个性化健康方案",
-        "营养指导建议",
-        "生活方式干预",
-        "定期健康跟踪",
-        "专家咨询服务"
-      ],
-      icon: "📊",
-      color: "from-cyan-500 to-cyan-700"
+  const [services, setServices] = useState<Service[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/services')
+        const data = await response.json()
+        if (data.success) {
+          // Filter only cell services (categories 10-13)
+          const cellServices = data.data.filter((service: Service) => service.category_id >= 10 && service.category_id <= 13)
+          setServices(cellServices)
+        } else {
+          setError('Failed to fetch services')
+        }
+      } catch (err) {
+        setError('Error fetching services')
+        console.error('Error fetching services:', err)
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
+
+    fetchServices()
+  }, [])
+
+  const groupServicesByCategory = (services: Service[]): CellServiceCategory[] => {
+    const categoryMap: Record<number, CellServiceCategory> = {
+      10: { name: "干细胞存储", description: "为未来健康投资，存储珍贵生命资源", icon: "🧬", color: "from-teal-500 to-teal-700", services: [] },
+      11: { name: "免疫细胞存储", description: "守护免疫系统，为健康保驾护航", icon: "🛡️", color: "from-indigo-500 to-indigo-700", services: [] },
+      12: { name: "细胞治疗", description: "前沿细胞技术，针对性治疗多种疾病", icon: "⚕️", color: "from-emerald-500 to-emerald-700", services: [] },
+      13: { name: "健康管理", description: "基于细胞技术的全方位健康管理", icon: "📊", color: "from-cyan-500 to-cyan-700", services: [] }
+    }
+
+    services.forEach(service => {
+      if (categoryMap[service.category_id]) {
+        categoryMap[service.category_id].services.push(service)
+      }
+    })
+
+    return Object.values(categoryMap).filter(category => category.services.length > 0)
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <div className="flex items-center justify-center h-96">
+          <div className="text-xl">加载中...</div>
+        </div>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <div className="flex items-center justify-center h-96">
+          <div className="text-xl text-red-600">错误: {error}</div>
+        </div>
+        <Footer />
+      </div>
+    )
+  }
+
+  const cellServices = groupServicesByCategory(services)
 
   const advantages = [
     {
@@ -132,25 +166,28 @@ export default function CellServices() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {services.map((service, index) => (
-                <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                  <div className={`bg-gradient-to-r ${service.color} text-white p-6`}>
+              {cellServices.map((serviceCategory) => (
+                <div key={serviceCategory.name} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                  <div className={`bg-gradient-to-r ${serviceCategory.color} text-white p-6`}>
                     <div className="flex items-center mb-4">
-                      <div className="text-4xl mr-4">{service.icon}</div>
-                      <h3 className="text-2xl font-bold">{service.name}</h3>
+                      <div className="text-4xl mr-4">{serviceCategory.icon}</div>
+                      <h3 className="text-2xl font-bold">{serviceCategory.name}</h3>
                     </div>
                     <p className="text-teal-100">
-                      {service.description}
+                      {serviceCategory.description}
                     </p>
                   </div>
                   <div className="p-6">
                     <ul className="space-y-3">
-                      {service.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-start">
+                      {serviceCategory.services.map((service) => (
+                        <li key={service.id} className="flex items-start">
                           <svg className="w-5 h-5 text-teal-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
-                          <span className="text-sm text-gray-700">{feature}</span>
+                          <span className="text-sm text-gray-700">
+                            <span className="font-medium">{service.name}</span>
+                            <span className="text-blue-600 ml-2">¥{service.price}</span>
+                          </span>
                         </li>
                       ))}
                     </ul>
