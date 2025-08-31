@@ -1,0 +1,63 @@
+# 数据库配置文件
+# 复制此文件为 database.config.local 并填入实际配置信息
+
+# 数据库连接配置
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_NAME=zhizhi_health
+DATABASE_USER=postgres
+DATABASE_PASSWORD=your_password_here
+
+# 连接池配置
+DATABASE_POOL_MIN=2
+DATABASE_POOL_MAX=10
+DATABASE_POOL_IDLE=30000
+DATABASE_POOL_ACQUIRE=60000
+
+# SSL配置 (生产环境建议开启)
+DATABASE_SSL=false
+DATABASE_SSL_REJECT_UNAUTHORIZED=true
+
+# 数据库日志配置
+DATABASE_LOGGING=true
+DATABASE_LOG_LEVEL=info
+
+# 应用配置
+NODE_ENV=development
+PORT=3000
+
+# JWT配置
+JWT_SECRET=your_jwt_secret_here
+JWT_EXPIRES_IN=7d
+
+# Redis配置 (可选)
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=
+REDIS_DB=0
+
+# 短信服务配置
+ALIYUN_SMS_ACCESS_KEY_ID=your_access_key_id
+ALIYUN_SMS_ACCESS_KEY_SECRET=your_access_key_secret
+ALIYUN_SMS_SIGN_NAME=知治健康
+ALIYUN_SMS_TEMPLATE_CODE=SMS_123456789
+
+# 微信小程序配置
+WECHAT_APP_ID=your_wechat_app_id
+WECHAT_APP_SECRET=your_wechat_app_secret
+
+# 文件存储配置
+OSS_ACCESS_KEY_ID=your_oss_access_key_id
+OSS_ACCESS_KEY_SECRET=your_oss_access_key_secret
+OSS_BUCKET=your_bucket_name
+OSS_REGION=oss-cn-hangzhou
+
+# 邮件配置 (可选)
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=your_email@example.com
+SMTP_PASS=your_email_password
+
+# 监控配置
+SENTRY_DSN=your_sentry_dsn
+LOG_LEVEL=info

@@ -105,7 +105,7 @@
 ### 3.2 后端技术栈
 - **Node.js** + Express
 - **TypeScript**
-- **MySQL** / PostgreSQL（数据库）
+- **PostgreSQL**（数据库）
 - **Redis**（缓存和会话管理）
 - **JWT**（身份认证）
 
@@ -119,69 +119,90 @@
 
 ### 4.1 主要数据表
 
+#### users 用户表
+```sql
+id: SERIAL PRIMARY KEY
+openid: VARCHAR(255) UNIQUE (微信openid)
+unionid: VARCHAR(255) (微信unionid)
+nickname: VARCHAR(100) (用户昵称)
+avatar_url: VARCHAR(500) (头像URL)
+phone: VARCHAR(20) (手机号)
+created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+updated_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+```
+
 #### doctors 医生表
 ```sql
-id: number (主键)
-name: string (姓名)
-avatar: string (头像)
-title: string (职称)
-specialty: string (专长)
-hospital: string (所属医院)
-location: string (所在地区)
-rating: number (评分)
-introduction: text (详细介绍)
-service_types: JSON COMMENT '提供的服务类型',
-created_at: datetime
-updated_at: datetime
+id: SERIAL PRIMARY KEY
+name: VARCHAR(100) NOT NULL (姓名)
+avatar: VARCHAR(500) (头像)
+title: VARCHAR(100) (职称)
+specialty: VARCHAR(200) (专长)
+hospital: VARCHAR(200) (所属医院)
+location: VARCHAR(100) (所在地区)
+rating: DECIMAL(3,2) DEFAULT 0.0 (评分)
+introduction: TEXT (详细介绍)
+service_types: JSONB (提供的服务类型)
+is_available: BOOLEAN DEFAULT true (是否可预约)
+consultation_count: INTEGER DEFAULT 0 (咨询次数)
+created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+updated_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ```
 
 #### appointments 预约表
 ```sql
-id: number (主键)
-doctor_id: number (医生ID)
-service_type: string COMMENT '服务类型',
-patient_name: string (患者姓名)
-phone: string (联系电话)
-appointment_date: datetime (预约时间)
-status: string (状态：待确认/已确认/已完成/已取消)
-notes: text (补充信息)
-membership_id: number COMMENT '使用的权益卡ID',
-created_at: datetime
-updated_at: datetime
+id: SERIAL PRIMARY KEY
+doctor_id: INTEGER NOT NULL REFERENCES doctors(id) (医生ID)
+user_id: INTEGER REFERENCES users(id) (用户ID)
+service_type: VARCHAR(100) (服务类型)
+patient_name: VARCHAR(100) NOT NULL (患者姓名)
+phone: VARCHAR(20) NOT NULL (联系电话)
+appointment_date: DATE NOT NULL (预约日期)
+appointment_time: TIME NOT NULL (预约时间)
+status: VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'completed', 'cancelled')) (状态)
+notes: TEXT (补充信息)
+membership_id: INTEGER REFERENCES membership_cards(id) (使用的权益卡ID)
+patient_age: INTEGER (患者年龄)
+patient_gender: VARCHAR(10) CHECK (patient_gender IN ('male', 'female', 'other')) (患者性别)
+symptoms: TEXT (症状描述)
+created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+updated_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ```
 
 #### sms_config 短信配置表
 ```sql
-id: number (主键)
-template_id: string (模板ID)
-recipient_type: string (接收人类型：客服/医生)
-is_enabled: boolean (是否启用)
-created_at: datetime
-updated_at: datetime
+id: SERIAL PRIMARY KEY
+template_id: VARCHAR(100) NOT NULL (模板ID)
+recipient_type: VARCHAR(50) NOT NULL (接收人类型：customer_service/doctor/both)
+is_enabled: BOOLEAN DEFAULT true (是否启用)
+created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+updated_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ```
 
 #### service_categories 服务分类表
 ```sql
-id: number (主键)
-name: string (分类名称)
-type: string (服务类型: dental/cell)
-description: text (描述)
-icon: string (图标)
-sort_order: number (排序)
-created_at: datetime
-updated_at: datetime
+id: SERIAL PRIMARY KEY
+name: VARCHAR(100) NOT NULL (分类名称)
+type: VARCHAR(50) NOT NULL (服务类型: dental/cell)
+description: TEXT (描述)
+icon: VARCHAR(100) (图标)
+sort_order: INTEGER DEFAULT 0 (排序)
+is_active: BOOLEAN DEFAULT true (是否启用)
+created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+updated_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ```
 
 #### membership_cards 权益卡表
 ```sql
-id: number (主键)
-name: string (权益卡名称)
-price: decimal(10,2) (价格)
-duration_days: number (有效期天数)
-benefits: JSON (权益内容)
-description: text (描述)
-created_at: datetime
-updated_at: datetime
+id: SERIAL PRIMARY KEY
+name: VARCHAR(100) NOT NULL (权益卡名称)
+price: DECIMAL(10,2) NOT NULL (价格)
+duration_days: INTEGER NOT NULL (有效期天数)
+benefits: JSONB NOT NULL (权益内容)
+description: TEXT (描述)
+is_available: BOOLEAN DEFAULT true (是否可用)
+created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+updated_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ```
 
 ## 5. 界面设计规范

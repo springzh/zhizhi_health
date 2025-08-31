@@ -76,9 +76,9 @@ export default function Doctors() {
         </div>
 
         <div className="text-center mt-12">
-          <button className="bg-secondary text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-green-600 transition-colors">
+          <a href="/doctors" className="inline-block bg-secondary text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-green-600 transition-colors">
             查看所有医生
-          </button>
+          </a>
         </div>
       </div>
     </section>

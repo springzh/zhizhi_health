@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # PostgreSQL数据库
+  postgres:
+    image: postgres:15-alpine
+    container_name: zhizhi-postgres-dev
+    environment:
+      POSTGRES_DB: zhizhi_health_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ../database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - zhizhi-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    container_name: zhizhi-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - zhizhi-network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # API服务 (开发模式)
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: zhizhi-api-dev
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: zhizhi_health_dev
+      DB_USER: postgres
+      DB_PASSWORD: password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: dev-jwt-secret
+      JWT_REFRESH_SECRET: dev-refresh-secret
+      LOG_LEVEL: debug
+      DATABASE_LOGGING: "true"
+    ports:
+      - "3000:3000"
+      - "9229:9229" # Debug port
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - zhizhi-network
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./logs:/app/logs
+    restart: unless-stopped
+    command: npm run dev
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+
+networks:
+  zhizhi-network:
+    driver: bridge

@@ -50,9 +50,12 @@ export default function Services() {
                   </li>
                 ))}
               </ul>
-              <button className="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors">
+              <a 
+                href={index === 0 ? "/services/dental" : index === 1 ? "/membership" : "/services/cell"}
+                className="block w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors text-center"
+              >
                 了解更多
-              </button>
+              </a>
             </div>
           ))}
         </div>

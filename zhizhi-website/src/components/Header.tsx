@@ -14,19 +14,19 @@ export default function Header() {
               <h1 className="text-2xl font-bold text-primary">知治健康</h1>
             </div>
             <nav className="hidden md:ml-8 md:flex md:space-x-8">
-              <a href="#" className="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
+              <a href="/" className="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
                 首页
               </a>
-              <a href="#" className="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
+              <a href="/services/dental" className="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
                 口腔服务
               </a>
-              <a href="#" className="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
+              <a href="/membership" className="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
                 医疗权益卡
               </a>
-              <a href="#" className="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
+              <a href="/services/cell" className="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
                 细胞服务
               </a>
-              <a href="#" className="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
+              <a href="/doctors" className="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
                 医生资源
               </a>
             </nav>
@@ -53,19 +53,19 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <a href="#" className="text-gray-700 hover:text-primary block px-3 py-2 text-base font-medium">
+              <a href="/" className="text-gray-700 hover:text-primary block px-3 py-2 text-base font-medium">
                 首页
               </a>
-              <a href="#" className="text-gray-700 hover:text-primary block px-3 py-2 text-base font-medium">
+              <a href="/services/dental" className="text-gray-700 hover:text-primary block px-3 py-2 text-base font-medium">
                 口腔服务
               </a>
-              <a href="#" className="text-gray-700 hover:text-primary block px-3 py-2 text-base font-medium">
+              <a href="/membership" className="text-gray-700 hover:text-primary block px-3 py-2 text-base font-medium">
                 医疗权益卡
               </a>
-              <a href="#" className="text-gray-700 hover:text-primary block px-3 py-2 text-base font-medium">
+              <a href="/services/cell" className="text-gray-700 hover:text-primary block px-3 py-2 text-base font-medium">
                 细胞服务
               </a>
-              <a href="#" className="text-gray-700 hover:text-primary block px-3 py-2 text-base font-medium">
+              <a href="/doctors" className="text-gray-700 hover:text-primary block px-3 py-2 text-base font-medium">
                 医生资源
               </a>
               <button className="w-full bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-dark transition-colors">
