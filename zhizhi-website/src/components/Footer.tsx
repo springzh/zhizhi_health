@@ -18,6 +18,7 @@ export default function Footer() {
               <li><a href="/rights-cards" className="hover:text-white transition-colors">健康权益卡</a></li>
               <li><a href="/services/cell" className="hover:text-white transition-colors">细胞服务</a></li>
               <li><a href="/doctors" className="hover:text-white transition-colors">医生预约</a></li>
+              <li><a href="/faq" className="hover:text-white transition-colors">常见问题</a></li>
             </ul>
           </div>
 

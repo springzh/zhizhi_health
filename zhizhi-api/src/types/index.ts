@@ -399,3 +399,6 @@ declare global {
     }
   }
 }
+
+// FAQ相关类型导出
+export * from './faq.types';

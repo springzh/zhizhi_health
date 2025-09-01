@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ API 测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-button {
+            background: #007cba;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #005a87;
+        }
+        .response {
+            background: #f5f5f5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+            white-space: pre-wrap;
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <h1>FAQ API 功能测试</h1>
+    
+    <div class="test-section">
+        <h2>1. 获取热门FAQ</h2>
+        <button class="test-button" onclick="testPopularFAQs()">测试获取热门FAQ</button>
+        <div id="popular-response"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. 获取所有FAQ</h2>
+        <button class="test-button" onclick="testAllFAQs()">测试获取所有FAQ</button>
+        <div id="all-response"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. 获取FAQ分类</h2>
+        <button class="test-button" onclick="testCategories()">测试获取分类</button>
+        <div id="categories-response"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. 搜索FAQ</h2>
+        <input type="text" id="search-input" placeholder="输入搜索关键词" style="padding: 8px; margin: 5px;">
+        <button class="test-button" onclick="testSearch()">测试搜索</button>
+        <div id="search-response"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. 按分类筛选</h2>
+        <select id="category-select" style="padding: 8px; margin: 5px;">
+            <option value="">选择分类</option>
+        </select>
+        <button class="test-button" onclick="testCategoryFilter()">测试分类筛选</button>
+        <div id="filter-response"></div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/faq';
+
+        async function makeRequest(url, options = {}) {
+            try {
+                const response = await fetch(url, options);
+                const data = await response.json();
+                return { success: true, data, status: response.status };
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        function displayResponse(elementId, result) {
+            const element = document.getElementById(elementId);
+            if (result.success) {
+                element.innerHTML = `<div class="success">✓ 请求成功 (状态: ${result.status})</div>
+                    <div class="response">${JSON.stringify(result.data, null, 2)}</div>`;
+            } else {
+                element.innerHTML = `<div class="error">✗ 请求失败: ${result.error}</div>`;
+            }
+        }
+
+        async function testPopularFAQs() {
+            const result = await makeRequest(`${API_BASE}/popular?limit=5`);
+            displayResponse('popular-response', result);
+        }
+
+        async function testAllFAQs() {
+            const result = await makeRequest(`${API_BASE}`);
+            displayResponse('all-response', result);
+        }
+
+        async function testCategories() {
+            const result = await makeRequest(`${API_BASE}/categories`);
+            displayResponse('categories-response', result);
+            
+            // 填充分类选择框
+            if (result.success && result.data.data) {
+                const select = document.getElementById('category-select');
+                select.innerHTML = '<option value="">选择分类</option>';
+                result.data.data.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.id;
+                    option.textContent = category.name;
+                    select.appendChild(option);
+                });
+            }
+        }
+
+        async function testSearch() {
+            const searchTerm = document.getElementById('search-input').value;
+            if (!searchTerm) {
+                alert('请输入搜索关键词');
+                return;
+            }
+            
+            const result = await makeRequest(`${API_BASE}?search=${encodeURIComponent(searchTerm)}`);
+            displayResponse('search-response', result);
+        }
+
+        async function testCategoryFilter() {
+            const categoryId = document.getElementById('category-select').value;
+            if (!categoryId) {
+                alert('请选择分类');
+                return;
+            }
+            
+            const result = await makeRequest(`${API_BASE}?category_id=${categoryId}`);
+            displayResponse('filter-response', result);
+        }
+
+        // 页面加载时自动测试
+        window.onload = function() {
+            console.log('页面加载完成，可以开始测试FAQ API');
+        };
+    </script>
+</body>
+</html>

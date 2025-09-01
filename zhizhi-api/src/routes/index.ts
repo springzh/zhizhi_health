@@ -7,6 +7,7 @@ import serviceRoutes from './service.routes';
 import healthRoutes from './health.routes';
 import consultationRoutes from './consultation.routes';
 import rightsCardRoutes from './rights-card.routes';
+import faqRoutes from './faq.routes';
 
 const router = Router();
 
@@ -21,6 +22,7 @@ router.use('/memberships', membershipRoutes);
 router.use('/services', serviceRoutes);
 router.use('/consultations', consultationRoutes);
 router.use('/rights-cards', rightsCardRoutes);
+router.use('/faq', faqRoutes);
 
 // API根路径
 router.get('/', (req, res) => {
@@ -38,6 +40,7 @@ router.get('/', (req, res) => {
       services: '/api/services',
       consultations: '/api/consultations',
       'rights-cards': '/api/rights-cards',
+      faq: '/api/faq',
     },
   });
 });
