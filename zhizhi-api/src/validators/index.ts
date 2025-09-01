@@ -374,3 +374,193 @@ export const searchValidation = [
     .isLength({ min: 1, max: 100 })
     .withMessage('Search keyword must be between 1 and 100 characters'),
 ];
+
+// 权益卡验证规则
+export const rightsCardValidation = {
+  // 创建权益卡
+  create: [
+    body('name')
+      .isLength({ min: 2, max: 100 })
+      .withMessage('Name must be between 2 and 100 characters'),
+    body('type')
+      .isIn(['nursing', 'special_drug', 'other'])
+      .withMessage('Type must be one of: nursing, special_drug, other'),
+    body('description')
+      .optional()
+      .isLength({ min: 1, max: 2000 })
+      .withMessage('Description must be between 1 and 2000 characters'),
+    body('price')
+      .isFloat({ min: 0 })
+      .withMessage('Price must be a positive number'),
+    body('duration_years')
+      .isInt({ min: 1 })
+      .withMessage('Duration years must be a positive integer'),
+    body('activation_age_min')
+      .optional()
+      .isInt({ min: 0 })
+      .withMessage('Minimum activation age must be a positive integer'),
+    body('activation_age_max')
+      .optional()
+      .isInt({ min: 0 })
+      .withMessage('Maximum activation age must be a positive integer'),
+    body('coverage_details')
+      .optional()
+      .isObject()
+      .withMessage('Coverage details must be an object'),
+    body('service_limits')
+      .optional()
+      .isObject()
+      .withMessage('Service limits must be an object'),
+    body('eligibility_rules')
+      .optional()
+      .isObject()
+      .withMessage('Eligibility rules must be an object'),
+    body('application_process')
+      .optional()
+      .isObject()
+      .withMessage('Application process must be an object'),
+    body('key_features')
+      .optional()
+      .isArray()
+      .withMessage('Key features must be an array'),
+    body('benefits')
+      .optional()
+      .isArray()
+      .withMessage('Benefits must be an array'),
+    body('target_audience')
+      .optional()
+      .isArray()
+      .withMessage('Target audience must be an array'),
+    body('sort_order')
+      .optional()
+      .isInt({ min: 0 })
+      .withMessage('Sort order must be a positive integer'),
+  ],
+
+  // 更新权益卡
+  update: [
+    body('name')
+      .optional()
+      .isLength({ min: 2, max: 100 })
+      .withMessage('Name must be between 2 and 100 characters'),
+    body('type')
+      .optional()
+      .isIn(['nursing', 'special_drug', 'other'])
+      .withMessage('Type must be one of: nursing, special_drug, other'),
+    body('description')
+      .optional()
+      .isLength({ min: 1, max: 2000 })
+      .withMessage('Description must be between 1 and 2000 characters'),
+    body('price')
+      .optional()
+      .isFloat({ min: 0 })
+      .withMessage('Price must be a positive number'),
+    body('duration_years')
+      .optional()
+      .isInt({ min: 1 })
+      .withMessage('Duration years must be a positive integer'),
+    body('activation_age_min')
+      .optional()
+      .isInt({ min: 0 })
+      .withMessage('Minimum activation age must be a positive integer'),
+    body('activation_age_max')
+      .optional()
+      .isInt({ min: 0 })
+      .withMessage('Maximum activation age must be a positive integer'),
+    body('coverage_details')
+      .optional()
+      .isObject()
+      .withMessage('Coverage details must be an object'),
+    body('service_limits')
+      .optional()
+      .isObject()
+      .withMessage('Service limits must be an object'),
+    body('eligibility_rules')
+      .optional()
+      .isObject()
+      .withMessage('Eligibility rules must be an object'),
+    body('application_process')
+      .optional()
+      .isObject()
+      .withMessage('Application process must be an object'),
+    body('key_features')
+      .optional()
+      .isArray()
+      .withMessage('Key features must be an array'),
+    body('benefits')
+      .optional()
+      .isArray()
+      .withMessage('Benefits must be an array'),
+    body('target_audience')
+      .optional()
+      .isArray()
+      .withMessage('Target audience must be an array'),
+    body('sort_order')
+      .optional()
+      .isInt({ min: 0 })
+      .withMessage('Sort order must be a positive integer'),
+    body('is_available')
+      .optional()
+      .isBoolean()
+      .withMessage('Available status must be a boolean'),
+  ],
+
+  // 查询参数
+  query: [
+    query('page')
+      .optional()
+      .isInt({ min: 1 })
+      .withMessage('Page must be a positive integer'),
+    query('limit')
+      .optional()
+      .isInt({ min: 1, max: 100 })
+      .withMessage('Limit must be between 1 and 100'),
+    query('type')
+      .optional()
+      .isIn(['nursing', 'special_drug', 'other'])
+      .withMessage('Type must be one of: nursing, special_drug, other'),
+    query('is_available')
+      .optional()
+      .isBoolean()
+      .withMessage('Available status must be a boolean'),
+  ],
+
+  // ID参数
+  id: [
+    param('id')
+      .isInt({ min: 1 })
+      .withMessage('ID must be a positive integer'),
+  ],
+
+  // 用户权益卡创建
+  createUserCard: [
+    body('user_id')
+      .isInt({ min: 1 })
+      .withMessage('User ID must be a positive integer'),
+    body('card_id')
+      .isInt({ min: 1 })
+      .withMessage('Card ID must be a positive integer'),
+    body('payment_method')
+      .optional()
+      .isLength({ min: 1, max: 50 })
+      .withMessage('Payment method must be between 1 and 50 characters'),
+    body('payment_amount')
+      .optional()
+      .isFloat({ min: 0 })
+      .withMessage('Payment amount must be a positive number'),
+  ],
+
+  // 使用记录创建
+  createUsage: [
+    body('user_card_id')
+      .isInt({ min: 1 })
+      .withMessage('User card ID must be a positive integer'),
+    body('service_type')
+      .isLength({ min: 1, max: 100 })
+      .withMessage('Service type must be between 1 and 100 characters'),
+    body('service_details')
+      .optional()
+      .isObject()
+      .withMessage('Service details must be an object'),
+  ],
+};

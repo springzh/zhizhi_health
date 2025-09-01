@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState } from 'react';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -21,7 +21,10 @@ export default function Header() {
                 口腔服务
               </a>
               <a href="/membership" className="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
-                医疗权益卡
+                医疗会员卡
+              </a>
+              <a href="/rights-cards" className="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
+                健康权益卡
               </a>
               <a href="/services/cell" className="text-gray-700 hover:text-primary px-3 py-2 text-sm font-medium">
                 细胞服务
@@ -63,7 +66,10 @@ export default function Header() {
                 口腔服务
               </a>
               <a href="/membership" className="text-gray-700 hover:text-primary block px-3 py-2 text-base font-medium">
-                医疗权益卡
+                医疗会员卡
+              </a>
+              <a href="/rights-cards" className="text-gray-700 hover:text-primary block px-3 py-2 text-base font-medium">
+                健康权益卡
               </a>
               <a href="/services/cell" className="text-gray-700 hover:text-primary block px-3 py-2 text-base font-medium">
                 细胞服务

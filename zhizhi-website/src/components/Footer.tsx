@@ -13,10 +13,11 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-4">核心服务</h4>
             <ul className="space-y-2 text-sm text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">口腔服务</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">医疗权益卡</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">细胞服务</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">医生预约</a></li>
+              <li><a href="/services/dental" className="hover:text-white transition-colors">口腔服务</a></li>
+              <li><a href="/membership" className="hover:text-white transition-colors">医疗会员卡</a></li>
+              <li><a href="/rights-cards" className="hover:text-white transition-colors">健康权益卡</a></li>
+              <li><a href="/services/cell" className="hover:text-white transition-colors">细胞服务</a></li>
+              <li><a href="/doctors" className="hover:text-white transition-colors">医生预约</a></li>
             </ul>
           </div>
 

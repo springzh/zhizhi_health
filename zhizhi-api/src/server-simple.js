@@ -306,6 +306,149 @@ const membershipCards = [
   }
 ];
 
+const rightsCards = [
+  {
+    id: 1,
+    name: "基础护工卡",
+    type: "nursing",
+    description: "提供基础住院期间的护理服务，适合一般护理需求",
+    price: 2999,
+    duration_years: 1,
+    activation_age_min: 18,
+    activation_age_max: 80,
+    key_features: [
+      "8天7夜一对一专业护工",
+      "基础生活照料",
+      "协助医护人员沟通",
+      "病情观察记录"
+    ],
+    benefits: [
+      "专业持证护工服务",
+      "24小时不间断护理",
+      "个性化护理方案",
+      "护理质量保证"
+    ],
+    target_audience: [
+      "术后康复患者",
+      "老年人日常护理",
+      "慢性病患者"
+    ],
+    is_available: true
+  },
+  {
+    id: 2,
+    name: "标准护工卡",
+    type: "nursing",
+    description: "提供全面的住院护理服务，包含专业医疗护理技能",
+    price: 4999,
+    duration_years: 1,
+    activation_age_min: 18,
+    activation_age_max: 80,
+    key_features: [
+      "8天7夜一对一专业护工",
+      "专业医疗护理技能",
+      "康复训练指导",
+      "心理疏导支持"
+    ],
+    benefits: [
+      "资深护工团队",
+      "医疗级护理标准",
+      "康复计划制定",
+      "心理健康关注"
+    ],
+    target_audience: [
+      "重大手术患者",
+      "需要专业护理的患者",
+      "康复期患者"
+    ],
+    is_available: true
+  },
+  {
+    id: 3,
+    name: "尊享护工卡",
+    type: "nursing",
+    description: "高端定制化护理服务，专家级护工团队",
+    price: 8999,
+    duration_years: 1,
+    activation_age_min: 18,
+    activation_age_max: 80,
+    key_features: [
+      "8天7夜一对一专家护工",
+      "个性化定制护理方案",
+      "多学科团队协作",
+      "全程健康管理"
+    ],
+    benefits: [
+      "专家级护工服务",
+      "个性化护理方案",
+      "多学科协作支持",
+      "健康管理档案"
+    ],
+    target_audience: [
+      "高端医疗需求患者",
+      "特殊护理需求",
+      "VIP客户"
+    ],
+    is_available: true
+  },
+  {
+    id: 4,
+    name: "基础特药卡",
+    type: "special_drug",
+    description: "覆盖基础特殊药品费用，提供用药指导服务",
+    price: 3999,
+    duration_years: 1,
+    activation_age_min: 0,
+    activation_age_max: 100,
+    key_features: [
+      "年度100万特药保障",
+      "覆盖100+种特药",
+      "专业用药指导",
+      "药品配送服务"
+    ],
+    benefits: [
+      "高额特药保障",
+      "用药安全指导",
+      "便捷药品配送",
+      "费用直接结算"
+    ],
+    target_audience: [
+      "慢性病患者",
+      "需要长期用药患者",
+      "中老年人"
+    ],
+    is_available: true
+  },
+  {
+    id: 5,
+    name: "尊享特药卡",
+    type: "special_drug",
+    description: "全面高额特殊药品保障，包含最新药物和专家咨询",
+    price: 9999,
+    duration_years: 1,
+    activation_age_min: 0,
+    activation_age_max: 100,
+    key_features: [
+      "年度300万特药保障",
+      "覆盖300+种特药",
+      "新药快速准入",
+      "专家用药咨询"
+    ],
+    benefits: [
+      "超高额度保障",
+      "最新药物覆盖",
+      "专家团队咨询",
+      "绿色就医通道"
+    ],
+    target_audience: [
+      "重大疾病患者",
+      "需要最新药物治疗",
+      "高端医疗保障需求"
+    ],
+    is_available: true
+  }
+];
+
 // API Routes
 app.get('/api/doctors', (req, res) => {
   res.json({
@@ -459,6 +602,79 @@ app.get('/api/memberships', (req, res) => {
     success: true,
     message: "Membership cards retrieved successfully",
     data: membershipCards,
+    timestamp: new Date()
+  });
+});
+
+// Rights Cards Routes
+app.get('/api/rights-cards/cards/available', (req, res) => {
+  const availableCards = rightsCards.filter(card => card.is_available);
+  res.json({
+    success: true,
+    message: "Available rights cards retrieved successfully",
+    data: availableCards,
+    timestamp: new Date()
+  });
+});
+
+app.get('/api/rights-cards/cards', (req, res) => {
+  const { type, is_available } = req.query;
+  let filteredCards = rightsCards;
+  
+  if (type) {
+    filteredCards = filteredCards.filter(card => card.type === type);
+  }
+  
+  if (is_available !== undefined) {
+    const available = is_available === 'true';
+    filteredCards = filteredCards.filter(card => card.is_available === available);
+  }
+  
+  res.json({
+    success: true,
+    message: "Rights cards retrieved successfully",
+    data: filteredCards,
+    timestamp: new Date()
+  });
+});
+
+app.get('/api/rights-cards/cards/:id', (req, res) => {
+  const cardId = parseInt(req.params.id);
+  const card = rightsCards.find(c => c.id === cardId);
+  
+  if (!card) {
+    return res.status(404).json({
+      success: false,
+      message: "Rights card not found",
+      timestamp: new Date()
+    });
+  }
+  
+  res.json({
+    success: true,
+    message: "Rights card retrieved successfully",
+    data: card,
+    timestamp: new Date()
+  });
+});
+
+app.get('/api/rights-cards/cards/type/:type', (req, res) => {
+  const { type } = req.params;
+  
+  if (!['nursing', 'special_drug', 'other'].includes(type)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid card type",
+      timestamp: new Date()
+    });
+  }
+  
+  const cards = rightsCards.filter(card => card.type === type);
+  
+  res.json({
+    success: true,
+    message: `Available ${type} cards retrieved successfully`,
+    data: cards,
     timestamp: new Date()
   });
 });
@@ -708,6 +924,8 @@ app.get('/api', (req, res) => {
       doctors: "/api/doctors",
       services: "/api/services",
       memberships: "/api/memberships",
+      "rights-cards": "/api/rights-cards",
+      "rights-cards-available": "/api/rights-cards/cards/available",
       consultations: "/api/consultations",
       "my-consultations": "/api/consultations/my-consultations",
       "consultation-detail": "/api/consultations/:id"

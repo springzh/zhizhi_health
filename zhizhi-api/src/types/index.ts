@@ -156,6 +156,95 @@ export interface UserMembership {
   updated_at: Date;
 }
 
+// 权益卡产品相关类型
+export interface RightsCard {
+  id: number;
+  name: string;
+  type: 'nursing' | 'special_drug' | 'other';
+  description?: string;
+  price: number;
+  duration_years: number;
+  activation_age_min: number;
+  activation_age_max: number;
+  coverage_details: Record<string, any>;
+  service_limits: Record<string, any>;
+  eligibility_rules: Record<string, any>;
+  application_process: Record<string, any>;
+  key_features: string[];
+  benefits: string[];
+  target_audience: string[];
+  faq: Record<string, any>;
+  comparison_points: Record<string, any>;
+  is_available: boolean;
+  sort_order: number;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface CreateRightsCardRequest {
+  name: string;
+  type: 'nursing' | 'special_drug' | 'other';
+  description?: string;
+  price: number;
+  duration_years: number;
+  activation_age_min?: number;
+  activation_age_max?: number;
+  coverage_details?: Record<string, any>;
+  service_limits?: Record<string, any>;
+  eligibility_rules?: Record<string, any>;
+  application_process?: Record<string, any>;
+  key_features?: string[];
+  benefits?: string[];
+  target_audience?: string[];
+  faq?: Record<string, any>;
+  comparison_points?: Record<string, any>;
+  sort_order?: number;
+}
+
+// 用户权益卡相关类型
+export interface UserRightsCard {
+  id: number;
+  user_id: number;
+  card_id: number;
+  card_number: string;
+  activation_date?: Date;
+  expiry_date?: Date;
+  status: 'inactive' | 'active' | 'expired' | 'cancelled';
+  remaining_benefits: Record<string, any>;
+  usage_records: any[];
+  payment_status: 'pending' | 'paid' | 'refunded' | 'failed';
+  payment_method?: string;
+  payment_amount?: number;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface CreateUserRightsCardRequest {
+  user_id: number;
+  card_id: number;
+  payment_method?: string;
+  payment_amount?: number;
+}
+
+// 权益卡使用记录相关类型
+export interface RightsCardUsage {
+  id: number;
+  user_card_id: number;
+  service_type: string;
+  service_details: Record<string, any>;
+  usage_date: Date;
+  status: 'pending' | 'approved' | 'rejected' | 'completed' | 'cancelled';
+  approval_notes?: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface CreateRightsCardUsageRequest {
+  user_card_id: number;
+  service_type: string;
+  service_details?: Record<string, any>;
+}
+
 // 预约相关类型
 export interface Appointment {
   id: number;
