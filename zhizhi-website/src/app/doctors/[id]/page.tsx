@@ -1,6 +1,5 @@
 'use client'
 
-import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
@@ -73,8 +72,7 @@ export default function DoctorDetail() {
   if (loading) {
     return (
       <div className="min-h-screen">
-        <Header />
-        <div className="flex items-center justify-center h-96">
+                <div className="flex items-center justify-center h-96">
           <div className="text-xl">加载中...</div>
         </div>
         <Footer />
@@ -85,8 +83,7 @@ export default function DoctorDetail() {
   if (error || !doctor) {
     return (
       <div className="min-h-screen">
-        <Header />
-        <div className="flex items-center justify-center h-96">
+                <div className="flex items-center justify-center h-96">
           <div className="text-xl text-red-600">错误: {error || '医生信息不存在'}</div>
         </div>
         <Footer />
@@ -96,8 +93,7 @@ export default function DoctorDetail() {
 
   return (
     <div className="min-h-screen">
-      <Header />
-      
+            
       <main>
         {/* Hero Section with Doctor Info */}
         <section className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-16">

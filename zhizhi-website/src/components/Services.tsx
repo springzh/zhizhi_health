@@ -8,9 +8,9 @@ export default function Services() {
     },
     {
       title: "医疗权益卡",
-      description: "专属会员权益，享受优先预约、专属折扣和个性化健康管理服务",
+      description: "专业护工照护和特药保障，提供入院前后辅助服务，包含既往症保障",
       icon: "💳",
-      features: ["优先预约", "专属折扣", "健康管理", "家庭共享"]
+      features: ["专业护工", "特药保障", "既往症包含", "家庭共享"]
     },
     {
       title: "细胞服务",
@@ -51,7 +51,7 @@ export default function Services() {
                 ))}
               </ul>
               <a 
-                href={index === 0 ? "/services/dental" : index === 1 ? "/membership" : "/services/cell"}
+                href={index === 0 ? "/services/dental" : index === 1 ? "/rights-cards" : "/services/cell"}
                 className="block w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors text-center"
               >
                 了解更多

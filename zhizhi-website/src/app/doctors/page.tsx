@@ -1,6 +1,5 @@
 'use client'
 
-import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import { useEffect, useState } from 'react'
 
@@ -48,8 +47,7 @@ export default function Doctors() {
   if (loading) {
     return (
       <div className="min-h-screen">
-        <Header />
-        <div className="flex items-center justify-center h-96">
+          <div className="flex items-center justify-center h-96">
           <div className="text-xl">加载中...</div>
         </div>
         <Footer />
@@ -60,8 +58,7 @@ export default function Doctors() {
   if (error) {
     return (
       <div className="min-h-screen">
-        <Header />
-        <div className="flex items-center justify-center h-96">
+          <div className="flex items-center justify-center h-96">
           <div className="text-xl text-red-600">错误: {error}</div>
         </div>
         <Footer />
@@ -74,7 +71,6 @@ export default function Doctors() {
 
   return (
     <div className="min-h-screen">
-      <Header />
       
       <main>
         {/* Hero Section */}

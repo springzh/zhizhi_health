@@ -27,7 +27,7 @@ export default function FAQSection() {
 
   const fetchPopularFAQs = async () => {
     try {
-      const response = await fetch('/api/faq/popular?limit=5')
+      const response = await fetch('http://localhost:3001/api/faq/popular?limit=5')
       const data = await response.json()
       if (data.success) {
         setFaqs(data.data || [])

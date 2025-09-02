@@ -1,6 +1,5 @@
 'use client'
 
-import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import { useEffect, useState } from 'react'
 
@@ -86,8 +85,7 @@ export default function Membership() {
   if (loading) {
     return (
       <div className="min-h-screen">
-        <Header />
-        <div className="flex items-center justify-center h-96">
+                <div className="flex items-center justify-center h-96">
           <div className="text-xl">加载中...</div>
         </div>
         <Footer />
@@ -98,8 +96,7 @@ export default function Membership() {
   if (error) {
     return (
       <div className="min-h-screen">
-        <Header />
-        <div className="flex items-center justify-center h-96">
+                <div className="flex items-center justify-center h-96">
           <div className="text-xl text-red-600">错误: {error}</div>
         </div>
         <Footer />
@@ -132,8 +129,7 @@ export default function Membership() {
 
   return (
     <div className="min-h-screen">
-      <Header />
-      
+            
       <main>
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-20">

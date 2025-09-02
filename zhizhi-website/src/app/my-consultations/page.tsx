@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
 interface Consultation {
@@ -93,8 +92,7 @@ export default function MyConsultationsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Header />
-        <main className="max-w-4xl mx-auto px-4 py-8">
+                <main className="max-w-4xl mx-auto px-4 py-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
             <p className="mt-4 text-gray-600">加载中...</p>
@@ -107,8 +105,7 @@ export default function MyConsultationsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
-      
+            
       <main className="max-w-4xl mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex justify-between items-center mb-6">

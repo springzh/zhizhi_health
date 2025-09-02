@@ -2,9 +2,18 @@ import express from 'express';
 import { Pool } from 'pg';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import cors from 'cors';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// CORS中间件
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // 中间件
 app.use(express.json());
@@ -492,6 +501,85 @@ app.get('/api/membership', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to fetch membership cards',
+      error: error.message,
+    });
+  }
+});
+
+// 获取健康权益卡列表
+app.get('/api/rights-cards/cards', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM rights_cards ORDER BY sort_order ASC');
+    res.json({
+      success: true,
+      data: result.rows,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch rights cards',
+      error: error.message,
+    });
+  }
+});
+
+// 获取可用的健康权益卡
+app.get('/api/rights-cards/cards/available', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM rights_cards WHERE is_available = true ORDER BY sort_order ASC');
+    res.json({
+      success: true,
+      data: result.rows,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch available rights cards',
+      error: error.message,
+    });
+  }
+});
+
+// 获取单个健康权益卡详情
+app.get('/api/rights-cards/cards/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query('SELECT * FROM rights_cards WHERE id = $1', [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Rights card not found',
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: result.rows[0],
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch rights card',
+      error: error.message,
+    });
+  }
+});
+
+// 按类型获取健康权益卡
+app.get('/api/rights-cards/cards/type/:type', async (req, res) => {
+  try {
+    const { type } = req.params;
+    const result = await pool.query('SELECT * FROM rights_cards WHERE type = $1 AND is_available = true ORDER BY sort_order ASC', [type]);
+    
+    res.json({
+      success: true,
+      data: result.rows,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch rights cards by type',
       error: error.message,
     });
   }

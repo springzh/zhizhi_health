@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 
 interface FAQCategory {
@@ -37,7 +36,7 @@ export default function FAQPage() {
   const fetchFAQs = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/faq')
+      const response = await fetch('http://localhost:3001/api/faq')
       const data = await response.json()
       if (data.success) {
         setFaqs(data.data.data || [])
@@ -51,7 +50,7 @@ export default function FAQPage() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('/api/faq/categories')
+      const response = await fetch('http://localhost:3001/api/faq/categories')
       const data = await response.json()
       if (data.success) {
         setCategories(data.data || [])
@@ -83,7 +82,6 @@ export default function FAQPage() {
 
   return (
     <div className="min-h-screen">
-      <Header />
       
       <main className="bg-gray-50 py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
