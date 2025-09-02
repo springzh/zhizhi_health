@@ -9,6 +9,12 @@ Component({
     recommendedDoctors: [],
     services: [],
     popularFaqs: [],
+    statistics: {
+      doctorCount: '500+',
+      successCases: '10万+',
+      satisfaction: '98%',
+      avgExperience: '15年+'
+    },
     banners: [
       {
         image: '/images/banner1.jpg',
@@ -24,21 +30,43 @@ Component({
     serviceCategories: [
       {
         id: 'dental',
-        name: '牙科服务',
-        icon: '/icons/dental.png',
-        color: '#1E88E5'
+        name: '口腔检查',
+        icon: '/images/tooth.svg'
+      },
+      {
+        id: 'cleaning',
+        name: '洗牙',
+        icon: '/images/cleaning.svg'
+      },
+      {
+        id: 'repair',
+        name: '牙齿修复',
+        icon: '/images/medical.svg'
+      },
+      {
+        id: 'treatment',
+        name: '牙齿治疗',
+        icon: '/images/clipboard.svg'
       },
       {
         id: 'cell',
         name: '细胞治疗',
-        icon: '/icons/cell.png',
-        color: '#43A047'
+        icon: '/images/dna.svg'
       },
       {
         id: 'membership',
         name: '会员服务',
-        icon: '/icons/membership.png',
-        color: '#FF6F00'
+        icon: '/images/crown.svg'
+      },
+      {
+        id: 'rights',
+        name: '权益卡',
+        icon: '/images/card.svg'
+      },
+      {
+        id: 'consultation',
+        name: '在线咨询',
+        icon: '/images/phone.svg'
       }
     ]
   },

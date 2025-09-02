@@ -1,0 +1,136 @@
+<!--consultation.wxml-->
+<scroll-view class="container" scroll-y>
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="page-title">在线咨询</text>
+    <text class="page-subtitle">专业医生为您解答口腔问题</text>
+  </view>
+
+  <!-- 快速咨询入口 -->
+  <view class="quick-consultation">
+    <view class="section-title">快速咨询</view>
+    <view class="quick-actions">
+      <view class="quick-action" bindtap="startTextConsultation">
+        <view class="action-icon">
+          <text class="icon-text">💬</text>
+        </view>
+        <text class="action-title">文字咨询</text>
+        <text class="action-desc">详细描述您的症状</text>
+      </view>
+      
+      <view class="quick-action" bindtap="startImageConsultation">
+        <view class="action-icon">
+          <text class="icon-text">📷</text>
+        </view>
+        <text class="action-title">图片咨询</text>
+        <text class="action-desc">上传照片让医生诊断</text>
+      </view>
+      
+      <view class="quick-action" bindtap="startVoiceConsultation">
+        <view class="action-icon">
+          <text class="icon-text">🎤</text>
+        </view>
+        <text class="action-title">语音咨询</text>
+        <text class="action-desc">直接与医生通话</text>
+      </view>
+      
+      <view class="quick-action" bindtap="startVideoConsultation">
+        <view class="action-icon">
+          <text class="icon-text">📹</text>
+        </view>
+        <text class="action-title">视频咨询</text>
+        <text class="action-desc">面对面视频诊断</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 选择医生 -->
+  <view class="select-doctor">
+    <view class="section-title">选择医生</view>
+    <view class="doctor-list">
+      <block wx:for="{{availableDoctors}}" wx:key="id">
+        <view class="doctor-card" bindtap="selectDoctor" data-id="{{item.id}}">
+          <image class="doctor-avatar" src="{{item.avatar_url || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+          <view class="doctor-info">
+            <text class="doctor-name">{{item.name}}</text>
+            <text class="doctor-title">{{item.title}}</text>
+            <text class="doctor-hospital">{{item.hospital}}</text>
+            <view class="doctor-stats">
+              <text class="stat-item">⭐{{item.rating}}</text>
+              <text class="stat-item">咨询{{item.consultation_count || 0}}次</text>
+              <text class="stat-item">¥{{item.consultation_price}}/次</text>
+            </view>
+          </view>
+          <view class="doctor-status">
+            <text class="status-dot {{item.online ? 'online' : 'offline'}}"></text>
+            <text class="status-text">{{item.online ? '在线' : '离线'}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 咨询记录 -->
+  <view class="consultation-history">
+    <view class="section-header">
+      <text class="section-title">咨询记录</text>
+      <text class="view-all" bindtap="viewAllHistory">查看全部</text>
+    </view>
+    
+    <view class="history-list">
+      <block wx:for="{{consultationHistory}}" wx:key="id">
+        <view class="history-item" bindtap="viewConsultationDetail" data-id="{{item.id}}">
+          <view class="history-header">
+            <view class="history-doctor">
+              <image class="doctor-avatar" src="{{item.doctor.avatar_url || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+              <view class="doctor-info">
+                <text class="doctor-name">{{item.doctor.name}}</text>
+                <text class="consultation-type">{{item.type}}</text>
+              </view>
+            </view>
+            <view class="history-time">
+              <text class="time-text">{{item.time}}</text>
+              <text class="status-text {{item.status}}">{{item.statusText}}</text>
+            </view>
+          </view>
+          
+          <view class="history-content">
+            <text class="content-text">{{item.content}}</text>
+            <view class="history-actions">
+              <button class="action-btn" bindtap="continueConsultation" data-id="{{item.id}}" wx:if="{{item.status === 'ongoing'}}">继续咨询</button>
+              <button class="action-btn secondary" bindtap="viewConsultationDetail" data-id="{{item.id}}">查看详情</button>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 咨询说明 -->
+  <view class="consultation-info">
+    <view class="section-title">咨询说明</view>
+    <view class="info-content">
+      <view class="info-item">
+        <text class="info-title">服务时间</text>
+        <text class="info-desc">工作日 9:00-18:00，节假日可能有调整</text>
+      </view>
+      <view class="info-item">
+        <text class="info-title">响应时效</text>
+        <text class="info-desc">文字咨询15分钟内响应，语音视频咨询需预约</text>
+      </view>
+      <view class="info-item">
+        <text class="info-title">咨询范围</text>
+        <text class="info-desc">口腔疾病预防、诊断、治疗建议等</text>
+      </view>
+      <view class="info-item">
+        <text class="info-title">注意事项</text>
+        <text class="info-desc">紧急情况请及时就医，在线咨询不能替代面诊</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+</scroll-view>

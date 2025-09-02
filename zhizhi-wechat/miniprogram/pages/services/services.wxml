@@ -1,0 +1,70 @@
+<!--services.wxml-->
+<scroll-view class="container" scroll-y>
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="page-title">服务项目</text>
+    <text class="page-subtitle">专业的口腔健康服务</text>
+  </view>
+
+  <!-- 服务分类 -->
+  <view class="service-categories">
+    <view class="category-tabs">
+      <view class="category-tab {{activeCategory === 'all' ? 'active' : ''}}" bindtap="switchCategory" data-category="all">全部</view>
+      <view class="category-tab {{activeCategory === 'dental' ? 'active' : ''}}" bindtap="switchCategory" data-category="dental">口腔检查</view>
+      <view class="category-tab {{activeCategory === 'cleaning' ? 'active' : ''}}" bindtap="switchCategory" data-category="cleaning">洗牙护理</view>
+      <view class="category-tab {{activeCategory === 'repair' ? 'active' : ''}}" bindtap="switchCategory" data-category="repair">牙齿修复</view>
+      <view class="category-tab {{activeCategory === 'treatment' ? 'active' : ''}}" bindtap="switchCategory" data-category="treatment">牙齿治疗</view>
+    </view>
+  </view>
+
+  <!-- 服务列表 -->
+  <view class="services-list">
+    <block wx:for="{{filteredServices}}" wx:key="id">
+      <view class="service-card" bindtap="navigateToServiceDetail" data-id="{{item.id}}">
+        <view class="service-header">
+          <view class="service-icon">
+            <image src="{{item.icon || '/images/default-service.png'}}" mode="aspectFit"></image>
+          </view>
+          <view class="service-info">
+            <text class="service-name">{{item.name}}</text>
+            <text class="service-category">{{item.category}}</text>
+          </view>
+          <view class="service-price">
+            <text class="price">¥{{item.price}}</text>
+            <text class="price-unit">起</text>
+          </view>
+        </view>
+        
+        <view class="service-content">
+          <text class="service-description">{{item.description}}</text>
+          
+          <view class="service-features">
+            <block wx:for="{{item.features}}" wx:key="*this" wx:for-item="feature">
+              <text class="feature-tag">{{feature}}</text>
+            </block>
+          </view>
+          
+          <view class="service-footer">
+            <view class="duration-info">
+              <text class="duration-icon">⏱️</text>
+              <text class="duration-text">{{item.duration}}</text>
+            </view>
+            <view class="booking-btn">
+              <text class="booking-text">立即预约</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-container" wx:if="{{!loading && filteredServices.length === 0}}">
+    <text class="empty-text">暂无相关服务</text>
+  </view>
+</scroll-view>

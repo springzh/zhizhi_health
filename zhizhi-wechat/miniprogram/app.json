@@ -6,15 +6,18 @@
     "pages/appointment/appointment",
     "pages/faq/faq",
     "pages/faq-detail/faq-detail",
+    "pages/services/services",
+    "pages/rights-cards/rights-cards",
+    "pages/consultation/consultation",
     "pages/profile/profile",
     "pages/login/login",
     "pages/settings/settings",
     "pages/logs/logs"
   ],
   "window": {
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "知治口腔",
-    "navigationBarBackgroundColor": "#ffffff"
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "知治健康",
+    "navigationBarBackgroundColor": "#1E88E5"
   },
   "tabBar": {
     "color": "#999999",
@@ -35,7 +38,7 @@
         "text": "预约"
       },
       {
-        "pagePath": "pages/faq/faq",
+        "pagePath": "pages/consultation/consultation",
         "text": "咨询"
       },
       {

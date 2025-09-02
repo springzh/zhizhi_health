@@ -1,0 +1,108 @@
+<!--rights-cards.wxml-->
+<scroll-view class="container" scroll-y>
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="page-title">权益卡</text>
+    <text class="page-subtitle">尊享会员专属权益</text>
+  </view>
+
+  <!-- 我的权益卡 -->
+  <view class="my-cards">
+    <view class="section-title">我的权益卡</view>
+    <view class="cards-list">
+      <block wx:for="{{myCards}}" wx:key="id">
+        <view class="card-item {{item.status}}" bindtap="viewCardDetail" data-id="{{item.id}}">
+          <view class="card-header">
+            <view class="card-info">
+              <text class="card-name">{{item.name}}</text>
+              <text class="card-type">{{item.type}}</text>
+            </view>
+            <view class="card-status">
+              <text class="status-text {{item.status}}">{{item.statusText}}</text>
+            </view>
+          </view>
+          
+          <view class="card-content">
+            <view class="card-benefits">
+              <block wx:for="{{item.benefits}}" wx:key="*this" wx:for-item="benefit">
+                <text class="benefit-item">{{benefit}}</text>
+              </block>
+            </view>
+            
+            <view class="card-footer">
+              <view class="validity">
+                <text class="validity-label">有效期至：</text>
+                <text class="validity-date">{{item.validUntil}}</text>
+              </view>
+              <view class="card-actions">
+                <button class="action-btn" bindtap="useCard" data-id="{{item.id}}" wx:if="{{item.status === 'active'}}">立即使用</button>
+                <button class="action-btn secondary" bindtap="renewCard" data-id="{{item.id}}" wx:if="{{item.status === 'expired'}}">续费</button>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 可购买的权益卡 -->
+  <view class="available-cards">
+    <view class="section-title">可购买权益卡</view>
+    <view class="cards-grid">
+      <block wx:for="{{availableCards}}" wx:key="id">
+        <view class="available-card" bindtap="viewCardDetail" data-id="{{item.id}}">
+          <view class="card-image">
+            <image src="{{item.image || '/images/default-card.png'}}" mode="aspectFill"></image>
+          </view>
+          
+          <view class="card-details">
+            <text class="card-name">{{item.name}}</text>
+            <text class="card-description">{{item.description}}</text>
+            
+            <view class="card-features">
+              <block wx:for="{{item.features}}" wx:key="*this" wx:for-item="feature">
+                <text class="feature-tag">{{feature}}</text>
+              </block>
+            </view>
+            
+            <view class="card-price">
+              <text class="price">¥{{item.price}}</text>
+              <text class="original-price" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text>
+              <text class="discount" wx:if="{{item.discount}}">{{item.discount}}折</text>
+            </view>
+            
+            <button class="buy-btn" bindtap="buyCard" data-id="{{item.id}}">立即购买</button>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 权益说明 -->
+  <view class="rights-info">
+    <view class="section-title">权益说明</view>
+    <view class="info-content">
+      <view class="info-item">
+        <text class="info-title">会员专享</text>
+        <text class="info-desc">购买权益卡后，即可享受相应的会员专属服务和优惠</text>
+      </view>
+      <view class="info-item">
+        <text class="info-title">优先预约</text>
+        <text class="info-desc">会员可享受优先预约权，减少等待时间</text>
+      </view>
+      <view class="info-item">
+        <text class="info-title">专属折扣</text>
+        <text class="info-desc">会员享受所有服务的专属折扣优惠</text>
+      </view>
+      <view class="info-item">
+        <text class="info-title">健康档案</text>
+        <text class="info-desc">建立个人健康档案，享受长期跟踪服务</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+</scroll-view>

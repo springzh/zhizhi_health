@@ -18,22 +18,21 @@
       </swiper>
     </view>
 
-    <!-- 快速预约 -->
-    <view class="quick-appointment">
-      <view class="quick-appointment-content">
-        <text class="quick-appointment-title">快速预约</text>
-        <text class="quick-appointment-subtitle">专业医生，在线预约</text>
-        <button class="appointment-btn" bindtap="makeAppointment">立即预约</button>
-      </view>
+    <!-- 快速预约入口 -->
+    <view class="quick-booking">
+      <button class="booking-btn" bindtap="makeAppointment">
+        <image class="btn-icon" src="/images/calendar.svg" mode="aspectFit"></image>
+        <text>快速预约</text>
+      </button>
     </view>
 
     <!-- 服务分类 -->
     <view class="service-categories">
       <view class="section-title">服务分类</view>
-      <view class="category-grid">
+      <view class="categories-grid">
         <block wx:for="{{serviceCategories}}" wx:key="id">
           <view class="category-item" bindtap="navigateToServiceList" data-category="{{item.id}}">
-            <view class="category-icon" style="background-color: {{item.color}}">
+            <view class="category-icon">
               <image src="{{item.icon}}" mode="aspectFit"></image>
             </view>
             <text class="category-name">{{item.name}}</text>
@@ -44,10 +43,7 @@
 
     <!-- 推荐医生 -->
     <view class="recommended-doctors">
-      <view class="section-header">
-        <text class="section-title">推荐医生</text>
-        <text class="section-more" bindtap="navigateToDoctorList">查看更多</text>
-      </view>
+      <view class="section-title">推荐医生</view>
       <view class="doctor-list">
         <block wx:for="{{recommendedDoctors}}" wx:key="id">
           <view class="doctor-card" bindtap="navigateToDoctorDetail" data-id="{{item.id}}">
@@ -56,26 +52,46 @@
               <text class="doctor-name">{{item.name}}</text>
               <text class="doctor-title">{{item.title}}</text>
               <text class="doctor-hospital">{{item.hospital}}</text>
-              <view class="doctor-stats">
-                <text class="doctor-rating">⭐ {{item.rating}}</text>
-                <text class="doctor-experience">{{item.experience}}</text>
+              <view class="doctor-rating">
+                <text class="rating-stars">⭐⭐⭐⭐⭐</text>
+                <text class="rating-text">{{item.rating}}分</text>
               </view>
             </view>
+            <button class="booking-btn-small">预约</button>
           </view>
         </block>
       </view>
     </view>
 
-    <!-- 热门咨询 -->
-    <view class="popular-faqs">
-      <view class="section-header">
-        <text class="section-title">热门咨询</text>
-        <text class="section-more" bindtap="navigateToFaq">查看更多</text>
+    <!-- 数据统计 -->
+    <view class="statistics">
+      <view class="section-title">平台数据</view>
+      <view class="stats-grid">
+        <view class="stat-item">
+          <text class="stat-number">{{statistics.doctorCount || '500+'}}</text>
+          <text class="stat-label">专业医生</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-number">{{statistics.successCases || '10万+'}}</text>
+          <text class="stat-label">成功案例</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-number">{{statistics.satisfaction || '98%'}}</text>
+          <text class="stat-label">满意度</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-number">{{statistics.avgExperience || '15年+'}}</text>
+          <text class="stat-label">平均经验</text>
+        </view>
       </view>
+    </view>
+
+    <!-- 热门FAQ -->
+    <view class="popular-faq">
+      <view class="section-title">热门问题</view>
       <view class="faq-list">
         <block wx:for="{{popularFaqs}}" wx:key="id">
           <view class="faq-item" bindtap="navigateToFaqDetail" data-id="{{item.id}}">
-            <view class="faq-icon">❓</view>
             <view class="faq-content">
               <text class="faq-question">{{item.question}}</text>
               <text class="faq-category">{{item.category}}</text>

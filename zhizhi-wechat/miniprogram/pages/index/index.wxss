@@ -3,6 +3,7 @@ page {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: #f5f5f5;
 }
 
 .scrollarea {
@@ -18,7 +19,7 @@ page {
 /* 轮播图 */
 .banner-section {
   width: 100%;
-  height: 300rpx;
+  height: 400rpx;
 }
 
 .banner {
@@ -60,226 +61,256 @@ page {
   opacity: 0.9;
 }
 
-/* 快速预约 */
-.quick-appointment {
-  background: linear-gradient(135deg, #1E88E5, #1565C0);
-  margin: 20rpx;
+/* 快速预约入口 */
+.quick-booking {
+  background: white;
+  margin: 24rpx;
+  border-radius: 24rpx;
   padding: 40rpx;
-  border-radius: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+}
+
+.booking-btn {
+  width: 100%;
+  background: #1E88E5;
   color: white;
-}
-
-.quick-appointment-title {
-  display: block;
-  font-size: 32rpx;
-  font-weight: bold;
-  margin-bottom: 10rpx;
-}
-
-.quick-appointment-subtitle {
-  display: block;
-  font-size: 26rpx;
-  opacity: 0.9;
-  margin-bottom: 30rpx;
-}
-
-.appointment-btn {
-  background-color: white;
-  color: #1E88E5;
   border: none;
   border-radius: 50rpx;
-  padding: 20rpx 60rpx;
-  font-size: 28rpx;
-  font-weight: bold;
+  padding: 32rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+}
+
+.booking-btn::after {
+  border: none;
+}
+
+.btn-icon {
+  width: 48rpx;
+  height: 48rpx;
 }
 
 /* 服务分类 */
 .service-categories {
   background: white;
-  margin: 20rpx;
-  padding: 30rpx;
-  border-radius: 20rpx;
+  margin: 24rpx;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
 }
 
 .section-title {
-  font-size: 32rpx;
-  font-weight: bold;
+  font-size: 36rpx;
+  font-weight: 600;
+  margin-bottom: 32rpx;
   color: #333;
-  margin-bottom: 30rpx;
 }
 
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30rpx;
-}
-
-.section-more {
-  font-size: 26rpx;
-  color: #1E88E5;
-}
-
-.category-grid {
-  display: flex;
-  justify-content: space-around;
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32rpx;
 }
 
 .category-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20rpx;
+  gap: 16rpx;
 }
 
 .category-icon {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
+  width: 96rpx;
+  height: 96rpx;
+  background: #E3F2FD;
+  border-radius: 24rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 15rpx;
 }
 
 .category-icon image {
-  width: 40rpx;
-  height: 40rpx;
+  width: 64rpx;
+  height: 64rpx;
 }
 
 .category-name {
   font-size: 24rpx;
   color: #666;
+  text-align: center;
 }
 
 /* 推荐医生 */
 .recommended-doctors {
   background: white;
-  margin: 20rpx;
-  padding: 30rpx;
-  border-radius: 20rpx;
+  margin: 24rpx;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
 }
 
 .doctor-list {
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
+  gap: 24rpx;
 }
 
 .doctor-card {
   display: flex;
-  padding: 20rpx;
-  border-radius: 15rpx;
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
+  align-items: center;
+  gap: 24rpx;
+  padding: 24rpx 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.doctor-card:last-child {
+  border-bottom: none;
 }
 
 .doctor-avatar {
-  width: 100rpx;
-  height: 100rpx;
+  width: 120rpx;
+  height: 120rpx;
   border-radius: 50%;
-  margin-right: 20rpx;
+  background: #E3F2FD;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .doctor-info {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
 
 .doctor-name {
-  font-size: 30rpx;
-  font-weight: bold;
+  font-size: 32rpx;
+  font-weight: 600;
   color: #333;
   margin-bottom: 8rpx;
 }
 
 .doctor-title {
-  font-size: 26rpx;
+  font-size: 28rpx;
   color: #666;
-  margin-bottom: 5rpx;
+  margin-bottom: 4rpx;
 }
 
 .doctor-hospital {
   font-size: 24rpx;
   color: #999;
-  margin-bottom: 10rpx;
-}
-
-.doctor-stats {
-  display: flex;
-  gap: 20rpx;
 }
 
 .doctor-rating {
-  font-size: 24rpx;
-  color: #ff6b6b;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-top: 8rpx;
 }
 
-.doctor-experience {
+.rating-stars {
+  color: #FF9800;
+  font-size: 24rpx;
+}
+
+.rating-text {
   font-size: 24rpx;
   color: #666;
 }
 
-/* 热门咨询 */
-.popular-faqs {
+.booking-btn-small {
+  background: #1E88E5;
+  color: white;
+  border: none;
+  border-radius: 32rpx;
+  padding: 12rpx 24rpx;
+  font-size: 24rpx;
+}
+
+.booking-btn-small::after {
+  border: none;
+}
+
+/* 数据统计 */
+.statistics {
   background: white;
-  margin: 20rpx;
-  padding: 30rpx;
-  border-radius: 20rpx;
+  margin: 24rpx;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32rpx;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 32rpx;
+  background: #F8F9FA;
+  border-radius: 16rpx;
+}
+
+.stat-number {
+  font-size: 48rpx;
+  font-weight: 600;
+  color: #1E88E5;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #666;
+  margin-top: 8rpx;
+}
+
+/* 热门FAQ */
+.popular-faq {
+  background: white;
+  margin: 24rpx;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
 }
 
 .faq-list {
   display: flex;
   flex-direction: column;
-  gap: 15rpx;
+  gap: 24rpx;
 }
 
 .faq-item {
-  display: flex;
-  padding: 20rpx;
-  border-radius: 15rpx;
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
+  padding: 24rpx 0;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.faq-icon {
-  width: 60rpx;
-  height: 60rpx;
-  background: #1E88E5;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 20rpx;
-  font-size: 24rpx;
-}
-
-.faq-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.faq-item:last-child {
+  border-bottom: none;
 }
 
 .faq-question {
   font-size: 28rpx;
   color: #333;
   margin-bottom: 8rpx;
-  line-height: 1.4;
+  line-height: 1.6;
 }
 
 .faq-category {
   font-size: 24rpx;
   color: #1E88E5;
+  background: #E3F2FD;
+  padding: 4rpx 16rpx;
+  border-radius: 24rpx;
+  display: inline-block;
 }
 
 /* 加载状态 */
 .loading {
   text-align: center;
-  padding: 40rpx;
+  padding: 80rpx;
   color: #666;
   font-size: 28rpx;
 }

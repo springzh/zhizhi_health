@@ -5,27 +5,25 @@ import api from '../../utils/api'
 
 Component({
   data: {
+    currentStep: 1,
     doctors: [],
     services: [],
     selectedDoctor: { id: 0 },
     selectedService: { id: 0 },
     appointmentDate: '',
+    appointmentTime: '',
     patientInfo: {
       name: '',
       phone: ''
     },
     symptoms: '',
-    loading: true
+    loading: true,
+    minDate: '',
+    maxDate: ''
   },
 
   lifetimes: {
     attached() {
-      this.loadData()
-    }
-  },
-
-  methods: {
-    async loadData() {
       if (!app.globalData.isLoggedIn) {
         wx.navigateTo({
           url: '/pages/login/login'
@@ -33,6 +31,17 @@ Component({
         return
       }
 
+      this.setData({
+        minDate: this.getTodayDate(),
+        maxDate: this.getMaxDate()
+      })
+      
+      this.loadData()
+    }
+  },
+
+  methods: {
+    async loadData() {
       this.setData({ loading: true })
 
       try {
@@ -57,7 +66,7 @@ Component({
       const doctor = this.data.doctors.find(d => d.id === doctorId)
       this.setData({
         selectedDoctor: doctor,
-        selectedService: null // 重置服务选择
+        selectedService: { id: 0 } // 重置服务选择
       })
     },
 
@@ -67,6 +76,38 @@ Component({
       this.setData({
         selectedService: service
       })
+    },
+
+    nextStep() {
+      if (this.data.currentStep === 1 && !this.data.selectedDoctor.id) {
+        wx.showToast({
+          title: '请选择医生',
+          icon: 'none'
+        })
+        return
+      }
+
+      if (this.data.currentStep === 2 && !this.data.selectedService.id) {
+        wx.showToast({
+          title: '请选择服务',
+          icon: 'none'
+        })
+        return
+      }
+
+      this.setData({
+        currentStep: this.data.currentStep + 1
+      })
+    },
+
+    prevStep() {
+      this.setData({
+        currentStep: this.data.currentStep - 1
+      })
+    },
+
+    goBack() {
+      wx.navigateBack()
     },
 
     onPatientInfoInput(e: any) {
@@ -90,6 +131,12 @@ Component({
       })
     },
 
+    onTimeChange(e: any) {
+      this.setData({
+        appointmentTime: e.detail.value
+      })
+    },
+
     async submitAppointment() {
       if (!this.validateForm()) return
 
@@ -99,10 +146,12 @@ Component({
         const appointmentData = {
           doctorId: this.data.selectedDoctor.id,
           serviceType: this.data.selectedService.name,
-          appointmentTime: this.data.appointmentDate,
+          appointmentDate: this.data.appointmentDate,
+          appointmentTime: this.data.appointmentTime,
           patientInfo: this.data.patientInfo,
           symptoms: this.data.symptoms,
-          notes: ''
+          notes: '',
+          status: 'pending'
         }
 
         await api.createAppointment(appointmentData)
@@ -128,7 +177,7 @@ Component({
     },
 
     validateForm() {
-      const { selectedDoctor, selectedService, appointmentDate, patientInfo } = this.data
+      const { selectedDoctor, selectedService, appointmentDate, appointmentTime, patientInfo } = this.data
 
       if (!selectedDoctor || selectedDoctor.id === 0) {
         wx.showToast({
@@ -154,6 +203,14 @@ Component({
         return false
       }
 
+      if (!appointmentTime) {
+        wx.showToast({
+          title: '请选择预约时间',
+          icon: 'none'
+        })
+        return false
+      }
+
       if (!patientInfo.name || !patientInfo.phone) {
         wx.showToast({
           title: '请填写患者信息',
@@ -171,6 +228,23 @@ Component({
       }
 
       return true
+    },
+
+    getTodayDate() {
+      const today = new Date()
+      const year = today.getFullYear()
+      const month = String(today.getMonth() + 1).padStart(2, '0')
+      const day = String(today.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    },
+
+    getMaxDate() {
+      const maxDate = new Date()
+      maxDate.setMonth(maxDate.getMonth() + 3) // 最多提前3个月预约
+      const year = maxDate.getFullYear()
+      const month = String(maxDate.getMonth() + 1).padStart(2, '0')
+      const day = String(maxDate.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
     }
   },
 })

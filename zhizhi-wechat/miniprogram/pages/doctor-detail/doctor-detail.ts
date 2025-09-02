@@ -7,6 +7,10 @@ Component({
   data: {
     doctor: null,
     loading: true,
+    activeTab: 'intro',
+    scheduleWeek: 'this',
+    scheduleDateRange: '',
+    timeSlots: [],
     selectedDate: '',
     selectedTime: '',
     showDatePicker: false,
@@ -24,6 +28,7 @@ Component({
       
       if (doctorId) {
         this.loadDoctorDetail(doctorId)
+        this.initializeSchedule()
       } else {
         wx.showToast({
           title: '医生ID不能为空',
@@ -100,6 +105,99 @@ Component({
           icon: 'none'
         })
       }
+    },
+
+    switchTab(e: any) {
+      const tab = e.currentTarget.dataset.tab
+      this.setData({ activeTab: tab })
+    },
+
+    switchWeek(e: any) {
+      const week = e.currentTarget.dataset.week
+      this.setData({ scheduleWeek: week })
+      this.updateScheduleDateRange()
+      this.generateTimeSlots()
+    },
+
+    selectTimeSlot(e: any) {
+      const time = e.currentTarget.dataset.time
+      const status = e.currentTarget.dataset.status
+      
+      if (status === 'available') {
+        this.setData({ selectedTime: time })
+        wx.showToast({
+          title: `已选择 ${time}`,
+          icon: 'success'
+        })
+      } else if (status === 'occupied') {
+        wx.showToast({
+          title: '该时间段已被预约',
+          icon: 'none'
+        })
+      }
+    },
+
+    makeConsultation() {
+      if (!app.globalData.isLoggedIn) {
+        wx.navigateTo({
+          url: '/pages/login/login'
+        })
+        return
+      }
+
+      const doctorId = this.data.doctor?.id
+      wx.navigateTo({
+        url: `/pages/consultation/consultation?doctorId=${doctorId}`
+      })
+    },
+
+    initializeSchedule() {
+      this.updateScheduleDateRange()
+      this.generateTimeSlots()
+    },
+
+    updateScheduleDateRange() {
+      const today = new Date()
+      const week = this.data.scheduleWeek
+      
+      let startDate, endDate
+      if (week === 'this') {
+        startDate = new Date(today)
+        endDate = new Date(today.getTime() + 6 * 24 * 60 * 60 * 1000)
+      } else {
+        startDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)
+        endDate = new Date(today.getTime() + 13 * 24 * 60 * 60 * 1000)
+      }
+
+      const formatDate = (date: Date) => {
+        return `${date.getMonth() + 1}月${date.getDate()}日`
+      }
+
+      const dateRange = `${formatDate(startDate)} - ${formatDate(endDate)}`
+      this.setData({ scheduleDateRange: dateRange })
+    },
+
+    generateTimeSlots() {
+      const timeSlots = [
+        { time: '08:00', status: 'available' },
+        { time: '08:30', status: 'available' },
+        { time: '09:00', status: 'occupied' },
+        { time: '09:30', status: 'available' },
+        { time: '10:00', status: 'available' },
+        { time: '10:30', status: 'occupied' },
+        { time: '11:00', status: 'available' },
+        { time: '11:30', status: 'available' },
+        { time: '14:00', status: 'available' },
+        { time: '14:30', status: 'occupied' },
+        { time: '15:00', status: 'available' },
+        { time: '15:30', status: 'available' },
+        { time: '16:00', status: 'available' },
+        { time: '16:30', status: 'occupied' },
+        { time: '17:00', status: 'available' },
+        { time: '17:30', status: 'available' }
+      ]
+      
+      this.setData({ timeSlots })
     },
 
     onShareAppMessage() {
