@@ -1,0 +1,86 @@
+<!--doctors.wxml-->
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrapper">
+      <image class="search-icon" src="/images/search.png" mode="aspectFit"></image>
+      <input 
+        class="search-input" 
+        placeholder="搜索医生姓名、医院、专长" 
+        value="{{searchQuery}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearch"
+      />
+      <image 
+        class="clear-icon" 
+        src="/images/clear.png" 
+        mode="aspectFit"
+        wx:if="{{searchQuery}}"
+        bindtap="onClearSearch"
+      ></image>
+    </view>
+    <view class="sort-btn" bindtap="showSortOptions">
+      <text class="sort-text">{{sortText}}</text>
+      <image class="sort-arrow" src="/images/arrow-down.png" mode="aspectFit"></image>
+    </view>
+  </view>
+
+  <!-- 医生列表 -->
+  <view class="doctors-list">
+    <block wx:for="{{doctors}}" wx:key="id">
+      <view class="doctor-card" bindtap="navigateToDoctorDetail" data-id="{{item.id}}">
+        <image class="doctor-avatar" src="{{item.avatar_url || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+        <view class="doctor-info">
+          <view class="doctor-header">
+            <text class="doctor-name">{{item.name}}</text>
+            <text class="doctor-rating">⭐ {{item.rating}}</text>
+          </view>
+          <text class="doctor-title">{{item.title}}</text>
+          <text class="doctor-hospital">{{item.hospital}}</text>
+          <text class="doctor-specialty">{{item.specialty}}</text>
+          <view class="doctor-stats">
+            <text class="doctor-experience">{{item.experience}}</text>
+            <text class="doctor-patients">患者 {{item.consultation_count || 0}}+</text>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 没有更多数据 -->
+  <view class="no-more" wx:if="{{!hasMore && doctors.length > 0}}">
+    <text>没有更多医生了</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{!loading && doctors.length === 0}}">
+    <image class="empty-icon" src="/images/empty-doctor.png" mode="aspectFit"></image>
+    <text class="empty-text">暂无相关医生</text>
+  </view>
+</view>
+
+<!-- 排序弹窗 -->
+<view class="modal-mask" wx:if="{{showSortModal}}" bindtap="hideSortOptions"></view>
+<view class="sort-modal" wx:if="{{showSortModal}}">
+  <view class="modal-header">
+    <text class="modal-title">排序方式</text>
+    <image class="close-icon" src="/images/close.png" mode="aspectFit" bindtap="hideSortOptions"></image>
+  </view>
+  <view class="sort-options">
+    <block wx:for="{{sortOptions}}" wx:key="value">
+      <view 
+        class="sort-option {{sortBy === item.value ? 'active' : ''}}" 
+        bindtap="selectSort" 
+        data-value="{{item.value}}"
+      >
+        <text class="option-text">{{item.label}}</text>
+        <image class="check-icon" src="/images/check.png" mode="aspectFit" wx:if="{{sortBy === item.value}}"></image>
+      </view>
+    </block>
+  </view>
+</view>

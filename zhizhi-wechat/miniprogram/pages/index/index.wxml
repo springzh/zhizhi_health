@@ -1,27 +1,93 @@
 <!--index.wxml-->
-<scroll-view class="scrollarea" scroll-y type="list">
+<scroll-view class="scrollarea" scroll-y type="list" bindrefresherrefresh="onRefresh" refresher-enabled="true" refresher-triggered="{{loading}}">
   <view class="container">
-    <view class="userinfo">
-      <block wx:if="{{canIUseNicknameComp && !hasUserInfo}}">
-        <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-          <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
-        </button>
-        <view class="nickname-wrapper">
-          <text class="nickname-label">昵称</text>
-          <input type="nickname" class="nickname-input" placeholder="请输入昵称" bind:change="onInputChange" />
-        </view>
-      </block>
-      <block wx:elif="{{!hasUserInfo}}">
-        <button wx:if="{{canIUseGetUserProfile}}" bindtap="getUserProfile"> 获取头像昵称 </button>
-        <view wx:else> 请使用2.10.4及以上版本基础库 </view>
-      </block>
-      <block wx:else>
-        <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-        <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-      </block>
+    <!-- 轮播图 -->
+    <view class="banner-section">
+      <swiper class="banner" indicator-dots="{{true}}" autoplay="{{true}}" interval="3000" duration="500">
+        <block wx:for="{{banners}}" wx:key="title">
+          <swiper-item>
+            <view class="banner-item">
+              <image class="banner-image" src="{{item.image}}" mode="aspectFill"></image>
+              <view class="banner-content">
+                <text class="banner-title">{{item.title}}</text>
+                <text class="banner-subtitle">{{item.subtitle}}</text>
+              </view>
+            </view>
+          </swiper-item>
+        </block>
+      </swiper>
     </view>
-    <view class="usermotto">
-      <text class="user-motto">{{motto}}</text>
+
+    <!-- 快速预约 -->
+    <view class="quick-appointment">
+      <view class="quick-appointment-content">
+        <text class="quick-appointment-title">快速预约</text>
+        <text class="quick-appointment-subtitle">专业医生，在线预约</text>
+        <button class="appointment-btn" bindtap="makeAppointment">立即预约</button>
+      </view>
+    </view>
+
+    <!-- 服务分类 -->
+    <view class="service-categories">
+      <view class="section-title">服务分类</view>
+      <view class="category-grid">
+        <block wx:for="{{serviceCategories}}" wx:key="id">
+          <view class="category-item" bindtap="navigateToServiceList" data-category="{{item.id}}">
+            <view class="category-icon" style="background-color: {{item.color}}">
+              <image src="{{item.icon}}" mode="aspectFit"></image>
+            </view>
+            <text class="category-name">{{item.name}}</text>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 推荐医生 -->
+    <view class="recommended-doctors">
+      <view class="section-header">
+        <text class="section-title">推荐医生</text>
+        <text class="section-more" bindtap="navigateToDoctorList">查看更多</text>
+      </view>
+      <view class="doctor-list">
+        <block wx:for="{{recommendedDoctors}}" wx:key="id">
+          <view class="doctor-card" bindtap="navigateToDoctorDetail" data-id="{{item.id}}">
+            <image class="doctor-avatar" src="{{item.avatar_url || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+            <view class="doctor-info">
+              <text class="doctor-name">{{item.name}}</text>
+              <text class="doctor-title">{{item.title}}</text>
+              <text class="doctor-hospital">{{item.hospital}}</text>
+              <view class="doctor-stats">
+                <text class="doctor-rating">⭐ {{item.rating}}</text>
+                <text class="doctor-experience">{{item.experience}}</text>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 热门咨询 -->
+    <view class="popular-faqs">
+      <view class="section-header">
+        <text class="section-title">热门咨询</text>
+        <text class="section-more" bindtap="navigateToFaq">查看更多</text>
+      </view>
+      <view class="faq-list">
+        <block wx:for="{{popularFaqs}}" wx:key="id">
+          <view class="faq-item" bindtap="navigateToFaqDetail" data-id="{{item.id}}">
+            <view class="faq-icon">❓</view>
+            <view class="faq-content">
+              <text class="faq-question">{{item.question}}</text>
+              <text class="faq-category">{{item.category}}</text>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 加载状态 -->
+    <view class="loading" wx:if="{{loading}}">
+      <text>加载中...</text>
     </view>
   </view>
 </scroll-view>

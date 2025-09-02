@@ -1,0 +1,68 @@
+<!--appointment.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">在线预约</text>
+    <text class="subtitle">请选择医生和服务进行预约</text>
+  </view>
+
+  <!-- 医生选择 -->
+  <view class="section">
+    <view class="section-title">选择医生</view>
+    <view class="doctor-grid">
+      <block wx:for="{{doctors}}" wx:key="id">
+        <view class="doctor-card {{selectedDoctor.id === item.id ? 'selected' : ''}}" bindtap="selectDoctor" data-id="{{item.id}}">
+          <image class="doctor-avatar" src="{{item.avatar_url || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+          <text class="doctor-name">{{item.name}}</text>
+          <text class="doctor-title">{{item.title}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 服务选择 -->
+  <view class="section" wx:if="{{selectedDoctor}}">
+    <view class="section-title">选择服务</view>
+    <view class="service-list">
+      <block wx:for="{{services}}" wx:key="id">
+        <view class="service-item {{selectedService.id === item.id ? 'selected' : ''}}" bindtap="selectService" data-id="{{item.id}}">
+          <view class="service-info">
+            <text class="service-name">{{item.name}}</text>
+            <text class="service-price">¥{{item.price}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 预约表单 -->
+  <view class="section" wx:if="{{selectedDoctor && selectedService}}">
+    <view class="section-title">预约信息</view>
+    <view class="form-group">
+      <view class="form-item">
+        <text class="form-label">患者姓名 *</text>
+        <input class="form-input" placeholder="请输入患者姓名" value="{{patientInfo.name}}" bindinput="onPatientInfoInput" data-field="name" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">联系电话 *</text>
+        <input class="form-input" placeholder="请输入联系电话" type="number" value="{{patientInfo.phone}}" bindinput="onPatientInfoInput" data-field="phone" />
+      </view>
+      <view class="form-item">
+        <text class="form-label">预约时间</text>
+        <picker mode="date" bindchange="onDateChange" value="{{appointmentDate}}">
+          <view class="picker-input">{{appointmentDate || '请选择日期'}}</view>
+        </picker>
+      </view>
+      <view class="form-item">
+        <text class="form-label">症状描述</text>
+        <textarea class="form-textarea" placeholder="请简要描述您的症状..." value="{{symptoms}}" bindinput="onSymptomsInput"></textarea>
+      </view>
+    </view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-section" wx:if="{{selectedDoctor && selectedService}}">
+    <button class="submit-btn" bindtap="submitAppointment" disabled="{{loading}}">
+      {{loading ? '提交中...' : '确认预约'}}
+    </button>
+  </view>
+</view>

@@ -1,0 +1,86 @@
+<!--settings.wxml-->
+<view class="container">
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 设置内容 -->
+  <view class="settings-content" wx:if="{{!loading}}">
+    <!-- 个人信息 -->
+    <view class="section" wx:if="{{userInfo}}">
+      <view class="section-title">个人信息</view>
+      <view class="form-group">
+        <view class="form-item">
+          <text class="form-label">姓名</text>
+          <input class="form-input" placeholder="请输入姓名" value="{{userInfo.name}}" bindinput="onNameInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">邮箱</text>
+          <input class="form-input" value="{{userInfo.email}}" disabled />
+        </view>
+        <view class="form-item">
+          <text class="form-label">手机号</text>
+          <input class="form-input" placeholder="请输入手机号" value="{{userInfo.phone}}" bindinput="onPhoneInput" />
+        </view>
+        <button class="save-btn" bindtap="saveProfile">保存修改</button>
+      </view>
+    </view>
+
+    <!-- 通知设置 -->
+    <view class="section">
+      <view class="section-title">通知设置</view>
+      <view class="setting-list">
+        <view class="setting-item">
+          <view class="setting-info">
+            <text class="setting-name">预约提醒</text>
+            <text class="setting-desc">接收预约状态变更通知</text>
+          </view>
+          <switch class="setting-switch" checked="{{notifications.appointment}}" bindchange="toggleNotification" data-type="appointment" />
+        </view>
+        <view class="setting-item">
+          <view class="setting-info">
+            <text class="setting-name">优惠活动</text>
+            <text class="setting-desc">接收优惠活动信息</text>
+          </view>
+          <switch class="setting-switch" checked="{{notifications.promotion}}" bindchange="toggleNotification" data-type="promotion" />
+        </view>
+        <view class="setting-item">
+          <view class="setting-info">
+            <text class="setting-name">系统通知</text>
+            <text class="setting-desc">接收系统重要通知</text>
+          </view>
+          <switch class="setting-switch" checked="{{notifications.system}}" bindchange="toggleNotification" data-type="system" />
+        </view>
+      </view>
+    </view>
+
+    <!-- 其他设置 -->
+    <view class="section">
+      <view class="section-title">其他设置</view>
+      <view class="setting-list">
+        <view class="setting-item" bindtap="clearCache">
+          <text class="setting-name">清除缓存</text>
+          <image class="setting-arrow" src="/images/arrow-right.png" mode="aspectFit"></image>
+        </view>
+        <view class="setting-item" bindtap="aboutUs">
+          <text class="setting-name">关于我们</text>
+          <image class="setting-arrow" src="/images/arrow-right.png" mode="aspectFit"></image>
+        </view>
+        <view class="setting-item" bindtap="userAgreement">
+          <text class="setting-name">用户协议</text>
+          <image class="setting-arrow" src="/images/arrow-right.png" mode="aspectFit"></image>
+        </view>
+        <view class="setting-item" bindtap="privacyPolicy">
+          <text class="setting-name">隐私政策</text>
+          <image class="setting-arrow" src="/images/arrow-right.png" mode="aspectFit"></image>
+        </view>
+      </view>
+    </view>
+
+    <!-- 退出登录 -->
+    <view class="logout-section" wx:if="{{userInfo}}">
+      <button class="logout-btn" bindtap="logout">退出登录</button>
+    </view>
+  </view>
+</view>

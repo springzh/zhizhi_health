@@ -1,54 +1,124 @@
 // index.ts
 // 获取应用实例
 const app = getApp<IAppOption>()
-const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
+import api from '../../utils/api'
 
 Component({
   data: {
-    motto: 'Hello World',
-    userInfo: {
-      avatarUrl: defaultAvatarUrl,
-      nickName: '',
-    },
-    hasUserInfo: false,
-    canIUseGetUserProfile: wx.canIUse('getUserProfile'),
-    canIUseNicknameComp: wx.canIUse('input.type.nickname'),
+    loading: true,
+    recommendedDoctors: [],
+    services: [],
+    popularFaqs: [],
+    banners: [
+      {
+        image: '/images/banner1.jpg',
+        title: '专业口腔护理',
+        subtitle: '呵护您的牙齿健康'
+      },
+      {
+        image: '/images/banner2.jpg',
+        title: '在线预约',
+        subtitle: '便捷快速预约专家'
+      }
+    ],
+    serviceCategories: [
+      {
+        id: 'dental',
+        name: '牙科服务',
+        icon: '/icons/dental.png',
+        color: '#1E88E5'
+      },
+      {
+        id: 'cell',
+        name: '细胞治疗',
+        icon: '/icons/cell.png',
+        color: '#43A047'
+      },
+      {
+        id: 'membership',
+        name: '会员服务',
+        icon: '/icons/membership.png',
+        color: '#FF6F00'
+      }
+    ]
   },
+
+  lifetimes: {
+    attached() {
+      this.loadData()
+    }
+  },
+
   methods: {
-    // 事件处理函数
-    bindViewTap() {
+    async loadData() {
+      this.setData({ loading: true })
+      
+      try {
+        const [doctors, services, faqs] = await Promise.all([
+          api.getDoctors({ limit: 3, sort: 'rating' }),
+          api.getServices(),
+          api.getPopularFaqs()
+        ])
+
+        this.setData({
+          recommendedDoctors: doctors.data || [],
+          services: services.data || [],
+          popularFaqs: faqs.data || [],
+          loading: false
+        })
+      } catch (error) {
+        console.error('加载数据失败:', error)
+        this.setData({ loading: false })
+      }
+    },
+
+    navigateToDoctorList() {
       wx.navigateTo({
-        url: '../logs/logs',
+        url: '/pages/doctors/doctors'
       })
     },
-    onChooseAvatar(e: any) {
-      const { avatarUrl } = e.detail
-      const { nickName } = this.data.userInfo
-      this.setData({
-        "userInfo.avatarUrl": avatarUrl,
-        hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
+
+    navigateToDoctorDetail(e: any) {
+      const id = e.currentTarget.dataset.id
+      wx.navigateTo({
+        url: `/pages/doctor-detail/doctor-detail?id=${id}`
       })
     },
-    onInputChange(e: any) {
-      const nickName = e.detail.value
-      const { avatarUrl } = this.data.userInfo
-      this.setData({
-        "userInfo.nickName": nickName,
-        hasUserInfo: nickName && avatarUrl && avatarUrl !== defaultAvatarUrl,
+
+    navigateToServiceList() {
+      wx.navigateTo({
+        url: '/pages/services/services'
       })
     },
-    getUserProfile() {
-      // 推荐使用wx.getUserProfile获取用户信息，开发者每次通过该接口获取用户个人信息均需用户确认，开发者妥善保管用户快速填写的头像昵称，避免重复弹窗
-      wx.getUserProfile({
-        desc: '展示用户信息', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-        success: (res) => {
-          console.log(res)
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          })
-        }
+
+    navigateToFaq() {
+      wx.navigateTo({
+        url: '/pages/faq/faq'
       })
     },
+
+    navigateToFaqDetail(e: any) {
+      const id = e.currentTarget.dataset.id
+      wx.navigateTo({
+        url: `/pages/faq-detail/faq-detail?id=${id}`
+      })
+    },
+
+    makeAppointment() {
+      if (!app.globalData.isLoggedIn) {
+        wx.navigateTo({
+          url: '/pages/login/login'
+        })
+        return
+      }
+      
+      wx.navigateTo({
+        url: '/pages/appointment/appointment'
+      })
+    },
+
+    onRefresh() {
+      this.loadData()
+    }
   },
 })

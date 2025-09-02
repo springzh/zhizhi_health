@@ -1,0 +1,114 @@
+<!--doctor-detail.wxml-->
+<scroll-view class="container" scroll-y>
+  <!-- 医生基本信息 -->
+  <view class="doctor-header" wx:if="{{!loading && doctor}}">
+    <image class="doctor-avatar" src="{{doctor.avatar_url || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+    <view class="doctor-info">
+      <text class="doctor-name">{{doctor.name}}</text>
+      <text class="doctor-title">{{doctor.title}}</text>
+      <text class="doctor-hospital">{{doctor.hospital}}</text>
+      <view class="doctor-stats">
+        <text class="doctor-rating">⭐ {{doctor.rating}}</text>
+        <text class="doctor-experience">{{doctor.experience}}</text>
+        <text class="doctor-patients">患者 {{doctor.consultation_count || 0}}+</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 医生详情内容 -->
+  <view class="detail-content" wx:if="{{!loading && doctor}}">
+    <!-- 专业信息 -->
+    <view class="section">
+      <view class="section-title">专业信息</view>
+      <view class="section-content">
+        <view class="info-item">
+          <text class="info-label">擅长领域</text>
+          <text class="info-value">{{doctor.specialty || '暂无'}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">从业年限</text>
+          <text class="info-value">{{doctor.experience}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">学术背景</text>
+          <text class="info-value">{{doctor.education && doctor.education.length > 0 ? doctor.education.join(', ') : '暂无'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 医院信息 -->
+    <view class="section">
+      <view class="section-title">医院信息</view>
+      <view class="section-content">
+        <view class="info-item">
+          <text class="info-label">医院名称</text>
+          <text class="info-value">{{doctor.hospital}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">医院地址</text>
+          <text class="info-value">{{doctor.address || '暂无'}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">联系电话</text>
+          <text class="info-value">{{doctor.contact_phone || '暂无'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 服务项目 -->
+    <view class="section">
+      <view class="section-title">服务项目</view>
+      <view class="section-content">
+        <view class="service-list">
+          <block wx:for="{{doctor.service_types}}" wx:key="*this">
+            <view class="service-item">
+              <text class="service-name">{{item}}</text>
+            </view>
+          </block>
+        </view>
+      </view>
+    </view>
+
+    <!-- 个人简介 -->
+    <view class="section">
+      <view class="section-title">个人简介</view>
+      <view class="section-content">
+        <text class="bio-text">{{doctor.introduction || '暂无个人简介'}}</text>
+      </view>
+    </view>
+
+    <!-- 患者评价 -->
+    <view class="section">
+      <view class="section-title">患者评价</view>
+      <view class="section-content">
+        <view class="rating-summary">
+          <text class="rating-score">{{doctor.rating}}</text>
+          <view class="rating-details">
+            <text class="rating-text">综合评分</text>
+            <text class="rating-count">共 {{doctor.consultation_count || 0}} 条评价</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-actions" wx:if="{{!loading && doctor}}">
+    <button class="action-btn secondary" bindtap="makePhoneCall">
+      <image class="btn-icon" src="/images/phone.png" mode="aspectFit"></image>
+      <text>电话咨询</text>
+    </button>
+    <button class="action-btn secondary" bindtap="showLocation">
+      <image class="btn-icon" src="/images/location.png" mode="aspectFit"></image>
+      <text>查看地址</text>
+    </button>
+    <button class="action-btn primary" bindtap="navigateToAppointment">
+      <text>立即预约</text>
+    </button>
+  </view>
+</scroll-view>

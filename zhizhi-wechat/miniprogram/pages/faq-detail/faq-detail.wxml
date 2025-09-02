@@ -1,0 +1,45 @@
+<!--faq-detail.wxml-->
+<view class="container">
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+
+  <!-- FAQ详情 -->
+  <view class="faq-content" wx:if="{{!loading && faq}}">
+    <view class="faq-header">
+      <text class="faq-category">{{faq.category}}</text>
+      <text class="faq-question">{{faq.question}}</text>
+      <view class="faq-meta">
+        <text class="faq-views">浏览 {{faq.view_count || 0}}</text>
+        <text class="faq-date">{{faq.created_at}}</text>
+      </view>
+    </view>
+
+    <view class="faq-body">
+      <view class="answer-section {{expanded ? 'expanded' : ''}}">
+        <text class="answer-text">{{faq.answer}}</text>
+        <view class="expand-toggle" bindtap="toggleExpand" wx:if="{{!expanded}}">
+          <text>展开全文</text>
+          <image class="expand-icon" src="/images/arrow-down.png" mode="aspectFit"></image>
+        </view>
+      </view>
+    </view>
+
+    <!-- 相关推荐 -->
+    <view class="related-section">
+      <text class="related-title">相关问题</text>
+      <view class="related-list">
+        <!-- 这里可以添加相关FAQ推荐 -->
+        <text class="no-related">暂无相关问题</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 错误状态 -->
+  <view class="error-state" wx:if="{{!loading && !faq}}">
+    <image class="error-icon" src="/images/error.png" mode="aspectFit"></image>
+    <text class="error-text">内容不存在或已被删除</text>
+    <button class="back-btn" bindtap="goBack">返回</button>
+  </view>
+</view>

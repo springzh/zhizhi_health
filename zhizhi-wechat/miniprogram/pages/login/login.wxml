@@ -1,0 +1,115 @@
+<!--login.wxml-->
+<view class="container">
+  <!-- Logo区域 -->
+  <view class="logo-section">
+    <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
+    <text class="app-name">知治口腔</text>
+    <text class="app-slogan">专业口腔护理，呵护牙齿健康</text>
+  </view>
+
+  <!-- 登录表单 -->
+  <view class="form-section">
+    <!-- 切换登录/注册 -->
+    <view class="auth-tabs">
+      <view 
+        class="auth-tab {{isLogin ? 'active' : ''}}"
+        bindtap="toggleAuthMode"
+      >
+        <text>登录</text>
+      </view>
+      <view 
+        class="auth-tab {{!isLogin ? 'active' : ''}}"
+        bindtap="toggleAuthMode"
+      >
+        <text>注册</text>
+      </view>
+    </view>
+
+    <!-- 表单内容 -->
+    <view class="form-content">
+      <!-- 姓名输入框（注册时显示） -->
+      <view class="input-group" wx:if="{{!isLogin}}">
+        <image class="input-icon" src="/images/user.png" mode="aspectFit"></image>
+        <input 
+          class="input-field" 
+          placeholder="请输入姓名" 
+          value="{{name}}"
+          bindinput="onNameInput"
+        />
+      </view>
+
+      <!-- 邮箱输入框 -->
+      <view class="input-group">
+        <image class="input-icon" src="/images/email.png" mode="aspectFit"></image>
+        <input 
+          class="input-field" 
+          placeholder="请输入邮箱" 
+          value="{{email}}"
+          bindinput="onEmailInput"
+          type="email"
+        />
+      </view>
+
+      <!-- 密码输入框 -->
+      <view class="input-group">
+        <image class="input-icon" src="/images/password.png" mode="aspectFit"></image>
+        <input 
+          class="input-field" 
+          placeholder="请输入密码" 
+          value="{{password}}"
+          bindinput="onPasswordInput"
+          type="{{showPassword ? 'text' : 'password'}}"
+        />
+        <image 
+          class="eye-icon" 
+          src="{{showPassword ? '/images/eye-open.png' : '/images/eye-close.png'}}"
+          mode="aspectFit"
+          bindtap="togglePassword"
+        ></image>
+      </view>
+
+      <!-- 记住我和忘记密码（仅登录时显示） -->
+      <view class="form-options" wx:if="{{isLogin}}">
+        <view class="remember-me" bindtap="toggleRememberMe">
+          <image 
+            class="checkbox-icon" 
+            src="{{rememberMe ? '/images/checkbox-checked.png' : '/images/checkbox-unchecked.png'}}"
+            mode="aspectFit"
+          ></image>
+          <text>记住我</text>
+        </view>
+        <text class="forgot-password" bindtap="forgotPassword">忘记密码？</text>
+      </view>
+
+      <!-- 提交按钮 -->
+      <button 
+        class="submit-btn {{loading ? 'loading' : ''}}" 
+        bindtap="handleSubmit"
+        disabled="{{loading}}"
+      >
+        <text>{{isLogin ? '登录' : '注册'}}</text>
+      </button>
+
+      <!-- 其他登录方式 -->
+      <view class="other-login" wx:if="{{isLogin}}">
+        <view class="divider">
+          <text class="divider-text">其他登录方式</text>
+        </view>
+        <button class="wechat-login-btn" bindtap="handleWechatLogin">
+          <image class="wechat-icon" src="/images/wechat.png" mode="aspectFit"></image>
+          <text>微信登录</text>
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 用户协议 -->
+  <view class="agreement">
+    <text class="agreement-text">
+      登录即表示同意
+      <text class="agreement-link">《用户协议》</text>
+      和
+      <text class="agreement-link">《隐私政策》</text>
+    </text>
+  </view>
+</view>

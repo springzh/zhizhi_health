@@ -1,12 +1,48 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/doctors/doctors",
+    "pages/doctor-detail/doctor-detail",
+    "pages/appointment/appointment",
+    "pages/faq/faq",
+    "pages/faq-detail/faq-detail",
+    "pages/profile/profile",
+    "pages/login/login",
+    "pages/settings/settings",
     "pages/logs/logs"
   ],
   "window": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "Weixin",
+    "navigationBarTitleText": "知治口腔",
     "navigationBarBackgroundColor": "#ffffff"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#1E88E5",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/doctors/doctors",
+        "text": "医生"
+      },
+      {
+        "pagePath": "pages/appointment/appointment",
+        "text": "预约"
+      },
+      {
+        "pagePath": "pages/faq/faq",
+        "text": "咨询"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
   },
   "style": "v2",
   "componentFramework": "glass-easel",

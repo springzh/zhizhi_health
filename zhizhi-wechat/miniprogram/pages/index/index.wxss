@@ -4,59 +4,282 @@ page {
   display: flex;
   flex-direction: column;
 }
+
 .scrollarea {
   flex: 1;
   overflow-y: hidden;
 }
 
-.userinfo {
+.container {
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+/* 轮播图 */
+.banner-section {
+  width: 100%;
+  height: 300rpx;
+}
+
+.banner {
+  width: 100%;
+  height: 100%;
+}
+
+.banner-item {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+}
+
+.banner-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  padding: 40rpx 30rpx;
+  color: white;
+}
+
+.banner-title {
+  display: block;
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.banner-subtitle {
+  display: block;
+  font-size: 26rpx;
+  opacity: 0.9;
+}
+
+/* 快速预约 */
+.quick-appointment {
+  background: linear-gradient(135deg, #1E88E5, #1565C0);
+  margin: 20rpx;
+  padding: 40rpx;
+  border-radius: 20rpx;
+  color: white;
+}
+
+.quick-appointment-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.quick-appointment-subtitle {
+  display: block;
+  font-size: 26rpx;
+  opacity: 0.9;
+  margin-bottom: 30rpx;
+}
+
+.appointment-btn {
+  background-color: white;
+  color: #1E88E5;
+  border: none;
+  border-radius: 50rpx;
+  padding: 20rpx 60rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+/* 服务分类 */
+.service-categories {
+  background: white;
+  margin: 20rpx;
+  padding: 30rpx;
+  border-radius: 20rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30rpx;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.section-more {
+  font-size: 26rpx;
+  color: #1E88E5;
+}
+
+.category-grid {
+  display: flex;
+  justify-content: space-around;
+}
+
+.category-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #aaa;
-  width: 80%;
+  padding: 20rpx;
 }
 
-.userinfo-avatar {
-  overflow: hidden;
-  width: 128rpx;
-  height: 128rpx;
-  margin: 20rpx;
+.category-icon {
+  width: 80rpx;
+  height: 80rpx;
   border-radius: 50%;
-}
-
-.usermotto {
-  margin-top: 200px;
-}
-
-.avatar-wrapper {
-  padding: 0;
-  width: 56px !important;
-  border-radius: 8px;
-  margin-top: 40px;
-  margin-bottom: 40px;
-}
-
-.avatar {
-  display: block;
-  width: 56px;
-  height: 56px;
-}
-
-.nickname-wrapper {
   display: flex;
-  width: 100%;
-  padding: 16px;
-  box-sizing: border-box;
-  border-top: .5px solid rgba(0, 0, 0, 0.1);
-  border-bottom: .5px solid rgba(0, 0, 0, 0.1);
-  color: black;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15rpx;
 }
 
-.nickname-label {
-  width: 105px;
+.category-icon image {
+  width: 40rpx;
+  height: 40rpx;
 }
 
-.nickname-input {
+.category-name {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 推荐医生 */
+.recommended-doctors {
+  background: white;
+  margin: 20rpx;
+  padding: 30rpx;
+  border-radius: 20rpx;
+}
+
+.doctor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.doctor-card {
+  display: flex;
+  padding: 20rpx;
+  border-radius: 15rpx;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+}
+
+.doctor-avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  margin-right: 20rpx;
+}
+
+.doctor-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.doctor-name {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.doctor-title {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 5rpx;
+}
+
+.doctor-hospital {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 10rpx;
+}
+
+.doctor-stats {
+  display: flex;
+  gap: 20rpx;
+}
+
+.doctor-rating {
+  font-size: 24rpx;
+  color: #ff6b6b;
+}
+
+.doctor-experience {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 热门咨询 */
+.popular-faqs {
+  background: white;
+  margin: 20rpx;
+  padding: 30rpx;
+  border-radius: 20rpx;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.faq-item {
+  display: flex;
+  padding: 20rpx;
+  border-radius: 15rpx;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+}
+
+.faq-icon {
+  width: 60rpx;
+  height: 60rpx;
+  background: #1E88E5;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+  font-size: 24rpx;
+}
+
+.faq-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.faq-question {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 8rpx;
+  line-height: 1.4;
+}
+
+.faq-category {
+  font-size: 24rpx;
+  color: #1E88E5;
+}
+
+/* 加载状态 */
+.loading {
+  text-align: center;
+  padding: 40rpx;
+  color: #666;
+  font-size: 28rpx;
 }

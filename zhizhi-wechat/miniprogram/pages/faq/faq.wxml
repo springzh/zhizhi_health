@@ -1,0 +1,104 @@
+<!--faq.wxml-->
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-header">
+    <view class="search-bar" wx:if="{{showSearch}}">
+      <view class="search-input-wrapper">
+        <image class="search-icon" src="/images/search.png" mode="aspectFit"></image>
+        <input 
+          class="search-input" 
+          placeholder="搜索常见问题" 
+          value="{{searchQuery}}"
+          bindinput="onSearchInput"
+          bindconfirm="onSearch"
+          focus="{{showSearch}}"
+        />
+        <image 
+          class="close-search" 
+          src="/images/close.png" 
+          mode="aspectFit"
+          bindtap="toggleSearch"
+        ></image>
+      </view>
+    </view>
+    <view class="header-actions" wx:else>
+      <text class="page-title">常见问题</text>
+      <view class="header-buttons">
+        <image class="search-btn" src="/images/search.png" mode="aspectFit" bindtap="toggleSearch"></image>
+        <image class="consult-btn" src="/images/consult.png" mode="aspectFit" bindtap="submitConsultation"></image>
+      </view>
+    </view>
+  </view>
+
+  <!-- 热门问题 -->
+  <view class="popular-section" wx:if="{{!searchQuery && popularFaqs.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">热门问题</text>
+    </view>
+    <view class="popular-list">
+      <block wx:for="{{popularFaqs}}" wx:key="id">
+        <view class="popular-item" bindtap="navigateToFaqDetail" data-id="{{item.id}}">
+          <view class="popular-icon">🔥</view>
+          <text class="popular-text">{{item.question}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 分类筛选 -->
+  <view class="categories-section" wx:if="{{!searchQuery && categories.length > 0}}">
+    <scroll-view class="categories-scroll" scroll-x>
+      <view class="categories-list">
+        <block wx:for="{{categories}}" wx:key="*this">
+          <view 
+            class="category-item {{activeCategory === item ? 'active' : ''}}"
+            bindtap="selectCategory"
+            data-category="{{item}}"
+          >
+            <text class="category-text">{{item}}</text>
+          </view>
+        </block>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- FAQ列表 -->
+  <view class="faq-section">
+    <view class="section-header" wx:if="{{activeCategory}}">
+      <text class="section-title">{{activeCategory}}</text>
+    </view>
+    
+    <view class="faq-list">
+      <block wx:for="{{faqs}}" wx:key="id">
+        <view class="faq-item">
+          <view class="faq-question" bindtap="toggleFaq" data-id="{{item.id}}">
+            <text class="question-text">{{item.question}}</text>
+            <image 
+              class="expand-icon {{expandedFaqs.has(item.id) ? 'expanded' : ''}}" 
+              src="/images/arrow-down.png" 
+              mode="aspectFit"
+            ></image>
+          </view>
+          <view class="faq-answer" wx:if="{{expandedFaqs.has(item.id)}}">
+            <text class="answer-text">{{item.answer}}</text>
+            <view class="faq-meta">
+              <text class="faq-category">{{item.category}}</text>
+              <text class="faq-views">浏览 {{item.view_count || 0}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{!loading && faqs.length === 0}}">
+    <image class="empty-icon" src="/images/empty-faq.png" mode="aspectFit"></image>
+    <text class="empty-text">{{searchQuery ? '没有找到相关问题' : '暂无常见问题'}}</text>
+  </view>
+</view>
