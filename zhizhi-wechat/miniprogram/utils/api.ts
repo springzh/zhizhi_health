@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3001/api'
+const BASE_URL = 'http://127.0.0.1:3001/api'
 
 interface RequestOption {
   url: string
@@ -15,10 +15,10 @@ interface ApiResponse<T = any> {
 
 class Api {
   private static instance: Api
-  private token: string = ''
+  private static token: string = ''
 
   constructor() {
-    this.token = wx.getStorageSync('token') || ''
+    Api.token = wx.getStorageSync('token') || ''
   }
 
   static getInstance(): Api {
@@ -30,34 +30,42 @@ class Api {
 
   private request<T = any>({ url, method = 'GET', data = {}, header = {} }: RequestOption): Promise<T> {
     return new Promise((resolve, reject) => {
+      const authToken = Api.token ? `Bearer ${Api.token}` : ''
+      console.log(`API请求: ${method} ${BASE_URL}${url}`, data)
+      console.log(`Authorization头: ${authToken}`)
+      console.log(`当前token: ${Api.token}`)
+      
       wx.request({
         url: `${BASE_URL}${url}`,
         method,
         data,
+        timeout: 10000, // 10秒超时
         header: {
           'Content-Type': 'application/json',
-          'Authorization': this.token ? `Bearer ${this.token}` : '',
+          'Authorization': authToken,
           ...header
         },
         success: (res) => {
+          console.log(`API响应: ${res.statusCode}`, res.data)
           if (res.statusCode === 200) {
             resolve(res.data)
           } else if (res.statusCode === 401) {
             this.handleUnauthorized()
             reject(new Error('登录已过期，请重新登录'))
           } else {
-            reject(new Error(res.data?.message || '请求失败'))
+            reject(new Error(res.data?.message || `请求失败 (${res.statusCode})`))
           }
         },
         fail: (err) => {
-          reject(new Error('网络请求失败'))
+          console.error(`API请求失败: ${method} ${BASE_URL}${url}`, err)
+          reject(new Error(`网络请求失败: ${err.errMsg || '未知错误'}`))
         }
       })
     })
   }
 
   private handleUnauthorized() {
-    this.token = ''
+    Api.token = ''
     wx.removeStorageSync('token')
     wx.removeStorageSync('userInfo')
     wx.navigateTo({
@@ -66,12 +74,14 @@ class Api {
   }
 
   setToken(token: string) {
-    this.token = token
+    console.log('设置token:', token)
+    Api.token = token
     wx.setStorageSync('token', token)
+    console.log('Token设置完成，当前token:', Api.token)
   }
 
   clearToken() {
-    this.token = ''
+    Api.token = ''
     wx.removeStorageSync('token')
   }
 
@@ -82,7 +92,7 @@ class Api {
       method: 'POST',
       data: { email, password }
     })
-    this.setToken(res.token)
+    this.setToken(res.data.token)
     return res
   }
 
@@ -179,6 +189,9 @@ class Api {
   }
 }
 
-export const api = Api.getInstance()
+// 创建单例实例
+const apiInstance = Api.getInstance()
 
-export default api
+export const api = apiInstance
+
+export default apiInstance

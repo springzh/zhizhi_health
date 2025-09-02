@@ -64,8 +64,10 @@ Component({
     },
 
     togglePassword() {
+      const newState = !this.data.showPassword
+      console.log('切换密码显示状态:', newState)
       this.setData({
-        showPassword: !this.data.showPassword
+        showPassword: newState
       })
     },
 

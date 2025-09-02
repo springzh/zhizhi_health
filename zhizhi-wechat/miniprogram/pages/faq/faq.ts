@@ -23,13 +23,17 @@ Component({
 
   methods: {
     async loadData() {
+      console.log('开始加载FAQ数据...')
       this.setData({ loading: true })
 
       try {
+        console.log('请求FAQ分类和热门问题...')
         const [categories, popularFaqs] = await Promise.all([
           api.getFaqCategories(),
           api.getPopularFaqs()
         ])
+
+        console.log('FAQ数据响应:', { categories, popularFaqs })
 
         this.setData({
           categories: categories.data || [],
@@ -42,7 +46,12 @@ Component({
           this.selectCategory(categories.data[0])
         }
       } catch (error) {
-        console.error('加载数据失败:', error)
+        console.error('加载FAQ数据失败:', error)
+        wx.showToast({
+          title: '加载常见问题失败',
+          icon: 'none',
+          duration: 2000
+        })
         this.setData({ loading: false })
       }
     },

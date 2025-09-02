@@ -31,7 +31,7 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:3002', 'http://localhost:8080'],
+  origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:3002', 'http://localhost:8080', 'http://127.0.0.1:3001'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -1332,6 +1332,139 @@ app.get('/api/consultations/:id', async (req, res) => {
   }
 });
 
+// FAQ Endpoints
+const faqCategories = [
+  { id: 1, name: "就诊须知", description: "关于就诊流程和注意事项的常见问题" },
+  { id: 2, name: "费用问题", description: "关于诊疗费用、医保报销等费用相关问题" },
+  { id: 3, name: "治疗相关", description: "关于治疗方案、治疗过程等技术性问题" },
+  { id: 4, name: "预约挂号", description: "关于预约挂号、改期取消等操作问题" },
+  { id: 5, name: "会员服务", description: "关于会员权益、服务套餐等问题" }
+];
+
+const faqs = [
+  {
+    id: 1,
+    category_id: 1,
+    question: "初次就诊需要带什么证件？",
+    answer: "初次就诊请携带身份证、医保卡（如有）、既往病历资料。建议提前预约并按时到达医院。",
+    is_popular: true,
+    is_active: true,
+    sort_order: 1,
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z"
+  },
+  {
+    id: 2,
+    category_id: 1,
+    question: "就诊流程是怎样的？",
+    answer: "1. 预约挂号 → 2. 按时到院 → 3. 前台登记 → 4. 等候就诊 → 5. 医生诊疗 → 6. 缴费取药 → 7. 预约复诊",
+    is_popular: true,
+    is_active: true,
+    sort_order: 2,
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z"
+  },
+  {
+    id: 3,
+    category_id: 2,
+    question: "诊疗费用如何计算？",
+    answer: "诊疗费用根据具体项目和治疗方案确定。我们会在治疗前提供详细费用清单，包括检查费、治疗费、材料费等。支持医保报销和自费支付。",
+    is_popular: false,
+    is_active: true,
+    sort_order: 1,
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z"
+  },
+  {
+    id: 4,
+    category_id: 3,
+    question: "种植牙需要多长时间？",
+    answer: "种植牙治疗通常需要3-6个月完成，具体时间因个人情况而异。包括：术前检查（1周）、种植体植入（1-2小时）、愈合期（3-4个月）、牙冠修复（2-3周）。",
+    is_popular: true,
+    is_active: true,
+    sort_order: 1,
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z"
+  },
+  {
+    id: 5,
+    category_id: 4,
+    question: "如何取消预约？",
+    answer: "请提前24小时通过微信小程序、APP或电话取消预约。临时取消可能会影响您的信用记录。如需改期，请先取消原预约后重新预约。",
+    is_popular: false,
+    is_active: true,
+    sort_order: 1,
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z"
+  }
+];
+
+// FAQ Categories endpoint
+app.get('/api/faq/categories', (req, res) => {
+  res.json({
+    success: true,
+    message: "FAQ categories retrieved successfully",
+    data: faqCategories,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// FAQ Popular endpoint
+app.get('/api/faq/popular', (req, res) => {
+  const popularFaqs = faqs.filter(faq => faq.is_popular && faq.is_active);
+  res.json({
+    success: true,
+    message: "Popular FAQs retrieved successfully",
+    data: popularFaqs,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// FAQ List endpoint
+app.get('/api/faq', (req, res) => {
+  const { category_id, limit = 10, offset = 0 } = req.query;
+  let filteredFaqs = faqs.filter(faq => faq.is_active);
+  
+  if (category_id) {
+    filteredFaqs = filteredFaqs.filter(faq => faq.category_id === parseInt(category_id));
+  }
+  
+  const paginatedFaqs = filteredFaqs.slice(parseInt(offset), parseInt(offset) + parseInt(limit));
+  
+  res.json({
+    success: true,
+    message: "FAQs retrieved successfully",
+    data: paginatedFaqs,
+    pagination: {
+      total: filteredFaqs.length,
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+      has_more: parseInt(offset) + parseInt(limit) < filteredFaqs.length
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
+// FAQ Detail endpoint
+app.get('/api/faq/:id', (req, res) => {
+  const faq = faqs.find(f => f.id === parseInt(req.params.id) && f.is_active);
+  
+  if (!faq) {
+    return res.status(404).json({
+      success: false,
+      message: "FAQ not found",
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  res.json({
+    success: true,
+    message: "FAQ retrieved successfully",
+    data: faq,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Root route
 app.get('/api', (req, res) => {
   res.json({
@@ -1348,7 +1481,11 @@ app.get('/api', (req, res) => {
       "rights-cards-available": "/api/rights-cards/cards/available",
       consultations: "/api/consultations",
       "my-consultations": "/api/consultations/my-consultations",
-      "consultation-detail": "/api/consultations/:id"
+      "consultation-detail": "/api/consultations/:id",
+      "faq-categories": "/api/faq/categories",
+      "faq-popular": "/api/faq/popular",
+      "faq": "/api/faq",
+      "faq-detail": "/api/faq/:id"
     }
   });
 });

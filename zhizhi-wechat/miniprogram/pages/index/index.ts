@@ -51,23 +51,34 @@ Component({
 
   methods: {
     async loadData() {
+      console.log('开始加载首页数据...')
       this.setData({ loading: true })
       
       try {
+        console.log('正在请求API数据...')
         const [doctors, services, faqs] = await Promise.all([
           api.getDoctors({ limit: 3, sort: 'rating' }),
           api.getServices(),
           api.getPopularFaqs()
         ])
 
+        console.log('API响应数据:', { doctors, services, faqs })
+        
         this.setData({
           recommendedDoctors: doctors.data || [],
           services: services.data || [],
           popularFaqs: faqs.data || [],
           loading: false
         })
+        
+        console.log('首页数据加载完成')
       } catch (error) {
         console.error('加载数据失败:', error)
+        wx.showToast({
+          title: '加载失败，请检查网络连接',
+          icon: 'none',
+          duration: 3000
+        })
         this.setData({ loading: false })
       }
     },

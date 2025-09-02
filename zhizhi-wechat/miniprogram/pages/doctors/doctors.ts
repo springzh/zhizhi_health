@@ -6,7 +6,7 @@ import api from '../../utils/api'
 Component({
   data: {
     doctors: [],
-    loading: true,
+    loading: false, // 改为false，避免初始化时被阻止
     hasMore: true,
     page: 1,
     limit: 10,
@@ -23,12 +23,15 @@ Component({
 
   lifetimes: {
     attached() {
+      console.log('医生页面已加载')
       this.loadDoctors()
     }
   },
 
   methods: {
     async loadDoctors(refresh = false) {
+      console.log('开始加载医生列表...', { refresh, page: this.data.page, loading: this.data.loading, hasMore: this.data.hasMore })
+      
       if (refresh) {
         this.setData({
           page: 1,
@@ -37,7 +40,10 @@ Component({
         })
       }
 
-      if (!this.data.hasMore || this.data.loading) return
+      // 如果正在加载，则返回（避免重复请求）
+      if (this.data.loading) return
+      // 如果没有更多数据且不是刷新，则返回
+      if (!this.data.hasMore && !refresh) return
 
       this.setData({ loading: true })
 
@@ -49,8 +55,11 @@ Component({
           q: this.data.searchQuery
         }
 
+        console.log('请求医生列表参数:', params)
         const res = await api.getDoctors(params)
         const doctors = res.data || []
+        
+        console.log('获取到医生数据:', doctors.length, '条')
 
         this.setData({
           doctors: refresh ? doctors : [...this.data.doctors, ...doctors],
@@ -58,8 +67,15 @@ Component({
           loading: false,
           page: this.data.page + 1
         })
+        
+        console.log('医生列表加载完成')
       } catch (error) {
         console.error('加载医生列表失败:', error)
+        wx.showToast({
+          title: '加载医生列表失败',
+          icon: 'none',
+          duration: 2000
+        })
         this.setData({ loading: false })
       }
     },

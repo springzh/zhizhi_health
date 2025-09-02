@@ -48,25 +48,38 @@ App<IAppOption>({
 
   async getUserInfo(): Promise<any> {
     try {
+      console.log('获取用户信息...')
       const userInfo = await api.getUserInfo()
+      console.log('用户信息获取成功:', userInfo)
+      
       this.globalData.userInfo = userInfo
       wx.setStorageSync('userInfo', userInfo)
       return userInfo
     } catch (error) {
       console.error('获取用户信息失败:', error)
-      this.logout()
+      // 如果获取用户信息失败，不要自动登出，而是先检查token是否存在
+      const token = wx.getStorageSync('token')
+      if (!token) {
+        this.logout()
+      }
       throw error
     }
   },
 
   async login(email: string, password: string): Promise<any> {
     try {
+      console.log('开始登录...')
       const res = await api.login(email, password)
-      this.globalData.token = res.token
+      console.log('登录响应:', res)
+      
+      // 设置全局状态
+      this.globalData.token = res.data.token
       this.globalData.isLoggedIn = true
       
-      // 获取用户信息
+      // 获取用户信息（此时token应该已经被api.login方法设置）
       const userInfo = await this.getUserInfo()
+      console.log('用户信息获取成功:', userInfo)
+      
       return { ...res, userInfo }
     } catch (error) {
       console.error('登录失败:', error)
