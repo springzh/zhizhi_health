@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>知治健康 - 医生列表</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 375px;
+            height: 812px;
+            margin: 0 auto;
+            background: #fff;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            height: 44px;
+            background: #1E88E5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* 顶部导航 */
+        .header {
+            background: #1E88E5;
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .filter-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        /* 搜索栏 */
+        .search-section {
+            background: white;
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .search-bar {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: #f5f5f5;
+            border-radius: 20px;
+            padding: 8px 16px;
+            gap: 8px;
+        }
+
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            color: #999;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        .search-btn {
+            background: #1E88E5;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        /* 筛选条件 */
+        .filter-section {
+            background: white;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .filter-section::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-tag {
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .filter-tag.active {
+            background: #1E88E5;
+            color: white;
+            border-color: #1E88E5;
+        }
+
+        .filter-tag .close-icon {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+        }
+
+        /* 排序选项 */
+        .sort-section {
+            background: white;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-count {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .sort-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .sort-dropdown::after {
+            content: '▼';
+            font-size: 10px;
+            color: #999;
+        }
+
+        /* 医生列表 */
+        .doctor-list {
+            background: #f5f5f5;
+            padding: 12px;
+            padding-bottom: 80px;
+        }
+
+        .doctor-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .doctor-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .doctor-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #E3F2FD;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #1E88E5;
+        }
+
+        .doctor-info {
+            flex: 1;
+        }
+
+        .doctor-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .doctor-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 2px;
+        }
+
+        .doctor-hospital {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .doctor-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .rating-stars {
+            color: #FF9800;
+            font-size: 12px;
+        }
+
+        .rating-text {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .consultation-count {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .doctor-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .doctor-specialty {
+            font-size: 12px;
+            color: #666;
+            background: #f5f5f5;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        .doctor-distance {
+            font-size: 12px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .doctor-services {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .service-tag {
+            font-size: 11px;
+            color: #1E88E5;
+            background: #E3F2FD;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .doctor-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            flex: 1;
+            border: 1px solid #1E88E5;
+            background: white;
+            color: #1E88E5;
+            border-radius: 16px;
+            padding: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .action-btn.primary {
+            background: #1E88E5;
+            color: white;
+        }
+
+        /* 筛选弹窗 */
+        .filter-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 1000;
+        }
+
+        .filter-modal.active {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .filter-content {
+            background: white;
+            width: 100%;
+            max-width: 375px;
+            max-height: 80%;
+            border-radius: 20px 20px 0 0;
+            overflow-y: auto;
+        }
+
+        .filter-header {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .filter-close {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .filter-body {
+            padding: 16px;
+        }
+
+        .filter-group {
+            margin-bottom: 20px;
+        }
+
+        .filter-group-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-option {
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .filter-option.active {
+            background: #1E88E5;
+            color: white;
+            border-color: #1E88E5;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .filter-reset {
+            flex: 1;
+            background: #f5f5f5;
+            color: #666;
+            border: none;
+            border-radius: 20px;
+            padding: 12px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .filter-confirm {
+            flex: 1;
+            background: #1E88E5;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 12px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 375px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .nav-item.active {
+            color: #1E88E5;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            font-size: 20px;
+        }
+
+        .nav-text {
+            font-size: 10px;
+        }
+
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <span>9:41</span>
+        </div>
+
+        <!-- 顶部导航 -->
+        <div class="header">
+            <div class="back-btn">←</div>
+            <h1>医生列表</h1>
+            <div class="filter-btn"><img src="images/settings.svg" alt="筛选" style="width: 20px; height: 20px;"></div>
+        </div>
+
+        <!-- 搜索栏 -->
+        <div class="search-section">
+            <div class="search-bar">
+                <div class="search-icon"><img src="images/search.svg" alt="搜索" style="width: 20px; height: 20px;"></div>
+                <input type="text" class="search-input" placeholder="搜索医生姓名、医院、专长">
+                <button class="search-btn">搜索</button>
+            </div>
+        </div>
+
+        <!-- 筛选条件 -->
+        <div class="filter-section">
+            <div class="filter-tag active">
+                地区: 广州
+                <span class="close-icon">×</span>
+            </div>
+            <div class="filter-tag">
+                专科: 口腔修复
+                <span class="close-icon">×</span>
+            </div>
+            <div class="filter-tag">
+                职称: 主任医师
+                <span class="close-icon">×</span>
+            </div>
+            <div class="filter-tag">
+                价格: 200-500
+                <span class="close-icon">×</span>
+            </div>
+        </div>
+
+        <!-- 排序选项 -->
+        <div class="sort-section">
+            <div class="result-count">共找到 156 位医生</div>
+            <div class="sort-dropdown">综合排序</div>
+        </div>
+
+        <!-- 医生列表 -->
+        <div class="doctor-list">
+            <div class="doctor-card">
+                <div class="doctor-header">
+                    <div class="doctor-avatar"><img src="images/user.svg" alt="医生" style="width: 48px; height: 48px; border-radius: 50%;"></div>
+                    <div class="doctor-info">
+                        <div class="doctor-name">张医生</div>
+                        <div class="doctor-title">主任医师 · 口腔修复</div>
+                        <div class="doctor-hospital">广州口腔医院</div>
+                        <div class="doctor-rating">
+                            <span class="rating-stars"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px;"></span>
+                            <span class="rating-text">4.9分</span>
+                            <span class="consultation-count">咨询1.2k次</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="doctor-details">
+                    <div class="doctor-specialty">擅长: 牙齿修复、种植牙</div>
+                    <div class="doctor-distance"><img src="images/location.svg" alt="距离" style="width: 16px; height: 16px; margin-right: 4px;">2.3km</div>
+                </div>
+                <div class="doctor-services">
+                    <div class="service-tag">洗牙</div>
+                    <div class="service-tag">补牙</div>
+                    <div class="service-tag">种植牙</div>
+                    <div class="service-tag">牙齿矫正</div>
+                </div>
+                <div class="doctor-actions">
+                    <button class="action-btn">咨询</button>
+                    <button class="action-btn primary">预约</button>
+                </div>
+            </div>
+
+            <div class="doctor-card">
+                <div class="doctor-header">
+                    <div class="doctor-avatar"><img src="images/user.svg" alt="医生" style="width: 48px; height: 48px; border-radius: 50%;"></div>
+                    <div class="doctor-info">
+                        <div class="doctor-name">李医生</div>
+                        <div class="doctor-title">副主任医师 · 牙周治疗</div>
+                        <div class="doctor-hospital">中山大学附属口腔医院</div>
+                        <div class="doctor-rating">
+                            <span class="rating-stars"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px;"></span>
+                            <span class="rating-text">4.8分</span>
+                            <span class="consultation-count">咨询856次</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="doctor-details">
+                    <div class="doctor-specialty">擅长: 牙周治疗、牙龈护理</div>
+                    <div class="doctor-distance">📍 3.7km</div>
+                </div>
+                <div class="doctor-services">
+                    <div class="service-tag">洗牙</div>
+                    <div class="service-tag">牙周治疗</div>
+                    <div class="service-tag">牙龈护理</div>
+                    <div class="service-tag">口腔检查</div>
+                </div>
+                <div class="doctor-actions">
+                    <button class="action-btn">咨询</button>
+                    <button class="action-btn primary">预约</button>
+                </div>
+            </div>
+
+            <div class="doctor-card">
+                <div class="doctor-header">
+                    <div class="doctor-avatar"><img src="images/user.svg" alt="医生" style="width: 48px; height: 48px; border-radius: 50%;"></div>
+                    <div class="doctor-info">
+                        <div class="doctor-name">王医生</div>
+                        <div class="doctor-title">主治医师 · 牙齿美容</div>
+                        <div class="doctor-hospital">广东省口腔医院</div>
+                        <div class="doctor-rating">
+                            <span class="rating-stars"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px;"></span>
+                            <span class="rating-text">4.7分</span>
+                            <span class="consultation-count">咨询623次</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="doctor-details">
+                    <div class="doctor-specialty">擅长: 牙齿美容、牙齿美白</div>
+                    <div class="doctor-distance">📍 5.1km</div>
+                </div>
+                <div class="doctor-services">
+                    <div class="service-tag">牙齿美白</div>
+                    <div class="service-tag">牙齿矫正</div>
+                    <div class="service-tag">瓷贴面</div>
+                    <div class="service-tag">冷光美白</div>
+                </div>
+                <div class="doctor-actions">
+                    <button class="action-btn">咨询</button>
+                    <button class="action-btn primary">预约</button>
+                </div>
+            </div>
+
+            <div class="doctor-card">
+                <div class="doctor-header">
+                    <div class="doctor-avatar"><img src="images/user.svg" alt="医生" style="width: 48px; height: 48px; border-radius: 50%;"></div>
+                    <div class="doctor-info">
+                        <div class="doctor-name">陈医生</div>
+                        <div class="doctor-title">主任医师 · 儿童牙科</div>
+                        <div class="doctor-hospital">广州市儿童医院</div>
+                        <div class="doctor-rating">
+                            <span class="rating-stars"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px;"></span>
+                            <span class="rating-text">4.9分</span>
+                            <span class="consultation-count">咨询445次</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="doctor-details">
+                    <div class="doctor-specialty">擅长: 儿童牙齿矫正、龋齿预防</div>
+                    <div class="doctor-distance">📍 4.2km</div>
+                </div>
+                <div class="doctor-services">
+                    <div class="service-tag">儿童牙齿检查</div>
+                    <div class="service-tag">窝沟封闭</div>
+                    <div class="service-tag">儿童牙齿矫正</div>
+                    <div class="service-tag">龋齿预防</div>
+                </div>
+                <div class="doctor-actions">
+                    <button class="action-btn">咨询</button>
+                    <button class="action-btn primary">预约</button>
+                </div>
+            </div>
+
+            <div class="loading">加载更多医生</div>
+        </div>
+
+        <!-- 筛选弹窗 -->
+        <div class="filter-modal" id="filterModal">
+            <div class="filter-content">
+                <div class="filter-header">
+                    <div class="filter-title">筛选条件</div>
+                    <div class="filter-close">×</div>
+                </div>
+                <div class="filter-body">
+                    <div class="filter-group">
+                        <div class="filter-group-title">地区</div>
+                        <div class="filter-options">
+                            <div class="filter-option active">广州</div>
+                            <div class="filter-option">深圳</div>
+                            <div class="filter-option">佛山</div>
+                            <div class="filter-option">东莞</div>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-group-title">专科</div>
+                        <div class="filter-options">
+                            <div class="filter-option">口腔修复</div>
+                            <div class="filter-option">牙周治疗</div>
+                            <div class="filter-option">牙齿美容</div>
+                            <div class="filter-option">儿童牙科</div>
+                            <div class="filter-option">牙齿矫正</div>
+                            <div class="filter-option">种植牙</div>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-group-title">职称</div>
+                        <div class="filter-options">
+                            <div class="filter-option">主任医师</div>
+                            <div class="filter-option">副主任医师</div>
+                            <div class="filter-option">主治医师</div>
+                            <div class="filter-option">住院医师</div>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-group-title">价格区间</div>
+                        <div class="filter-options">
+                            <div class="filter-option">100-200</div>
+                            <div class="filter-option">200-500</div>
+                            <div class="filter-option">500-1000</div>
+                            <div class="filter-option">1000+</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button class="filter-reset">重置</button>
+                    <button class="filter-confirm">确定</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+            <div class="nav-item">
+                <div class="nav-icon"><img src="images/home.svg" alt="首页" style="width: 24px; height: 24px;"></div>
+                <span class="nav-text">首页</span>
+            </div>
+            <div class="nav-item active">
+                <div class="nav-icon"><img src="images/user.svg" alt="医生" style="width: 24px; height: 24px;"></div>
+                <span class="nav-text">医生</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"><img src="images/clock.svg" alt="预约" style="width: 24px; height: 24px;"></div>
+                <span class="nav-text">预约</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"><img src="images/chat.svg" alt="咨询" style="width: 24px; height: 24px;"></div>
+                <span class="nav-text">咨询</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"><img src="images/user.svg" alt="我的" style="width: 24px; height: 24px;"></div>
+                <span class="nav-text">我的</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 筛选弹窗控制
+        const filterBtn = document.querySelector('.filter-btn');
+        const filterModal = document.getElementById('filterModal');
+        const filterClose = document.querySelector('.filter-close');
+        const filterConfirm = document.querySelector('.filter-confirm');
+        const filterReset = document.querySelector('.filter-reset');
+
+        filterBtn.addEventListener('click', () => {
+            filterModal.classList.add('active');
+        });
+
+        filterClose.addEventListener('click', () => {
+            filterModal.classList.remove('active');
+        });
+
+        filterConfirm.addEventListener('click', () => {
+            filterModal.classList.remove('active');
+            // 这里可以添加筛选逻辑
+        });
+
+        filterReset.addEventListener('click', () => {
+            // 重置所有筛选选项
+            document.querySelectorAll('.filter-option').forEach(option => {
+                option.classList.remove('active');
+            });
+        });
+
+        // 筛选选项点击
+        document.querySelectorAll('.filter-option').forEach(option => {
+            option.addEventListener('click', () => {
+                option.classList.toggle('active');
+            });
+        });
+
+        // 筛选标签关闭
+        document.querySelectorAll('.filter-tag .close-icon').forEach(closeIcon => {
+            closeIcon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeIcon.parentElement.remove();
+            });
+        });
+
+        // 排序下拉
+        const sortDropdown = document.querySelector('.sort-dropdown');
+        const sortOptions = ['综合排序', '评分最高', '距离最近', '咨询最多', '价格最低'];
+        let currentSort = 0;
+
+        sortDropdown.addEventListener('click', () => {
+            currentSort = (currentSort + 1) % sortOptions.length;
+            sortDropdown.textContent = sortOptions[currentSort];
+        });
+
+        // 医生卡片点击
+        document.querySelectorAll('.doctor-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('action-btn')) {
+                    console.log('跳转到医生详情页');
+                }
+            });
+        });
+
+        // 搜索功能
+        const searchInput = document.querySelector('.search-input');
+        const searchBtn = document.querySelector('.search-btn');
+
+        searchBtn.addEventListener('click', () => {
+            const searchTerm = searchInput.value.trim();
+            if (searchTerm) {
+                console.log('搜索:', searchTerm);
+            }
+        });
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchBtn.click();
+            }
+        });
+
+        // 无限滚动加载
+        let isLoading = false;
+        window.addEventListener('scroll', () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !isLoading) {
+                isLoading = true;
+                // 模拟加载更多数据
+                setTimeout(() => {
+                    const loadingElement = document.querySelector('.loading');
+                    if (loadingElement) {
+                        loadingElement.textContent = '加载完成';
+                    }
+                    isLoading = false;
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>

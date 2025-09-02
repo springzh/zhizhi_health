@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>知治健康 - 个人中心</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 375px;
+            height: 812px;
+            margin: 0 auto;
+            background: #fff;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            height: 44px;
+            background: #1E88E5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* 顶部导航 */
+        .header {
+            background: #1E88E5;
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .header-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        /* 用户信息区域 */
+        .user-profile {
+            background: linear-gradient(135deg, #1E88E5 0%, #42A5F5 100%);
+            padding: 20px;
+            color: white;
+            position: relative;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .user-id {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .user-level {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .user-stats {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .user-stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* 功能菜单 */
+        .menu-section {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            font-size: 20px;
+        }
+
+        .menu-content {
+            flex: 1;
+        }
+
+        .menu-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .menu-subtitle {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .menu-arrow {
+            width: 20px;
+            height: 20px;
+            color: #999;
+        }
+
+        .menu-badge {
+            background: #F44336;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-right: 8px;
+        }
+
+        /* 订单状态 */
+        .order-status {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .order-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .order-more {
+            font-size: 12px;
+            color: #1E88E5;
+            cursor: pointer;
+        }
+
+        .order-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .order-item {
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .order-icon {
+            width: 48px;
+            height: 48px;
+            background: #f5f5f5;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin: 0 auto 8px;
+            position: relative;
+        }
+
+        .order-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #F44336;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .order-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* 常用工具 */
+        .tools-section {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tools-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .tool-item {
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .tool-icon {
+            width: 48px;
+            height: 48px;
+            background: #E3F2FD;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin: 0 auto 8px;
+            color: #1E88E5;
+        }
+
+        .tool-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 375px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .nav-item.active {
+            color: #1E88E5;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            font-size: 20px;
+        }
+
+        .nav-text {
+            font-size: 10px;
+        }
+
+        /* 设置按钮 */
+        .settings-section {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 80px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 375px) {
+            .app-container {
+                max-width: 100%;
+            }
+        }
+
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <span>9:41</span>
+        </div>
+
+        <!-- 顶部导航 -->
+        <div class="header">
+            <h1>个人中心</h1>
+            <div class="header-actions">
+                <div class="header-icon"><img src="images/bell.svg" alt="通知" style="width: 20px; height: 20px;"></div>
+                <div class="header-icon"><img src="images/settings.svg" alt="设置" style="width: 20px; height: 20px;"></div>
+            </div>
+        </div>
+
+        <!-- 用户信息区域 -->
+        <div class="user-profile">
+            <div class="user-info">
+                <div class="user-avatar"><img src="images/user.svg" alt="用户" style="width: 64px; height: 64px; border-radius: 50%;"></div>
+                <div class="user-details">
+                    <div class="user-name">张三</div>
+                    <div class="user-id">ID: 138****8888</div>
+                    <div class="user-level">VIP会员</div>
+                </div>
+            </div>
+            <div class="user-stats">
+                <div class="user-stat">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">预约次数</div>
+                </div>
+                <div class="user-stat">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">收藏医生</div>
+                </div>
+                <div class="user-stat">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">咨询记录</div>
+                </div>
+                <div class="user-stat">
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">权益卡</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 订单状态 -->
+        <div class="order-status">
+            <div class="order-header">
+                <div class="order-title">我的预约</div>
+                <div class="order-more">查看全部 ></div>
+            </div>
+            <div class="order-grid">
+                <div class="order-item">
+                    <div class="order-icon">
+                        ⏳
+                        <div class="order-badge">2</div>
+                    </div>
+                    <div class="order-label">待确认</div>
+                </div>
+                <div class="order-item">
+                    <div class="order-icon">
+                        📅
+                    </div>
+                    <div class="order-label">已确认</div>
+                </div>
+                <div class="order-item">
+                    <div class="order-icon">
+                        ✅
+                    </div>
+                    <div class="order-label">已完成</div>
+                </div>
+                <div class="order-item">
+                    <div class="order-icon">
+                        ❌
+                    </div>
+                    <div class="order-label">已取消</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 功能菜单 -->
+        <div class="menu-section">
+            <div class="menu-item">
+                <div class="menu-icon"><img src="images/user.svg" alt="我的医生" style="width: 24px; height: 24px;"></div>
+                <div class="menu-content">
+                    <div class="menu-title">我的医生</div>
+                    <div class="menu-subtitle">收藏的医生和常用医生</div>
+                </div>
+                <div class="menu-arrow">></div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon"><img src="images/chat.svg" alt="咨询记录" style="width: 24px; height: 24px;"></div>
+                <div class="menu-content">
+                    <div class="menu-title">我的咨询</div>
+                    <div class="menu-subtitle">在线咨询记录和回复</div>
+                </div>
+                <div class="menu-badge">1</div>
+                <div class="menu-arrow">></div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon"><img src="images/star.svg" alt="我的收藏" style="width: 24px; height: 24px;"></div>
+                <div class="menu-content">
+                    <div class="menu-title">我的评价</div>
+                    <div class="menu-subtitle">已发布的评价记录</div>
+                </div>
+                <div class="menu-arrow">></div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon">🎫</div>
+                <div class="menu-content">
+                    <div class="menu-title">我的权益卡</div>
+                    <div class="menu-subtitle">已购买的权益卡和优惠券</div>
+                </div>
+                <div class="menu-arrow">></div>
+            </div>
+        </div>
+
+        <!-- 常用工具 -->
+        <div class="tools-section">
+            <div class="tools-title">常用工具</div>
+            <div class="tools-grid">
+                <div class="tool-item">
+                    <div class="tool-icon"><img src="images/check.svg" alt="预约记录" style="width: 24px; height: 24px;"></div>
+                    <div class="tool-label">预约记录</div>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon"><img src="images/home.svg" alt="附近医院" style="width: 24px; height: 24px;"></div>
+                    <div class="tool-label">就诊记录</div>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon"><img src="images/check.svg" alt="药品查询" style="width: 24px; height: 24px;"></div>
+                    <div class="tool-label">用药记录</div>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon"><img src="images/star.svg" alt="健康报告" style="width: 24px; height: 24px;"></div>
+                    <div class="tool-label">健康报告</div>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon">👪</div>
+                    <div class="tool-label">家庭成员</div>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon"><img src="images/location.svg" alt="地址管理" style="width: 24px; height: 24px;"></div>
+                    <div class="tool-label">地址管理</div>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon"><img src="images/star.svg" alt="支付管理" style="width: 24px; height: 24px;"></div>
+                    <div class="tool-label">支付方式</div>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon"><img src="images/star.svg" alt="优惠券" style="width: 24px; height: 24px;"></div>
+                    <div class="tool-label">邀请好友</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设置菜单 -->
+        <div class="settings-section">
+            <div class="menu-item">
+                <div class="menu-icon"><img src="images/bell.svg" alt="消息通知" style="width: 24px; height: 24px;"></div>
+                <div class="menu-content">
+                    <div class="menu-title">消息通知</div>
+                    <div class="menu-subtitle">设置通知偏好</div>
+                </div>
+                <div class="menu-arrow">></div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon"><img src="images/settings.svg" alt="账号安全" style="width: 24px; height: 24px;"></div>
+                <div class="menu-content">
+                    <div class="menu-title">隐私设置</div>
+                    <div class="menu-subtitle">管理隐私权限</div>
+                </div>
+                <div class="menu-arrow">></div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon"><img src="images/help.svg" alt="帮助中心" style="width: 24px; height: 24px;"></div>
+                <div class="menu-content">
+                    <div class="menu-title">帮助中心</div>
+                    <div class="menu-subtitle">常见问题和客服</div>
+                </div>
+                <div class="menu-arrow">></div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon">ℹ️</div>
+                <div class="menu-content">
+                    <div class="menu-title">关于我们</div>
+                    <div class="menu-subtitle">版本信息和公司介绍</div>
+                </div>
+                <div class="menu-arrow">></div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+            <div class="nav-item">
+                <div class="nav-icon"><img src="images/home.svg" alt="首页" style="width: 24px; height: 24px;"></div>
+                <span class="nav-text">首页</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"><img src="images/user.svg" alt="医生" style="width: 24px; height: 24px;"></div>
+                <span class="nav-text">医生</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"><img src="images/clock.svg" alt="预约" style="width: 24px; height: 24px;"></div>
+                <span class="nav-text">预约</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"><img src="images/chat.svg" alt="咨询" style="width: 24px; height: 24px;"></div>
+                <span class="nav-text">咨询</span>
+            </div>
+            <div class="nav-item active">
+                <div class="nav-icon"><img src="images/user.svg" alt="我的" style="width: 24px; height: 24px;"></div>
+                <span class="nav-text">我的</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 菜单项点击事件
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const title = item.querySelector('.menu-title').textContent;
+                console.log('点击了:', title);
+                
+                // 根据不同的菜单项跳转到相应页面
+                switch (title) {
+                    case '我的医生':
+                        window.location.href = 'my-doctors.html';
+                        break;
+                    case '我的咨询':
+                        window.location.href = 'my-consultations.html';
+                        break;
+                    case '我的评价':
+                        window.location.href = 'my-reviews.html';
+                        break;
+                    case '我的权益卡':
+                        window.location.href = 'my-cards.html';
+                        break;
+                    case '消息通知':
+                        window.location.href = 'notification-settings.html';
+                        break;
+                    case '隐私设置':
+                        window.location.href = 'privacy-settings.html';
+                        break;
+                    case '帮助中心':
+                        window.location.href = 'help-center.html';
+                        break;
+                    case '关于我们':
+                        window.location.href = 'about-us.html';
+                        break;
+                }
+            });
+        });
+
+        // 订单状态点击事件
+        document.querySelectorAll('.order-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const label = item.querySelector('.order-label').textContent;
+                console.log('点击了订单状态:', label);
+                window.location.href = 'my-appointments.html';
+            });
+        });
+
+        // 工具项点击事件
+        document.querySelectorAll('.tool-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const label = item.querySelector('.tool-label').textContent;
+                console.log('点击了工具:', label);
+                
+                // 根据不同的工具跳转到相应页面
+                switch (label) {
+                    case '预约记录':
+                        window.location.href = 'my-appointments.html';
+                        break;
+                    case '就诊记录':
+                        window.location.href = 'medical-records.html';
+                        break;
+                    case '用药记录':
+                        window.location.href = 'medication-records.html';
+                        break;
+                    case '健康报告':
+                        window.location.href = 'health-reports.html';
+                        break;
+                    case '家庭成员':
+                        window.location.href = 'family-members.html';
+                        break;
+                    case '地址管理':
+                        window.location.href = 'address-management.html';
+                        break;
+                    case '支付方式':
+                        window.location.href = 'payment-methods.html';
+                        break;
+                    case '邀请好友':
+                        window.location.href = 'invite-friends.html';
+                        break;
+                }
+            });
+        });
+
+        // 查看全部预约
+        document.querySelector('.order-more').addEventListener('click', () => {
+            window.location.href = 'my-appointments.html';
+        });
+
+        // 通知按钮
+        document.querySelector('.header-icon:first-child').addEventListener('click', () => {
+            window.location.href = 'notifications.html';
+        });
+
+        // 设置按钮
+        document.querySelector('.header-icon:last-child').addEventListener('click', () => {
+            window.location.href = 'settings.html';
+        });
+
+        // 用户头像点击
+        document.querySelector('.user-avatar').addEventListener('click', () => {
+            window.location.href = 'profile-edit.html';
+        });
+
+        // 模拟消息提醒
+        setTimeout(() => {
+            const notificationBadge = document.querySelector('.menu-badge');
+            if (notificationBadge) {
+                notificationBadge.style.animation = 'pulse 2s infinite';
+            }
+        }, 1000);
+
+        // 添加脉冲动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+                100% { transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>知治健康 - 权益卡</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 375px;
+            height: 812px;
+            margin: 0 auto;
+            background: #fff;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            height: 44px;
+            background: #1E88E5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* 顶部导航 */
+        .header {
+            background: #1E88E5;
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .header-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        /* Banner区域 */
+        .banner-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .banner-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .banner-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* 分类标签 */
+        .category-tabs {
+            background: white;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .category-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-tab {
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .category-tab.active {
+            background: #1E88E5;
+            color: white;
+            border-color: #1E88E5;
+        }
+
+        /* 权益卡列表 */
+        .cards-container {
+            background: #f5f5f5;
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+
+        .card-section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* 权益卡卡片 */
+        .rights-card {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .rights-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            position: relative;
+        }
+
+        .card-premium {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #FF5722;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .card-price {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .price-current {
+            font-size: 24px;
+            font-weight: 600;
+            color: #FF5722;
+        }
+
+        .price-original {
+            font-size: 14px;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .price-unit {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .card-content {
+            padding: 16px;
+        }
+
+        .benefits-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .benefit-icon {
+            width: 16px;
+            height: 16px;
+            color: #4CAF50;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .benefit-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .card-validity {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .card-action {
+            background: #1E88E5;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .card-action.secondary {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        /* 我的权益卡 */
+        .my-cards {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .my-card-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .my-card-item:last-child {
+            border-bottom: none;
+        }
+
+        .my-card-icon {
+            width: 48px;
+            height: 48px;
+            background: #E3F2FD;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #1E88E5;
+        }
+
+        .my-card-info {
+            flex: 1;
+        }
+
+        .my-card-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .my-card-date {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .my-card-status {
+            font-size: 12px;
+            color: #4CAF50;
+            background: #E8F5E8;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        /* 权益卡详情弹窗 */
+        .card-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 1000;
+        }
+
+        .card-modal.active {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 375px;
+            max-height: 90%;
+            border-radius: 20px 20px 0 0;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            position: relative;
+            height: 160px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .modal-section {
+            margin-bottom: 20px;
+        }
+
+        .modal-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .modal-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .modal-price {
+            font-size: 28px;
+            font-weight: 600;
+            color: #FF5722;
+            margin-bottom: 8px;
+        }
+
+        .modal-price-original {
+            font-size: 16px;
+            color: #999;
+            text-decoration: line-through;
+            margin-left: 8px;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .benefit-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .benefit-card-icon {
+            width: 32px;
+            height: 32px;
+            background: #E3F2FD;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            color: #1E88E5;
+        }
+
+        .benefit-card-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .benefit-card-desc {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .modal-btn.secondary {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .modal-btn.primary {
+            background: #1E88E5;
+            color: white;
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 375px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .nav-item.active {
+            color: #1E88E5;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            font-size: 20px;
+        }
+
+        .nav-text {
+            font-size: 10px;
+        }
+
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 375px) {
+            .app-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <span>9:41</span>
+        </div>
+
+        <!-- 顶部导航 -->
+        <div class="header">
+            <div class="back-btn">←</div>
+            <h1>权益卡</h1>
+            <div class="header-icon">🛒</div>
+        </div>
+
+        <!-- Banner区域 -->
+        <div class="banner-section">
+            <div class="banner-title">会员权益卡</div>
+            <div class="banner-subtitle">专享优惠，超值体验</div>
+        </div>
+
+        <!-- 分类标签 -->
+        <div class="category-tabs">
+            <div class="category-tab active">全部</div>
+            <div class="category-tab">护理卡</div>
+            <div class="category-tab">特效药卡</div>
+            <div class="category-tab">会员卡</div>
+            <div class="category-tab">治疗卡</div>
+        </div>
+
+        <!-- 我的权益卡 -->
+        <div class="cards-container">
+            <div class="my-cards">
+                <div class="section-title">
+                    <span class="section-icon">💳</span>
+                    我的权益卡
+                </div>
+                <div class="my-card-item">
+                    <div class="my-card-icon">🌟</div>
+                    <div class="my-card-info">
+                        <div class="my-card-name">VIP护理卡</div>
+                        <div class="my-card-date">有效期至: 2024-12-31</div>
+                    </div>
+                    <div class="my-card-status">使用中</div>
+                </div>
+                <div class="my-card-item">
+                    <div class="my-card-icon">💊</div>
+                    <div class="my-card-info">
+                        <div class="my-card-name">特效药卡</div>
+                        <div class="my-card-date">有效期至: 2024-06-30</div>
+                    </div>
+                    <div class="my-card-status">未使用</div>
+                </div>
+            </div>
+
+            <!-- 推荐权益卡 -->
+            <div class="card-section">
+                <div class="section-title">
+                    <span class="section-icon">🔥</span>
+                    热门推荐
+                </div>
+                
+                <div class="rights-card">
+                    <div class="card-header">
+                        <div class="card-premium">热销</div>
+                        <div class="card-title">VIP护理卡</div>
+                        <div class="card-subtitle">全年无限次洗牙护理服务</div>
+                        <div class="card-price">
+                            <span class="price-current">¥599</span>
+                            <span class="price-original">¥999</span>
+                            <span class="price-unit">/年</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="benefits-list">
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">全年无限次超声波洗牙</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">免费口腔检查4次</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">牙齿抛光2次</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">优先预约权</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-validity">有效期1年</div>
+                            <button class="card-action">立即购买</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rights-card">
+                    <div class="card-header">
+                        <div class="card-title">特效药卡</div>
+                        <div class="card-subtitle">进口药品专属优惠</div>
+                        <div class="card-price">
+                            <span class="price-current">¥299</span>
+                            <span class="price-original">¥499</span>
+                            <span class="price-unit">/年</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="benefits-list">
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">进口药品8折优惠</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">免费用药咨询</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">药品配送服务</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">用药提醒服务</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-validity">有效期1年</div>
+                            <button class="card-action">立即购买</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rights-card">
+                    <div class="card-header">
+                        <div class="card-premium">新品</div>
+                        <div class="card-title">儿童牙科护理卡</div>
+                        <div class="card-subtitle">专为儿童设计的口腔护理套餐</div>
+                        <div class="card-price">
+                            <span class="price-current">¥399</span>
+                            <span class="price-original">¥699</span>
+                            <span class="price-unit">/年</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="benefits-list">
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">儿童洗牙6次</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">窝沟封闭2次</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">口腔检查4次</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">儿童口腔护理指导</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-validity">有效期1年</div>
+                            <button class="card-action">立即购买</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rights-card">
+                    <div class="card-header">
+                        <div class="card-title">牙齿美白卡</div>
+                        <div class="card-subtitle">专业美白服务套餐</div>
+                        <div class="card-price">
+                            <span class="price-current">¥899</span>
+                            <span class="price-original">¥1299</span>
+                            <span class="price-unit">/年</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="benefits-list">
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">冷光美白3次</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">牙齿护理套装</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">美白效果维护</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">专业护理指导</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-validity">有效期1年</div>
+                            <button class="card-action">立即购买</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rights-card">
+                    <div class="card-header">
+                        <div class="card-title">种植牙优惠卡</div>
+                        <div class="card-subtitle">种植牙专属优惠</div>
+                        <div class="card-price">
+                            <span class="price-current">¥1299</span>
+                            <span class="price-original">¥1999</span>
+                            <span class="price-unit">/年</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="benefits-list">
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">种植牙9折优惠</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">免费术前检查</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">术后护理指导</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-icon">✓</span>
+                                <span class="benefit-text">质保期延长</span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="card-validity">有效期1年</div>
+                            <button class="card-action">立即购买</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 权益卡详情弹窗 -->
+        <div class="card-modal" id="cardModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-close">×</div>
+                    <div>
+                        <div style="font-size: 48px; margin-bottom: 12px;">🌟</div>
+                        <div class="modal-title" style="color: white; margin-bottom: 8px;">VIP护理卡</div>
+                        <div class="modal-price" style="color: white;">¥599</div>
+                        <div style="font-size: 14px; opacity: 0.9;">全年无限次洗牙护理服务</div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-section">
+                        <div class="modal-price">¥599<span class="modal-price-original">¥999</span></div>
+                        <div class="modal-text">限时优惠，节省¥400</div>
+                    </div>
+
+                    <div class="modal-section">
+                        <div class="modal-section-title">权益详情</div>
+                        <div class="benefits-grid">
+                            <div class="benefit-card">
+                                <div class="benefit-card-icon">🪥</div>
+                                <div class="benefit-card-title">无限次洗牙</div>
+                                <div class="benefit-card-desc">全年不限次数</div>
+                            </div>
+                            <div class="benefit-card">
+                                <div class="benefit-card-icon">🔍</div>
+                                <div class="benefit-card-title">口腔检查</div>
+                                <div class="benefit-card-desc">每年4次免费</div>
+                            </div>
+                            <div class="benefit-card">
+                                <div class="benefit-card-icon">✨</div>
+                                <div class="benefit-card-title">牙齿抛光</div>
+                                <div class="benefit-card-desc">每年2次</div>
+                            </div>
+                            <div class="benefit-card">
+                                <div class="benefit-card-icon">⏰</div>
+                                <div class="benefit-card-title">优先预约</div>
+                                <div class="benefit-card-desc">24小时预约</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-section">
+                        <div class="modal-section-title">使用说明</div>
+                        <div class="modal-text">
+                            1. 本卡自购买之日起1年内有效<br>
+                            2. 需提前1天预约服务<br>
+                            3. 仅限持卡人本人使用<br>
+                            4. 不可与其他优惠同时使用<br>
+                            5. 最终解释权归知治健康所有
+                        </div>
+                    </div>
+
+                    <div class="modal-section">
+                        <div class="modal-section-title">适用人群</div>
+                        <div class="modal-text">
+                            • 注重口腔健康的成年人<br>
+                            • 需要定期洗牙护理的人士<br>
+                            • 追求高品质服务的人群<br>
+                            • 希望节省口腔护理费用的用户
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn secondary">关闭</button>
+                    <button class="modal-btn primary">立即购买</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+            <div class="nav-item">
+                <div class="nav-icon">🏠</div>
+                <span class="nav-text">首页</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">👨‍⚕️</div>
+                <span class="nav-text">医生</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">📅</div>
+                <span class="nav-text">预约</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">💬</div>
+                <span class="nav-text">咨询</span>
+            </div>
+            <div class="nav-item active">
+                <div class="nav-icon">👤</div>
+                <span class="nav-text">我的</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 分类标签切换
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        categoryTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                categoryTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                console.log('选择了分类:', tab.textContent);
+            });
+        });
+
+        // 权益卡卡片点击
+        const rightsCards = document.querySelectorAll('.rights-card');
+        const cardModal = document.getElementById('cardModal');
+        const modalClose = document.querySelector('.modal-close');
+        const modalBtnSecondary = document.querySelector('.modal-btn.secondary');
+        const modalBtnPrimary = document.querySelector('.modal-btn.primary');
+
+        rightsCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const cardTitle = card.querySelector('.card-title').textContent;
+                console.log('查看权益卡详情:', cardTitle);
+                cardModal.classList.add('active');
+            });
+        });
+
+        // 关闭弹窗
+        function closeModal() {
+            cardModal.classList.remove('active');
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modalBtnSecondary.addEventListener('click', closeModal);
+
+        modalBtnPrimary.addEventListener('click', () => {
+            closeModal();
+            // 跳转到购买页面
+            console.log('跳转到购买页面');
+        });
+
+        // 点击弹窗外部关闭
+        cardModal.addEventListener('click', (e) => {
+            if (e.target === cardModal) {
+                closeModal();
+            }
+        });
+
+        // 购买按钮点击
+        const cardActions = document.querySelectorAll('.card-action');
+        cardActions.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                console.log('点击购买按钮');
+                cardModal.classList.add('active');
+            });
+        });
+
+        // 我的权益卡点击
+        const myCardItems = document.querySelectorAll('.my-card-item');
+        myCardItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const cardName = item.querySelector('.my-card-name').textContent;
+                console.log('查看我的权益卡:', cardName);
+                // 跳转到权益卡详情页面
+            });
+        });
+
+        // 返回按钮
+        document.querySelector('.back-btn').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+
+        // 购物车按钮
+        document.querySelector('.header-icon').addEventListener('click', () => {
+            console.log('跳转到购物车页面');
+        });
+
+        // 模拟加载更多
+        let isLoading = false;
+        window.addEventListener('scroll', () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !isLoading) {
+                isLoading = true;
+                
+                // 模拟加载更多权益卡
+                setTimeout(() => {
+                    console.log('加载更多权益卡...');
+                    isLoading = false;
+                }, 1000);
+            }
+        });
+
+        // 添加动画效果
+        const style = document.createElement('style');
+        style.textContent = `
+            .rights-card {
+                animation: fadeInUp 0.5s ease-out;
+            }
+            
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

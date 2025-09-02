@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>知治健康 - 常见问题</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 375px;
+            height: 812px;
+            margin: 0 auto;
+            background: #fff;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            height: 44px;
+            background: #1E88E5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* 顶部导航 */
+        .header {
+            background: #1E88E5;
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .header-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        /* 搜索栏 */
+        .search-section {
+            background: white;
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .search-bar {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: #f5f5f5;
+            border-radius: 20px;
+            padding: 8px 16px;
+            gap: 8px;
+        }
+
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            color: #999;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        /* 分类标签 */
+        .category-tabs {
+            background: white;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .category-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-tab {
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .category-tab.active {
+            background: #1E88E5;
+            color: white;
+            border-color: #1E88E5;
+        }
+
+        /* 热门问题 */
+        .hot-questions {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hot-icon {
+            width: 20px;
+            height: 20px;
+            color: #FF5722;
+        }
+
+        .hot-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .hot-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .hot-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .hot-number {
+            width: 24px;
+            height: 24px;
+            background: #FF5722;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .hot-number.rank-1 {
+            background: #FFD700;
+            color: #333;
+        }
+
+        .hot-number.rank-2 {
+            background: #C0C0C0;
+            color: #333;
+        }
+
+        .hot-number.rank-3 {
+            background: #CD7F32;
+            color: white;
+        }
+
+        .hot-content {
+            flex: 1;
+        }
+
+        .hot-question {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+
+        .hot-category {
+            font-size: 12px;
+            color: #1E88E5;
+            background: #E3F2FD;
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .hot-views {
+            font-size: 12px;
+            color: #999;
+            margin-left: 8px;
+        }
+
+        /* FAQ列表 */
+        .faq-container {
+            background: #f5f5f5;
+            padding: 12px;
+            padding-bottom: 80px;
+        }
+
+        .faq-category {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-header {
+            background: #1E88E5;
+            color: white;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .category-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .category-count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .category-arrow {
+            transition: transform 0.3s;
+        }
+
+        .category-arrow.expanded {
+            transform: rotate(180deg);
+        }
+
+        .faq-items {
+            display: none;
+            padding: 0;
+        }
+
+        .faq-items.expanded {
+            display: block;
+        }
+
+        .faq-item {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .faq-icon {
+            width: 16px;
+            height: 16px;
+            color: #1E88E5;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .faq-answer {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+            display: none;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .faq-answer.expanded {
+            display: block;
+        }
+
+        .faq-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .faq-date {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .faq-views {
+            font-size: 12px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* FAQ详情弹窗 */
+        .faq-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 1000;
+        }
+
+        .faq-modal.active {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 375px;
+            max-height: 90%;
+            border-radius: 20px 20px 0 0;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            background: #f5f5f5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-category {
+            background: #E3F2FD;
+            color: #1E88E5;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .modal-question {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .modal-answer {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .modal-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid #f0f0f0;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .related-questions {
+            margin-top: 20px;
+        }
+
+        .related-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .related-item {
+            padding: 8px 0;
+            font-size: 13px;
+            color: #1E88E5;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .related-item:last-child {
+            border-bottom: none;
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 375px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .nav-item.active {
+            color: #1E88E5;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            font-size: 20px;
+        }
+
+        .nav-text {
+            font-size: 10px;
+        }
+
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+            font-size: 48px;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .empty-subtitle {
+            font-size: 14px;
+            color: #999;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 375px) {
+            .app-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <span>9:41</span>
+        </div>
+
+        <!-- 顶部导航 -->
+        <div class="header">
+            <div class="back-btn">←</div>
+            <h1>常见问题</h1>
+            <div class="header-icon">🔍</div>
+        </div>
+
+        <!-- 搜索栏 -->
+        <div class="search-section">
+            <div class="search-bar">
+                <div class="search-icon">🔍</div>
+                <input type="text" class="search-input" placeholder="搜索问题关键词">
+            </div>
+        </div>
+
+        <!-- 分类标签 -->
+        <div class="category-tabs">
+            <div class="category-tab active">全部</div>
+            <div class="category-tab">洗牙护理</div>
+            <div class="category-tab">牙齿修复</div>
+            <div class="category-tab">牙齿矫正</div>
+            <div class="category-tab">种植牙</div>
+            <div class="category-tab">牙齿美容</div>
+            <div class="category-tab">儿童牙科</div>
+            <div class="category-tab">预约咨询</div>
+        </div>
+
+        <!-- 热门问题 -->
+        <div class="hot-questions">
+            <h3 class="section-title">
+                <span class="hot-icon">🔥</span>
+                热门问题
+            </h3>
+            <div class="hot-list">
+                <div class="hot-item">
+                    <div class="hot-number rank-1">1</div>
+                    <div class="hot-content">
+                        <div class="hot-question">洗牙疼吗？多久洗一次比较好？</div>
+                        <div class="hot-category">洗牙护理</div>
+                        <span class="hot-views">👁 2.3k</span>
+                    </div>
+                </div>
+                <div class="hot-item">
+                    <div class="hot-number rank-2">2</div>
+                    <div class="hot-content">
+                        <div class="hot-question">牙齿矫正需要多长时间？</div>
+                        <div class="hot-category">牙齿矫正</div>
+                        <span class="hot-views">👁 1.8k</span>
+                    </div>
+                </div>
+                <div class="hot-item">
+                    <div class="hot-number rank-3">3</div>
+                    <div class="hot-content">
+                        <div class="hot-question">补牙材料有哪些？如何选择？</div>
+                        <div class="hot-category">牙齿修复</div>
+                        <span class="hot-views">👁 1.5k</span>
+                    </div>
+                </div>
+                <div class="hot-item">
+                    <div class="hot-number">4</div>
+                    <div class="hot-content">
+                        <div class="hot-question">种植牙能用多久？</div>
+                        <div class="hot-category">种植牙</div>
+                        <span class="hot-views">👁 1.2k</span>
+                    </div>
+                </div>
+                <div class="hot-item">
+                    <div class="hot-number">5</div>
+                    <div class="hot-content">
+                        <div class="hot-question">儿童几岁开始牙齿矫正比较合适？</div>
+                        <div class="hot-category">儿童牙科</div>
+                        <span class="hot-views">👁 986</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ列表 -->
+        <div class="faq-container">
+            <div class="faq-category">
+                <div class="category-header" data-category="cleaning">
+                    <div class="category-title">
+                        <span class="category-icon">🪥</span>
+                        洗牙护理
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div class="category-count">8个问题</div>
+                        <div class="category-arrow">▼</div>
+                    </div>
+                </div>
+                <div class="faq-items">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span class="faq-icon">Q</span>
+                            <span>洗牙疼吗？多久洗一次比较好？</span>
+                        </div>
+                        <div class="faq-answer">
+                            洗牙一般不会疼痛，可能会有轻微的酸胀感。建议每6个月洗一次牙，可以有效预防牙周疾病，保持口腔健康。
+                        </div>
+                        <div class="faq-meta">
+                            <div class="faq-date">更新于2024-01-15</div>
+                            <div class="faq-views">👁 2.3k</div>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span class="faq-icon">Q</span>
+                            <span>洗牙后牙齿敏感怎么办？</span>
+                        </div>
+                        <div class="faq-answer">
+                            洗牙后牙齿敏感是正常现象，通常持续1-2周。可以使用抗敏感牙膏，避免过冷过热食物，如果敏感持续较长时间请咨询医生。
+                        </div>
+                        <div class="faq-meta">
+                            <div class="faq-date">更新于2024-01-10</div>
+                            <div class="faq-views">👁 856</div>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span class="faq-icon">Q</span>
+                            <span>洗牙和抛光有什么区别？</span>
+                        </div>
+                        <div class="faq-answer">
+                            洗牙主要是去除牙结石和牙菌斑，而抛光是在洗牙后对牙齿表面进行打磨，使牙齿更加光滑，减少色素沉着。
+                        </div>
+                        <div class="faq-meta">
+                            <div class="faq-date">更新于2024-01-08</div>
+                            <div class="faq-views">👁 645</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-category">
+                <div class="category-header" data-category="repair">
+                    <div class="category-title">
+                        <span class="category-icon">🔧</span>
+                        牙齿修复
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div class="category-count">12个问题</div>
+                        <div class="category-arrow">▼</div>
+                    </div>
+                </div>
+                <div class="faq-items">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span class="faq-icon">Q</span>
+                            <span>补牙材料有哪些？如何选择？</span>
+                        </div>
+                        <div class="faq-answer">
+                            常见的补牙材料有：树脂材料（美观自然，适合前牙）、玻璃离子（含氟，适合儿童）、银汞合金（耐用，适合后牙）。选择时主要考虑位置、美观需求和经济因素。
+                        </div>
+                        <div class="faq-meta">
+                            <div class="faq-date">更新于2024-01-12</div>
+                            <div class="faq-views">👁 1.5k</div>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span class="faq-icon">Q</span>
+                            <span>补牙后能吃东西吗？</span>
+                        </div>
+                        <div class="faq-answer">
+                            补牙后建议等待2小时再进食，24小时内避免食用过硬、过热、过冷的食物，以免影响补牙材料的固化。
+                        </div>
+                        <div class="faq-meta">
+                            <div class="faq-date">更新于2024-01-05</div>
+                            <div class="faq-views">👁 723</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-category">
+                <div class="category-header" data-category="orthodontics">
+                    <div class="category-title">
+                        <span class="category-icon">🦷</span>
+                        牙齿矫正
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div class="category-count">10个问题</div>
+                        <div class="category-arrow">▼</div>
+                    </div>
+                </div>
+                <div class="faq-items">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span class="faq-icon">Q</span>
+                            <span>牙齿矫正需要多长时间？</span>
+                        </div>
+                        <div class="faq-answer">
+                            牙齿矫正时间因人而异，一般需要1-3年。具体时间取决于牙齿畸形程度、年龄、矫正方法等因素。儿童矫正时间相对较短。
+                        </div>
+                        <div class="faq-meta">
+                            <div class="faq-date">更新于2024-01-14</div>
+                            <div class="faq-views">👁 1.8k</div>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span class="faq-icon">Q</span>
+                            <span>隐形矫正和传统矫正哪个好？</span>
+                        </div>
+                        <div class="faq-answer">
+                            隐形矫正美观舒适，可自行摘戴，适合轻中度畸形；传统矫正价格较低，适合各种畸形。选择时考虑美观需求、预算和矫正效果。
+                        </div>
+                        <div class="faq-meta">
+                            <div class="faq-date">更新于2024-01-07</div>
+                            <div class="faq-views">👁 934</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-category">
+                <div class="category-header" data-category="implant">
+                    <div class="category-title">
+                        <span class="category-icon">🔩</span>
+                        种植牙
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div class="category-count">6个问题</div>
+                        <div class="category-arrow">▼</div>
+                    </div>
+                </div>
+                <div class="faq-items">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span class="faq-icon">Q</span>
+                            <span>种植牙能用多久？</span>
+                        </div>
+                        <div class="faq-answer">
+                            种植牙的使用年限一般在15-20年，如果护理得当可以使用更长时间。良好的口腔卫生习惯和定期复查是延长种植牙寿命的关键。
+                        </div>
+                        <div class="faq-meta">
+                            <div class="faq-date">更新于2024-01-11</div>
+                            <div class="faq-views">👁 1.2k</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ详情弹窗 -->
+        <div class="faq-modal" id="faqModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">问题详情</div>
+                    <div class="modal-close">×</div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-category">洗牙护理</div>
+                    <div class="modal-question">洗牙疼吗？多久洗一次比较好？</div>
+                    <div class="modal-answer">
+                        <p>洗牙一般不会疼痛，可能会有轻微的酸胀感。这是因为超声波振动会接触到牙齿敏感区域，但整个过程是安全无痛的。</p>
+                        <br>
+                        <p><strong>关于洗牙频率：</strong></p>
+                        <p>• 一般建议每6个月洗一次牙</p>
+                        <p>• 口腔卫生差的人群可3-4个月洗一次</p>
+                        <p>• 吸烟、喝茶、咖啡的人应增加洗牙频率</p>
+                        <br>
+                        <p><strong>洗牙的好处：</strong></p>
+                        <p>• 预防牙周疾病</p>
+                        <p>• 去除牙结石和牙菌斑</p>
+                        <p>• 保持口气清新</p>
+                        <p>• 早期发现口腔问题</p>
+                        <br>
+                        <p><strong>洗牙后注意事项：</strong></p>
+                        <p>• 24小时内避免过冷过热食物</p>
+                        <p>• 使用软毛牙刷刷牙</p>
+                        <p>• 如有敏感可使用抗敏感牙膏</p>
+                    </div>
+                    <div class="modal-meta">
+                        <div>更新于2024-01-15</div>
+                        <div>👁 2.3k 次浏览</div>
+                    </div>
+                    <div class="related-questions">
+                        <div class="related-title">相关问题</div>
+                        <div class="related-item">洗牙后牙齿敏感怎么办？</div>
+                        <div class="related-item">洗牙和抛光有什么区别？</div>
+                        <div class="related-item">孕妇可以洗牙吗？</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+            <div class="nav-item">
+                <div class="nav-icon">🏠</div>
+                <span class="nav-text">首页</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">👨‍⚕️</div>
+                <span class="nav-text">医生</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">📅</div>
+                <span class="nav-text">预约</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">💬</div>
+                <span class="nav-text">咨询</span>
+            </div>
+            <div class="nav-item active">
+                <div class="nav-icon">👤</div>
+                <span class="nav-text">我的</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 分类标签切换
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        categoryTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                categoryTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                console.log('选择了分类:', tab.textContent);
+            });
+        });
+
+        // FAQ分类展开/收起
+        const categoryHeaders = document.querySelectorAll('.category-header');
+        categoryHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const faqItems = header.nextElementSibling;
+                const arrow = header.querySelector('.category-arrow');
+                
+                faqItems.classList.toggle('expanded');
+                arrow.classList.toggle('expanded');
+            });
+        });
+
+        // FAQ问题展开/收起
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const answer = item.querySelector('.faq-answer');
+                answer.classList.toggle('expanded');
+            });
+        });
+
+        // 热门问题点击
+        const hotItems = document.querySelectorAll('.hot-item');
+        const faqModal = document.getElementById('faqModal');
+        const modalClose = document.querySelector('.modal-close');
+
+        hotItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const question = item.querySelector('.hot-question').textContent;
+                console.log('查看热门问题:', question);
+                faqModal.classList.add('active');
+            });
+        });
+
+        // FAQ问题点击查看详情
+        faqItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const question = item.querySelector('.faq-question span:last-child').textContent;
+                console.log('查看FAQ详情:', question);
+                faqModal.classList.add('active');
+            });
+        });
+
+        // 关闭弹窗
+        function closeModal() {
+            faqModal.classList.remove('active');
+        }
+
+        modalClose.addEventListener('click', closeModal);
+
+        faqModal.addEventListener('click', (e) => {
+            if (e.target === faqModal) {
+                closeModal();
+            }
+        });
+
+        // 相关问题点击
+        const relatedItems = document.querySelectorAll('.related-item');
+        relatedItems.forEach(item => {
+            item.addEventListener('click', () => {
+                console.log('查看相关问题:', item.textContent);
+                // 更新弹窗内容
+            });
+        });
+
+        // 搜索功能
+        const searchInput = document.querySelector('.search-input');
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            console.log('搜索:', searchTerm);
+            
+            if (searchTerm) {
+                // 搜索逻辑
+                faqItems.forEach(item => {
+                    const question = item.querySelector('.faq-question span:last-child').textContent.toLowerCase();
+                    const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+                    
+                    if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            } else {
+                // 显示所有FAQ
+                faqItems.forEach(item => {
+                    item.style.display = 'block';
+                });
+            }
+        });
+
+        // 返回按钮
+        document.querySelector('.back-btn').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+
+        // 搜索按钮
+        document.querySelector('.header-icon').addEventListener('click', () => {
+            searchInput.focus();
+        });
+
+        // 模拟加载更多
+        let isLoading = false;
+        window.addEventListener('scroll', () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !isLoading) {
+                isLoading = true;
+                
+                // 模拟加载更多FAQ
+                setTimeout(() => {
+                    console.log('加载更多FAQ...');
+                    isLoading = false;
+                }, 1000);
+            }
+        });
+
+        // 添加动画效果
+        const style = document.createElement('style');
+        style.textContent = `
+            .faq-category {
+                animation: fadeInUp 0.5s ease-out;
+            }
+            
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>知治健康 - 服务介绍</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 375px;
+            height: 812px;
+            margin: 0 auto;
+            background: #fff;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            height: 44px;
+            background: #1E88E5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* 顶部导航 */
+        .header {
+            background: #1E88E5;
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .header-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        /* 搜索栏 */
+        .search-section {
+            background: white;
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .search-bar {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: #f5f5f5;
+            border-radius: 20px;
+            padding: 8px 16px;
+            gap: 8px;
+        }
+
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            color: #999;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        /* 服务分类标签 */
+        .category-tabs {
+            background: white;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .category-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-tab {
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .category-tab.active {
+            background: #1E88E5;
+            color: white;
+            border-color: #1E88E5;
+        }
+
+        /* 服务列表 */
+        .services-container {
+            background: #f5f5f5;
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .service-image {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            position: relative;
+        }
+
+        .service-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #1E88E5;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .service-content {
+            padding: 16px;
+        }
+
+        .service-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .service-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .service-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .feature-tag {
+            background: #E3F2FD;
+            color: #1E88E5;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .service-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .service-price {
+            font-size: 20px;
+            font-weight: 600;
+            color: #FF5722;
+        }
+
+        .service-price-unit {
+            font-size: 14px;
+            color: #999;
+            font-weight: normal;
+        }
+
+        .service-action {
+            background: #1E88E5;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* 服务详情弹窗 */
+        .service-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 1000;
+        }
+
+        .service-modal.active {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 375px;
+            max-height: 90%;
+            border-radius: 20px 20px 0 0;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            position: relative;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .modal-section {
+            margin-bottom: 20px;
+        }
+
+        .modal-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .modal-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .suitable-people {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .people-tag {
+            background: #E8F5E8;
+            color: #4CAF50;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .attention-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .attention-list li {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .attention-list li::before {
+            content: '•';
+            position: absolute;
+            left: 8px;
+            color: #FF9800;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .modal-btn.secondary {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .modal-btn.primary {
+            background: #1E88E5;
+            color: white;
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 375px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .nav-item.active {
+            color: #1E88E5;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            font-size: 20px;
+        }
+
+        .nav-text {
+            font-size: 10px;
+        }
+
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+            font-size: 48px;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .empty-subtitle {
+            font-size: 14px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <span>9:41</span>
+        </div>
+
+        <!-- 顶部导航 -->
+        <div class="header">
+            <div class="back-btn">←</div>
+            <h1>服务介绍</h1>
+            <div class="header-icon">🔍</div>
+        </div>
+
+        <!-- 搜索栏 -->
+        <div class="search-section">
+            <div class="search-bar">
+                <div class="search-icon">🔍</div>
+                <input type="text" class="search-input" placeholder="搜索服务项目">
+            </div>
+        </div>
+
+        <!-- 服务分类标签 -->
+        <div class="category-tabs">
+            <div class="category-tab active">全部</div>
+            <div class="category-tab">口腔检查</div>
+            <div class="category-tab">洗牙</div>
+            <div class="category-tab">牙齿修复</div>
+            <div class="category-tab">牙齿矫正</div>
+            <div class="category-tab">牙齿美容</div>
+            <div class="category-tab">细胞治疗</div>
+            <div class="category-tab">会员服务</div>
+        </div>
+
+        <!-- 服务列表 -->
+        <div class="services-container">
+            <div class="service-card" data-service="cleaning">
+                <div class="service-image">
+                    <span>🪥</span>
+                    <div class="service-badge">热门</div>
+                </div>
+                <div class="service-content">
+                    <h3 class="service-title">超声波洗牙</h3>
+                    <p class="service-description">
+                        采用先进的超声波技术，有效去除牙结石、牙菌斑和色素沉着，预防牙周疾病，让您的牙齿恢复健康洁白。
+                    </p>
+                    <div class="service-features">
+                        <div class="feature-tag">去除牙结石</div>
+                        <div class="feature-tag">预防牙周病</div>
+                        <div class="feature-tag">口腔清洁</div>
+                        <div class="feature-tag">无痛舒适</div>
+                    </div>
+                    <div class="service-footer">
+                        <div class="service-price">¥150<span class="service-price-unit">起</span></div>
+                        <button class="service-action">查看详情</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card" data-service="filling">
+                <div class="service-image" style="background: linear-gradient(135deg, #43A047 0%, #66BB6A 100%);">
+                    <span>🔧</span>
+                </div>
+                <div class="service-content">
+                    <h3 class="service-title">树脂补牙</h3>
+                    <p class="service-description">
+                        使用高品质树脂材料，精确修复龋齿，恢复牙齿功能和美观。材料安全环保，颜色自然，与真牙无异。
+                    </p>
+                    <div class="service-features">
+                        <div class="feature-tag">美观自然</div>
+                        <div class="feature-tag">耐用牢固</div>
+                        <div class="feature-tag">安全环保</div>
+                        <div class="feature-tag">快速修复</div>
+                    </div>
+                    <div class="service-footer">
+                        <div class="service-price">¥200-500<span class="service-price-unit">起</span></div>
+                        <button class="service-action">查看详情</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card" data-service="orthodontics">
+                <div class="service-image" style="background: linear-gradient(135deg, #FB8C00 0%, #FFA726 100%);">
+                    <span>🦷</span>
+                    <div class="service-badge">推荐</div>
+                </div>
+                <div class="service-content">
+                    <h3 class="service-title">隐形牙齿矫正</h3>
+                    <p class="service-description">
+                        采用隐形矫正技术，无需传统钢牙套，美观舒适，可自行摘戴。矫正过程中不影响正常生活和工作。
+                    </p>
+                    <div class="service-features">
+                        <div class="feature-tag">隐形美观</div>
+                        <div class="feature-tag">舒适便捷</div>
+                        <div class="feature-tag">可自行摘戴</div>
+                        <div class="feature-tag">效果显著</div>
+                    </div>
+                    <div class="service-footer">
+                        <div class="service-price">¥15000<span class="service-price-unit">起</span></div>
+                        <button class="service-action">查看详情</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card" data-service="implant">
+                <div class="service-image" style="background: linear-gradient(135deg, #8E24AA 0%, #AB47BC 100%);">
+                    <span>🔩</span>
+                </div>
+                <div class="service-content">
+                    <h3 class="service-title">种植牙</h3>
+                    <p class="service-description">
+                        进口种植体，微创种植技术，恢复牙齿功能和美观。单颗、多颗、全口种植，满足不同需求。
+                    </p>
+                    <div class="service-features">
+                        <div class="feature-tag">进口种植体</div>
+                        <div class="feature-tag">微创技术</div>
+                        <div class="feature-tag">永久修复</div>
+                        <div class="feature-tag">自然美观</div>
+                    </div>
+                    <div class="service-footer">
+                        <div class="service-price">¥8000<span class="service-price-unit">起</span></div>
+                        <button class="service-action">查看详情</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card" data-service="whitening">
+                <div class="service-image" style="background: linear-gradient(135deg, #29B6F6 0%, #4FC3F7 100%);">
+                    <span>✨</span>
+                </div>
+                <div class="service-content">
+                    <h3 class="service-title">冷光美白</h3>
+                    <p class="service-description">
+                        采用先进的冷光美白技术，安全有效地去除牙齿表面色素沉着，让牙齿恢复自然洁白。
+                    </p>
+                    <div class="service-features">
+                        <div class="feature-tag">安全有效</div>
+                        <div class="feature-tag">快速美白</div>
+                        <div class="feature-tag">持久效果</div>
+                        <div class="feature-tag">无刺激</div>
+                    </div>
+                    <div class="service-footer">
+                        <div class="service-price">¥1200<span class="service-price-unit">起</span></div>
+                        <button class="service-action">查看详情</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-card" data-service="cell-therapy">
+                <div class="service-image" style="background: linear-gradient(135deg, #E91E63 0%, #F06292 100%);">
+                    <span>🧬</span>
+                    <div class="service-badge">新技术</div>
+                </div>
+                <div class="service-content">
+                    <h3 class="service-title">细胞治疗</h3>
+                    <p class="service-description">
+                        前沿细胞治疗技术，针对口腔疾病和牙齿修复，促进组织再生，提供更先进的治疗方案。
+                    </p>
+                    <div class="service-features">
+                        <div class="feature-tag">前沿技术</div>
+                        <div class="feature-tag">组织再生</div>
+                        <div class="feature-tag">个性化治疗</div>
+                        <div class="feature-tag">效果显著</div>
+                    </div>
+                    <div class="service-footer">
+                        <div class="service-price">¥5000<span class="service-price-unit">起</span></div>
+                        <button class="service-action">查看详情</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 服务详情弹窗 -->
+        <div class="service-modal" id="serviceModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-close">×</div>
+                    <div style="font-size: 48px;">🪥</div>
+                </div>
+                <div class="modal-body">
+                    <h3 class="modal-title">超声波洗牙</h3>
+                    
+                    <div class="modal-section">
+                        <h4 class="modal-section-title">服务介绍</h4>
+                        <p class="modal-text">
+                            超声波洗牙是一种专业、安全、有效的牙齿清洁方法。通过高频超声波振动，能够有效去除牙齿表面的牙结石、牙菌斑和色素沉着，预防牙周疾病，让您的牙齿恢复健康洁白。
+                        </p>
+                    </div>
+
+                    <div class="modal-section">
+                        <h4 class="modal-section-title">适合人群</h4>
+                        <div class="suitable-people">
+                            <div class="people-tag">所有人群</div>
+                            <div class="people-tag">牙结石患者</div>
+                            <div class="people-tag">牙龈出血者</div>
+                            <div class="people-tag">口腔异味者</div>
+                            <div class="people-tag">牙齿发黄者</div>
+                        </div>
+                    </div>
+
+                    <div class="modal-section">
+                        <h4 class="modal-section-title">服务流程</h4>
+                        <p class="modal-text">
+                            1. 口腔检查 → 2. 超声波清洁 → 3. 喷砂抛光 → 4. 涂氟保护 → 5. 口腔护理指导
+                        </p>
+                    </div>
+
+                    <div class="modal-section">
+                        <h4 class="modal-section-title">注意事项</h4>
+                        <ul class="attention-list">
+                            <li>洗牙后可能会有轻微敏感，属于正常现象</li>
+                            <li>建议每6个月进行一次专业洗牙</li>
+                            <li>洗牙后24小时内避免食用过冷过热食物</li>
+                            <li>保持良好的口腔卫生习惯</li>
+                            <li>如有不适请及时联系医生</li>
+                        </ul>
+                    </div>
+
+                    <div class="modal-section">
+                        <h4 class="modal-section-title">价格说明</h4>
+                        <p class="modal-text">
+                            基础洗牙：¥150<br>
+                            深度清洁：¥200-300<br>
+                            全口洁治：¥300-500
+                        </p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn secondary">关闭</button>
+                    <button class="modal-btn primary">立即预约</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+            <div class="nav-item">
+                <div class="nav-icon">🏠</div>
+                <span class="nav-text">首页</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">👨‍⚕️</div>
+                <span class="nav-text">医生</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">📅</div>
+                <span class="nav-text">预约</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">💬</div>
+                <span class="nav-text">咨询</span>
+            </div>
+            <div class="nav-item active">
+                <div class="nav-icon">👤</div>
+                <span class="nav-text">我的</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 分类标签切换
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        categoryTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                categoryTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                // 这里可以添加筛选逻辑
+                console.log('选择了分类:', tab.textContent);
+            });
+        });
+
+        // 服务卡片点击
+        const serviceCards = document.querySelectorAll('.service-card');
+        const serviceModal = document.getElementById('serviceModal');
+        const modalClose = document.querySelector('.modal-close');
+        const modalBtnSecondary = document.querySelector('.modal-btn.secondary');
+        const modalBtnPrimary = document.querySelector('.modal-btn.primary');
+
+        serviceCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const serviceType = card.dataset.service;
+                console.log('查看服务详情:', serviceType);
+                serviceModal.classList.add('active');
+                
+                // 这里可以根据不同的服务类型更新弹窗内容
+                updateModalContent(serviceType);
+            });
+        });
+
+        // 关闭弹窗
+        function closeModal() {
+            serviceModal.classList.remove('active');
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modalBtnSecondary.addEventListener('click', closeModal);
+
+        modalBtnPrimary.addEventListener('click', () => {
+            closeModal();
+            // 跳转到预约页面
+            window.location.href = 'appointment.html';
+        });
+
+        // 点击弹窗外部关闭
+        serviceModal.addEventListener('click', (e) => {
+            if (e.target === serviceModal) {
+                closeModal();
+            }
+        });
+
+        // 更新弹窗内容
+        function updateModalContent(serviceType) {
+            // 这里可以根据不同的服务类型更新弹窗内容
+            console.log('更新弹窗内容:', serviceType);
+        }
+
+        // 搜索功能
+        const searchInput = document.querySelector('.search-input');
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            console.log('搜索:', searchTerm);
+            
+            // 这里可以添加搜索逻辑
+            if (searchTerm) {
+                // 过滤服务卡片
+                serviceCards.forEach(card => {
+                    const title = card.querySelector('.service-title').textContent.toLowerCase();
+                    const description = card.querySelector('.service-description').textContent.toLowerCase();
+                    
+                    if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            } else {
+                // 显示所有服务卡片
+                serviceCards.forEach(card => {
+                    card.style.display = 'block';
+                });
+            }
+        });
+
+        // 返回按钮
+        document.querySelector('.back-btn').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+
+        // 搜索按钮
+        document.querySelector('.header-icon').addEventListener('click', () => {
+            searchInput.focus();
+        });
+
+        // 模拟加载更多
+        let isLoading = false;
+        window.addEventListener('scroll', () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !isLoading) {
+                isLoading = true;
+                
+                // 模拟加载更多服务
+                setTimeout(() => {
+                    console.log('加载更多服务...');
+                    isLoading = false;
+                }, 1000);
+            }
+        });
+
+        // 添加动画效果
+        const style = document.createElement('style');
+        style.textContent = `
+            .service-card {
+                animation: fadeInUp 0.5s ease-out;
+            }
+            
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

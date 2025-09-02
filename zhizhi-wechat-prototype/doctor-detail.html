@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>知治健康 - 医生详情</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 375px;
+            height: 812px;
+            margin: 0 auto;
+            background: #fff;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            height: 44px;
+            background: #1E88E5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* 顶部导航 */
+        .header {
+            background: #1E88E5;
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .header-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        /* 医生基本信息 */
+        .doctor-profile {
+            background: white;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .doctor-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .doctor-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #E3F2FD;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: #1E88E5;
+        }
+
+        .doctor-info {
+            flex: 1;
+        }
+
+        .doctor-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .doctor-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .doctor-hospital {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
+        }
+
+        .doctor-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rating-stars {
+            color: #FF9800;
+            font-size: 14px;
+        }
+
+        .rating-text {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .consultation-count {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .doctor-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 16px 0;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1E88E5;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* 标签页 */
+        .tabs {
+            background: white;
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            color: #1E88E5;
+            border-bottom-color: #1E88E5;
+        }
+
+        /* 标签页内容 */
+        .tab-content {
+            display: none;
+            background: #f5f5f5;
+            padding-bottom: 80px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 医生简介 */
+        .doctor-intro {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .intro-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* 擅长领域 */
+        .specialties {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .specialty-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .specialty-tag {
+            background: #E3F2FD;
+            color: #1E88E5;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+        }
+
+        /* 服务项目 */
+        .services {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .service-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .service-item:last-child {
+            border-bottom: none;
+        }
+
+        .service-info {
+            flex: 1;
+        }
+
+        .service-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .service-desc {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .service-price {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FF5722;
+        }
+
+        /* 患者评价 */
+        .reviews {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .review-item {
+            padding: 16px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .reviewer-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .reviewer-info {
+            flex: 1;
+        }
+
+        .reviewer-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .review-date {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .review-rating {
+            color: #FF9800;
+            font-size: 12px;
+        }
+
+        .review-content {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* 预约排班 */
+        .schedule {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .schedule-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .schedule-btn {
+            background: #f5f5f5;
+            border: none;
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .schedule-btn.active {
+            background: #1E88E5;
+            color: white;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .time-slot {
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .time-slot.available {
+            background: #E8F5E8;
+            border-color: #4CAF50;
+            color: #2E7D32;
+        }
+
+        .time-slot.occupied {
+            background: #FFF3E0;
+            border-color: #FF9800;
+            color: #F57C00;
+        }
+
+        .time-slot.selected {
+            background: #1E88E5;
+            color: white;
+            border-color: #1E88E5;
+        }
+
+        /* 底部预约栏 */
+        .bottom-booking {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 375px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            padding: 12px 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .booking-price {
+            flex: 1;
+        }
+
+        .price-label {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .price-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FF5722;
+        }
+
+        .booking-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .booking-btn {
+            background: #f5f5f5;
+            color: #666;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .booking-btn.primary {
+            background: #1E88E5;
+            color: white;
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 375px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .nav-item.active {
+            color: #1E88E5;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            font-size: 20px;
+        }
+
+        .nav-text {
+            font-size: 10px;
+        }
+
+        /* 收藏状态 */
+        .favorite-btn {
+            color: #999;
+        }
+
+        .favorite-btn.active {
+            color: #FF5722;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <span>9:41</span>
+        </div>
+
+        <!-- 顶部导航 -->
+        <div class="header">
+            <div class="back-btn">←</div>
+            <h1>医生详情</h1>
+            <div class="header-actions">
+                <div class="header-icon favorite-btn" id="favoriteBtn">⭐</div>
+                <div class="header-icon">📤</div>
+            </div>
+        </div>
+
+        <!-- 医生基本信息 -->
+        <div class="doctor-profile">
+            <div class="doctor-header">
+                <div class="doctor-avatar">👨‍⚕️</div>
+                <div class="doctor-info">
+                    <div class="doctor-name">张医生</div>
+                    <div class="doctor-title">主任医师 · 口腔修复</div>
+                    <div class="doctor-hospital">广州口腔医院 · 口腔修复科</div>
+                    <div class="doctor-rating">
+                        <span class="rating-stars">⭐⭐⭐⭐⭐</span>
+                        <span class="rating-text">4.9分</span>
+                        <span class="consultation-count">咨询1.2k次</span>
+                    </div>
+                </div>
+            </div>
+            <div class="doctor-stats">
+                <div class="stat-item">
+                    <div class="stat-number">15年</div>
+                    <div class="stat-label">从业经验</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">3.2k</div>
+                    <div class="stat-label">成功案例</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">满意度</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">2天</div>
+                    <div class="stat-label">可预约</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 标签页 -->
+        <div class="tabs">
+            <div class="tab active" data-tab="intro">医生简介</div>
+            <div class="tab" data-tab="services">服务项目</div>
+            <div class="tab" data-tab="reviews">患者评价</div>
+            <div class="tab" data-tab="schedule">预约排班</div>
+        </div>
+
+        <!-- 标签页内容 -->
+        <div class="tab-content active" id="intro">
+            <div class="doctor-intro">
+                <h3 class="section-title">医生简介</h3>
+                <p class="intro-text">
+                    张医生，主任医师，从事口腔修复工作15年，拥有丰富的临床经验。擅长牙齿修复、种植牙、牙齿矫正等项目，发表学术论文20余篇，主持多项科研项目。致力于为患者提供专业、安全、舒适的口腔医疗服务。
+                </p>
+            </div>
+
+            <div class="specialties">
+                <h3 class="section-title">擅长领域</h3>
+                <div class="specialty-tags">
+                    <div class="specialty-tag">牙齿修复</div>
+                    <div class="specialty-tag">种植牙</div>
+                    <div class="specialty-tag">牙齿矫正</div>
+                    <div class="specialty-tag">瓷贴面</div>
+                    <div class="specialty-tag">牙齿美白</div>
+                    <div class="specialty-tag">根管治疗</div>
+                    <div class="specialty-tag">牙周治疗</div>
+                    <div class="specialty-tag">儿童牙科</div>
+                </div>
+            </div>
+
+            <div class="doctor-intro">
+                <h3 class="section-title">学术背景</h3>
+                <p class="intro-text">
+                    毕业于中山大学口腔医学院，获口腔医学博士学位。曾在国内外知名口腔医院进修学习，掌握国际先进技术。现任广东省口腔医学会理事，口腔修复专业委员会常委。
+                </p>
+            </div>
+
+            <div class="doctor-intro">
+                <h3 class="section-title">医院地址</h3>
+                <p class="intro-text">
+                    广州市越秀区中山二路58号广州口腔医院<br>
+                    交通路线：地铁1号线烈士陵园站C出口<br>
+                    联系电话：020-87654321
+                </p>
+            </div>
+        </div>
+
+        <div class="tab-content" id="services">
+            <div class="services">
+                <h3 class="section-title">服务项目</h3>
+                <div class="service-item">
+                    <div class="service-info">
+                        <div class="service-name">洗牙</div>
+                        <div class="service-desc">超声波洗牙，去除牙结石和牙菌斑</div>
+                    </div>
+                    <div class="service-price">¥150</div>
+                </div>
+                <div class="service-item">
+                    <div class="service-info">
+                        <div class="service-name">补牙</div>
+                        <div class="service-desc">树脂补牙，恢复牙齿功能</div>
+                    </div>
+                    <div class="service-price">¥200-500</div>
+                </div>
+                <div class="service-item">
+                    <div class="service-info">
+                        <div class="service-name">种植牙</div>
+                        <div class="service-desc">进口种植体，永久修复</div>
+                    </div>
+                    <div class="service-price">¥8000起</div>
+                </div>
+                <div class="service-item">
+                    <div class="service-info">
+                        <div class="service-name">牙齿矫正</div>
+                        <div class="service-desc">隐形矫正，美观舒适</div>
+                    </div>
+                    <div class="service-price">¥15000起</div>
+                </div>
+                <div class="service-item">
+                    <div class="service-info">
+                        <div class="service-name">瓷贴面</div>
+                        <div class="service-desc">超薄瓷贴面，改善牙齿外观</div>
+                    </div>
+                    <div class="service-price">¥1200起</div>
+                </div>
+                <div class="service-item">
+                    <div class="service-info">
+                        <div class="service-name">根管治疗</div>
+                        <div class="service-desc">显微根管治疗，保留患牙</div>
+                    </div>
+                    <div class="service-price">¥800-1500</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="reviews">
+            <div class="reviews">
+                <h3 class="section-title">患者评价</h3>
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="reviewer-avatar">王</div>
+                        <div class="reviewer-info">
+                            <div class="reviewer-name">王先生</div>
+                            <div class="review-date">2024-01-15</div>
+                        </div>
+                        <div class="review-rating">⭐⭐⭐⭐⭐</div>
+                    </div>
+                    <div class="review-content">
+                        张医生非常专业，态度很好，详细解释了治疗方案。洗牙过程很仔细，没有任何不适感。强烈推荐！
+                    </div>
+                </div>
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="reviewer-avatar">李</div>
+                        <div class="reviewer-info">
+                            <div class="reviewer-name">李女士</div>
+                            <div class="review-date">2024-01-10</div>
+                        </div>
+                        <div class="review-rating">⭐⭐⭐⭐⭐</div>
+                    </div>
+                    <div class="review-content">
+                        在张医生这里做了种植牙，技术很好，恢复得很快。医院环境也很好，服务态度一流。
+                    </div>
+                </div>
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="reviewer-avatar">陈</div>
+                        <div class="reviewer-info">
+                            <div class="reviewer-name">陈女士</div>
+                            <div class="review-date">2024-01-05</div>
+                        </div>
+                        <div class="review-rating">⭐⭐⭐⭐⭐</div>
+                    </div>
+                    <div class="review-content">
+                        孩子牙齿矫正，张医生很有耐心，孩子不害怕。矫正效果很好，感谢张医生！
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="schedule">
+            <div class="schedule">
+                <h3 class="section-title">预约排班</h3>
+                <div class="schedule-header">
+                    <div class="schedule-nav">
+                        <button class="schedule-btn active">本周</button>
+                        <button class="schedule-btn">下周</button>
+                    </div>
+                </div>
+                <div class="schedule-date">
+                    <p style="font-size: 14px; color: #666; margin-bottom: 12px;">2024年1月15日 - 1月21日</p>
+                </div>
+                <div class="time-slots">
+                    <div class="time-slot available">09:00</div>
+                    <div class="time-slot available">09:30</div>
+                    <div class="time-slot occupied">10:00</div>
+                    <div class="time-slot available">10:30</div>
+                    <div class="time-slot available">11:00</div>
+                    <div class="time-slot occupied">11:30</div>
+                    <div class="time-slot">14:00</div>
+                    <div class="time-slot available">14:30</div>
+                    <div class="time-slot available">15:00</div>
+                    <div class="time-slot occupied">15:30</div>
+                    <div class="time-slot available">16:00</div>
+                    <div class="time-slot available">16:30</div>
+                </div>
+                <div style="margin-top: 16px; font-size: 12px; color: #666;">
+                    <p>🟢 可预约  🟠 已约满  ⚪ 休息时间</p>
+                </div>
+            </div>
+
+            <div class="doctor-intro">
+                <h3 class="section-title">预约须知</h3>
+                <ul style="font-size: 14px; color: #666; line-height: 1.8; padding-left: 20px;">
+                    <li>请提前10分钟到达医院</li>
+                    <li>预约成功后会收到短信提醒</li>
+                    <li>如需取消预约，请提前24小时操作</li>
+                    <li>初诊患者请携带身份证件</li>
+                    <li>如有疑问，请致电医院咨询</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 底部预约栏 -->
+        <div class="bottom-booking">
+            <div class="booking-price">
+                <div class="price-label">咨询费用</div>
+                <div class="price-value">¥50起</div>
+            </div>
+            <div class="booking-actions">
+                <button class="booking-btn">咨询</button>
+                <button class="booking-btn primary">预约</button>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+            <div class="nav-item">
+                <div class="nav-icon">🏠</div>
+                <span class="nav-text">首页</span>
+            </div>
+            <div class="nav-item active">
+                <div class="nav-icon">👨‍⚕️</div>
+                <span class="nav-text">医生</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">📅</div>
+                <span class="nav-text">预约</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">💬</div>
+                <span class="nav-text">咨询</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">👤</div>
+                <span class="nav-text">我的</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 标签页切换
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetTab = tab.getAttribute('data-tab');
+                
+                // 移除所有active类
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // 添加active类
+                tab.classList.add('active');
+                document.getElementById(targetTab).classList.add('active');
+            });
+        });
+
+        // 收藏功能
+        const favoriteBtn = document.getElementById('favoriteBtn');
+        let isFavorite = false;
+
+        favoriteBtn.addEventListener('click', () => {
+            isFavorite = !isFavorite;
+            favoriteBtn.classList.toggle('active');
+            favoriteBtn.textContent = isFavorite ? '⭐' : '⭐';
+        });
+
+        // 时间段选择
+        const timeSlots = document.querySelectorAll('.time-slot');
+        let selectedSlot = null;
+
+        timeSlots.forEach(slot => {
+            slot.addEventListener('click', () => {
+                if (slot.classList.contains('available')) {
+                    // 移除之前选中的时间段
+                    if (selectedSlot) {
+                        selectedSlot.classList.remove('selected');
+                    }
+                    
+                    // 选中新时间段
+                    slot.classList.add('selected');
+                    selectedSlot = slot;
+                }
+            });
+        });
+
+        // 预约按钮
+        const bookingBtn = document.querySelector('.booking-btn.primary');
+        bookingBtn.addEventListener('click', () => {
+            if (selectedSlot) {
+                console.log('预约时间:', selectedSlot.textContent);
+                // 跳转到预约页面
+            } else {
+                console.log('请先选择预约时间');
+            }
+        });
+
+        // 咨询按钮
+        const consultBtn = document.querySelector('.booking-btn');
+        consultBtn.addEventListener('click', () => {
+            console.log('跳转到咨询页面');
+        });
+
+        // 分页导航
+        const scheduleBtns = document.querySelectorAll('.schedule-btn');
+        scheduleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                scheduleBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // 返回按钮
+        const backBtn = document.querySelector('.back-btn');
+        backBtn.addEventListener('click', () => {
+            console.log('返回上一页');
+        });
+
+        // 分享功能
+        const shareBtn = document.querySelector('.header-icon:last-child');
+        shareBtn.addEventListener('click', () => {
+            console.log('分享医生信息');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>知治健康 - 首页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 375px;
+            height: 812px;
+            margin: 0 auto;
+            background: #fff;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* 顶部状态栏 */
+        .status-bar {
+            height: 44px;
+            background: #1E88E5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* 顶部导航 */
+        .header {
+            background: #1E88E5;
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .header-icon {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        /* 轮播图 */
+        .carousel {
+            height: 200px;
+            background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.3s ease;
+        }
+
+        .carousel-item {
+            min-width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .carousel-indicators {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .indicator {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+        }
+
+        .indicator.active {
+            background: white;
+        }
+
+        /* 快速预约入口 */
+        .quick-booking {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .booking-btn {
+            width: 100%;
+            background: #1E88E5;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .booking-btn:hover {
+            background: #1976D2;
+        }
+
+        /* 服务分类 */
+        .service-categories {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .category-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .category-icon {
+            width: 48px;
+            height: 48px;
+            background: #E3F2FD;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .category-name {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+
+        /* 推荐医生 */
+        .recommended-doctors {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .doctor-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .doctor-card:last-child {
+            border-bottom: none;
+        }
+
+        .doctor-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #E3F2FD;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #1E88E5;
+        }
+
+        .doctor-info {
+            flex: 1;
+        }
+
+        .doctor-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .doctor-title {
+            font-size: 14px;
+            color: #666;
+            margin: 2px 0;
+        }
+
+        .doctor-hospital {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .doctor-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
+        .rating-stars {
+            color: #FF9800;
+            font-size: 12px;
+        }
+
+        .rating-text {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .booking-btn-small {
+            background: #1E88E5;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        /* 数据统计 */
+        .statistics {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 16px;
+            background: #F8F9FA;
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1E88E5;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* 热门FAQ */
+        .popular-faq {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .faq-category {
+            font-size: 12px;
+            color: #1E88E5;
+            background: #E3F2FD;
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 375px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .nav-item.active {
+            color: #1E88E5;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            font-size: 20px;
+        }
+
+        .nav-text {
+            font-size: 10px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 375px) {
+            .app-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <span>9:41</span>
+        </div>
+
+        <!-- 顶部导航 -->
+        <div class="header">
+            <h1>知治健康</h1>
+            <div class="header-icons">
+                <div class="header-icon"><img src="images/search.svg" alt="搜索" style="width: 20px; height: 20px;"></div>
+                <div class="header-icon"><img src="images/bell.svg" alt="通知" style="width: 20px; height: 20px;"></div>
+            </div>
+        </div>
+
+        <!-- 轮播图 -->
+        <div class="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item">
+                    <span>专业口腔护理服务</span>
+                </div>
+                <div class="carousel-item" style="background: linear-gradient(135deg, #43A047 0%, #66BB6A 100%);">
+                    <span>会员专属优惠</span>
+                </div>
+                <div class="carousel-item" style="background: linear-gradient(135deg, #FB8C00 0%, #FFA726 100%);">
+                    <span>新用户专享福利</span>
+                </div>
+            </div>
+            <div class="carousel-indicators">
+                <div class="indicator active"></div>
+                <div class="indicator"></div>
+                <div class="indicator"></div>
+            </div>
+        </div>
+
+        <!-- 快速预约入口 -->
+        <div class="quick-booking">
+            <button class="booking-btn">
+                <img src="images/calendar.svg" alt="快速预约" style="width: 24px; height: 24px;">
+                <span>快速预约</span>
+            </button>
+        </div>
+
+        <!-- 服务分类 -->
+        <div class="service-categories">
+            <h2 class="section-title">服务分类</h2>
+            <div class="categories-grid">
+                <div class="category-item">
+                    <div class="category-icon"><img src="images/tooth.svg" alt="口腔服务" style="width: 32px; height: 32px;"></div>
+                    <span class="category-name">口腔检查</span>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon"><img src="images/cleaning.svg" alt="洗牙" style="width: 32px; height: 32px;"></div>
+                    <span class="category-name">洗牙</span>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon"><img src="images/medical.svg" alt="牙齿修复" style="width: 32px; height: 32px;"></div>
+                    <span class="category-name">牙齿修复</span>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon"><img src="images/clipboard.svg" alt="牙齿治疗" style="width: 32px; height: 32px;"></div>
+                    <span class="category-name">牙齿治疗</span>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon"><img src="images/dna.svg" alt="细胞治疗" style="width: 32px; height: 32px;"></div>
+                    <span class="category-name">细胞治疗</span>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon"><img src="images/crown.svg" alt="会员服务" style="width: 32px; height: 32px;"></div>
+                    <span class="category-name">会员服务</span>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon"><img src="images/card.svg" alt="权益卡" style="width: 32px; height: 32px;"></div>
+                    <span class="category-name">权益卡</span>
+                </div>
+                <div class="category-item">
+                    <div class="category-icon"><img src="images/phone.svg" alt="在线咨询" style="width: 32px; height: 32px;"></div>
+                    <span class="category-name">在线咨询</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 推荐医生 -->
+        <div class="recommended-doctors">
+            <h2 class="section-title">推荐医生</h2>
+            <div class="doctor-card">
+                <div class="doctor-avatar"><img src="images/user.svg" alt="医生" style="width: 48px; height: 48px; border-radius: 50%;"></div>
+                <div class="doctor-info">
+                    <div class="doctor-name">张医生</div>
+                    <div class="doctor-title">主任医师 · 口腔修复</div>
+                    <div class="doctor-hospital">广州口腔医院</div>
+                    <div class="doctor-rating">
+                        <span class="rating-stars"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px;"></span>
+                        <span class="rating-text">4.9分</span>
+                    </div>
+                </div>
+                <button class="booking-btn-small">预约</button>
+            </div>
+            <div class="doctor-card">
+                <div class="doctor-avatar"><img src="images/user.svg" alt="医生" style="width: 48px; height: 48px; border-radius: 50%;"></div>
+                <div class="doctor-info">
+                    <div class="doctor-name">李医生</div>
+                    <div class="doctor-title">副主任医师 · 牙周治疗</div>
+                    <div class="doctor-hospital">中山大学附属口腔医院</div>
+                    <div class="doctor-rating">
+                        <span class="rating-stars"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px;"></span>
+                        <span class="rating-text">4.8分</span>
+                    </div>
+                </div>
+                <button class="booking-btn-small">预约</button>
+            </div>
+            <div class="doctor-card">
+                <div class="doctor-avatar"><img src="images/user.svg" alt="医生" style="width: 48px; height: 48px; border-radius: 50%;"></div>
+                <div class="doctor-info">
+                    <div class="doctor-name">王医生</div>
+                    <div class="doctor-title">主治医师 · 牙齿美容</div>
+                    <div class="doctor-hospital">广东省口腔医院</div>
+                    <div class="doctor-rating">
+                        <span class="rating-stars"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px; margin-right: 2px;"><img src="images/star.svg" alt="星级" style="width: 16px; height: 16px;"></span>
+                        <span class="rating-text">4.7分</span>
+                    </div>
+                </div>
+                <button class="booking-btn-small">预约</button>
+            </div>
+        </div>
+
+        <!-- 数据统计 -->
+        <div class="statistics">
+            <h2 class="section-title">平台数据</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">专业医生</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10万+</div>
+                    <div class="stat-label">成功案例</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">满意度</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">15年+</div>
+                    <div class="stat-label">平均经验</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 热门FAQ -->
+        <div class="popular-faq">
+            <h2 class="section-title">热门问题</h2>
+            <div class="faq-item">
+                <div class="faq-question">洗牙疼吗？多久洗一次比较好？</div>
+                <div class="faq-category">洗牙护理</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">牙齿矫正需要多长时间？</div>
+                <div class="faq-category">牙齿矫正</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">补牙材料有哪些？如何选择？</div>
+                <div class="faq-category">补牙修复</div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+            <div class="nav-item active">
+                <div class="nav-icon"><img src="images/home.svg" alt="首页" style="width: 24px; height: 24px;"></div>
+                <span class="nav-text">首页</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"><img src="images/user.svg" alt="医生" style="width: 24px; height: 24px;"></div>
+                <span class="nav-text">医生</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"><img src="images/clock.svg" alt="预约" style="width: 24px; height: 24px;"></div>
+                <span class="nav-text">预约</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"><img src="images/chat.svg" alt="咨询" style="width: 24px; height: 24px;"></div>
+                <span class="nav-text">咨询</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon"><img src="images/user.svg" alt="我的" style="width: 24px; height: 24px;"></div>
+                <span class="nav-text">我的</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 轮播图自动播放
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.carousel-item');
+        const indicators = document.querySelectorAll('.indicator');
+        const carouselInner = document.querySelector('.carousel-inner');
+
+        function showSlide(index) {
+            carouselInner.style.transform = `translateX(-${index * 100}%)`;
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === index);
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        // 自动播放
+        setInterval(nextSlide, 3000);
+
+        // 指示器点击
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                currentSlide = index;
+                showSlide(currentSlide);
+            });
+        });
+
+        // 页面交互
+        document.querySelectorAll('.category-item').forEach(item => {
+            item.addEventListener('click', () => {
+                console.log('点击了服务分类');
+            });
+        });
+
+        document.querySelectorAll('.doctor-card').forEach(card => {
+            card.addEventListener('click', () => {
+                console.log('点击了医生卡片');
+            });
+        });
+
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                console.log('点击了FAQ');
+            });
+        });
+    </script>
+</body>
+</html>
