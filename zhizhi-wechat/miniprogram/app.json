@@ -27,23 +27,33 @@
     "list": [
       {
         "pagePath": "pages/index/index",
-        "text": "首页"
+        "text": "首页",
+        "iconPath": "images/home-inactive.png",
+        "selectedIconPath": "images/home-active.png"
       },
       {
         "pagePath": "pages/doctors/doctors",
-        "text": "医生"
+        "text": "医生",
+        "iconPath": "images/doctor-inactive.png",
+        "selectedIconPath": "images/doctor-active.png"
       },
       {
         "pagePath": "pages/appointment/appointment",
-        "text": "预约"
+        "text": "预约",
+        "iconPath": "images/appointment-inactive.png",
+        "selectedIconPath": "images/appointment-active.png"
       },
       {
-        "pagePath": "pages/consultation/consultation",
-        "text": "咨询"
+        "pagePath": "pages/services/services",
+        "text": "服务",
+        "iconPath": "images/services-inactive.png",
+        "selectedIconPath": "images/services-active.png"
       },
       {
         "pagePath": "pages/profile/profile",
-        "text": "我的"
+        "text": "我的",
+        "iconPath": "images/profile-inactive.png",
+        "selectedIconPath": "images/profile-active.png"
       }
     ]
   },
