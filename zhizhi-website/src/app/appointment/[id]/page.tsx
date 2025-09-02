@@ -1,6 +1,5 @@
 'use client'
 
-import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import DoctorList from '@/components/DoctorList'
 import { useEffect, useState } from 'react'
@@ -36,6 +35,13 @@ export default function UniversalAppointmentPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showDoctorList, setShowDoctorList] = useState(false)
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  
+  // Helper function to show messages
+  const showMessage = (type: 'success' | 'error', text: string) => {
+    setMessage({ type, text })
+    setTimeout(() => setMessage(null), 5000)
+  }
   
   // Form state
   const [selectedService, setSelectedService] = useState(searchParams.get('service') || '')
@@ -169,7 +175,7 @@ export default function UniversalAppointmentPage() {
     e.preventDefault()
     
     if (!doctor || !selectedDate || !selectedTime || !patientName || !patientPhone) {
-      alert('请填写所有必填项')
+      showMessage('error', '请填写所有必填项')
       return
     }
     
@@ -199,7 +205,7 @@ export default function UniversalAppointmentPage() {
       const result = await response.json()
       
       if (result.success) {
-        alert('预约成功！我们将在24小时内与您联系确认预约信息。')
+        showMessage('success', '预约成功！我们将在24小时内与您联系确认预约信息。')
         // Reset form
         setPatientName('')
         setPatientPhone('')
@@ -208,11 +214,11 @@ export default function UniversalAppointmentPage() {
         setSelectedDate('')
         setSelectedTime('')
       } else {
-        alert('预约失败：' + result.message)
+        showMessage('error', '预约失败：' + result.message)
       }
     } catch (err) {
       console.error('Error submitting appointment:', err)
-      alert('预约失败，请稍后重试')
+      showMessage('error', '预约失败，请稍后重试')
     } finally {
       setIsSubmitting(false)
     }
@@ -231,7 +237,6 @@ export default function UniversalAppointmentPage() {
   if (loading) {
     return (
       <div className="min-h-screen">
-        <Header />
         <div className="flex items-center justify-center h-96">
           <div className="text-xl">加载中...</div>
         </div>
@@ -242,7 +247,6 @@ export default function UniversalAppointmentPage() {
 
   return (
     <div className="min-h-screen">
-      <Header />
       
       <main>
         {/* Header Section */}
@@ -346,6 +350,17 @@ export default function UniversalAppointmentPage() {
                 <div className="md:w-3/5 p-6">
                   {doctor ? (
                     <form onSubmit={handleSubmit} className="space-y-6">
+                      {/* Message Display */}
+                      {message && (
+                        <div className={`p-4 rounded-lg ${
+                          message.type === 'success' 
+                            ? 'bg-green-100 border border-green-400 text-green-700' 
+                            : 'bg-red-100 border border-red-400 text-red-700'
+                        }`}>
+                          {message.text}
+                        </div>
+                      )}
+                      
                       {/* Service Selection */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">

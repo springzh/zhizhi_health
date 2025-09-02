@@ -1,9 +1,15 @@
 'use client'
 
 import { useState } from 'react';
+import { useAuth } from './AuthContext';
+import AuthModal from './AuthModal';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  
+  const { user, isAuthenticated, logout } = useAuth()
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-100">
@@ -42,6 +48,54 @@ export default function Header() {
           </div>
           
           <div className="hidden md:flex items-center space-x-4">
+            {isAuthenticated ? (
+              <div className="relative">
+                <button
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="flex items-center space-x-2 text-gray-700 hover:text-primary"
+                >
+                  <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center">
+                    {user?.nickname?.[0] || user?.email?.[0] || 'U'}
+                  </div>
+                  <span className="text-sm font-medium">
+                    {user?.nickname || user?.email}
+                  </span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                    <a
+                      href="/account"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      账号管理
+                    </a>
+                    <a
+                      href="/my-consultations"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      我的咨询
+                    </a>
+                    <button
+                      onClick={logout}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      退出登录
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsAuthModalOpen(true)}
+                className="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-dark transition-colors"
+              >
+                登录/注册
+              </button>
+            )}
             <a href="/appointment" className="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-dark transition-colors inline-block">
               立即预约
             </a>
@@ -93,6 +147,11 @@ export default function Header() {
           </div>
         )}
       </div>
+      
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
     </header>
   )
 }

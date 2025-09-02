@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '../types';
+import { UserModel } from '../models/user.model';
 import { logger } from '../utils/logger';
 
 // 扩展Express Request类型
@@ -33,17 +34,17 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
     
-    // 这里可以添加从数据库获取用户信息的逻辑
-    // const user = await UserModel.findById(decoded.id);
-    // if (!user) {
-    //   return res.status(401).json({
-    //     success: false,
-    //     message: 'Token is not valid',
-    //     timestamp: new Date(),
-    //   });
-    // }
+    // 从数据库获取用户信息
+    const user = await UserModel.findById(decoded.id);
+    if (!user || !user.is_active) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token is not valid',
+        timestamp: new Date(),
+      });
+    }
 
-    req.user = decoded as any;
+    req.user = user;
     next();
   } catch (error) {
     logger.error('Authentication error:', error);
@@ -61,7 +62,10 @@ export const optionalAuth = async (req: Request, res: Response, next: NextFuncti
 
     if (token) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
-      req.user = decoded as any;
+      const user = await UserModel.findById(decoded.id);
+      if (user && user.is_active) {
+        req.user = user;
+      }
     }
     
     next();

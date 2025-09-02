@@ -8,11 +8,15 @@ import healthRoutes from './health.routes';
 import consultationRoutes from './consultation.routes';
 import rightsCardRoutes from './rights-card.routes';
 import faqRoutes from './faq.routes';
+import authRoutes from './auth.routes';
 
 const router = Router();
 
 // 健康检查路由
 router.use('/health', healthRoutes);
+
+// 认证路由
+router.use('/auth', authRoutes);
 
 // API路由
 router.use('/users', userRoutes);
@@ -33,6 +37,7 @@ router.get('/', (req, res) => {
     timestamp: new Date(),
     endpoints: {
       health: '/api/health',
+      auth: '/api/auth',
       users: '/api/users',
       doctors: '/api/doctors',
       appointments: '/api/appointments',

@@ -126,6 +126,11 @@ psql -h localhost -U postgres -d zhizhi_health
 3. **数据库**: PostgreSQL 连接配置在环境变量中
 4. **样式**: 使用 Tailwind CSS，遵循设计规范
 5. **API 响应格式**: 统一使用 `{ success: true/false, data: any, message: string }` 格式
+6. **消息提示规范**: 全站统一使用内联消息提示，禁止使用 `alert()` 弹窗
+   - **成功消息**: 绿色背景 `bg-green-100 border border-green-400 text-green-700`
+   - **错误消息**: 红色背景 `bg-red-100 border border-red-400 text-red-700`
+   - **显示时长**: 5秒后自动消失
+   - **实现方式**: 使用状态管理 + `setTimeout` 自动清除
 
 ## 部署要求
 

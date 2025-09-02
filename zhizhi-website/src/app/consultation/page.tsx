@@ -2,11 +2,17 @@
 
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
-import Header from '@/components/Header'
+import { useAuth } from '@/components/AuthContext'
+import AuthModal from '@/components/AuthModal'
 import Footer from '@/components/Footer'
 
 export default function ConsultationPage() {
   const searchParams = useSearchParams()
+  const { isAuthenticated, user } = useAuth()
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null)
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -39,7 +45,12 @@ export default function ConsultationPage() {
   }, [searchParams])
   
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitMessage, setSubmitMessage] = useState('')
+  
+  // Helper function to show messages
+  const showMessage = (type: 'success' | 'error', text: string) => {
+    setMessage({ type, text })
+    setTimeout(() => setMessage(null), 5000)
+  }
 
   const categories = [
     { value: 'general', label: '一般咨询' },
@@ -64,29 +75,33 @@ export default function ConsultationPage() {
     }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    setSubmitMessage('')
-
+  const submitConsultation = async () => {
     try {
       const submitData = {
         ...formData,
         doctor_id: formData.doctor_id ? parseInt(formData.doctor_id) : undefined
       }
 
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      }
+
+      // Add authorization token if available
+      const token = localStorage.getItem('token')
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+
       const response = await fetch('/api/consultations', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(submitData),
       })
 
       const result = await response.json()
 
       if (result.success) {
-        setSubmitMessage('咨询提交成功！我们会尽快回复您。')
+        showMessage('success', '咨询提交成功！我们会尽快回复您。')
         setFormData({
           title: '',
           content: '',
@@ -99,19 +114,38 @@ export default function ConsultationPage() {
           is_public: false
         })
       } else {
-        setSubmitMessage(result.message || '提交失败，请重试')
+        showMessage('error', result.message || '提交失败，请重试')
       }
     } catch (error) {
       console.error('提交咨询失败:', error)
-      setSubmitMessage('提交失败，请检查网络连接')
+      showMessage('error', '提交失败，请检查网络连接')
     } finally {
       setIsSubmitting(false)
     }
   }
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    // Validate required fields
+    if (!formData.title || !formData.content) {
+      showMessage('error', '请填写咨询标题和内容')
+      return
+    }
+
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      setPendingAction(() => submitConsultation)
+      setIsAuthModalOpen(true)
+      return
+    }
+    
+    setIsSubmitting(true)
+    await submitConsultation()
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
       
       <main className="max-w-4xl mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -120,13 +154,13 @@ export default function ConsultationPage() {
             欢迎咨询我们的专业团队。请填写以下表单，我们会尽快回复您的咨询。
           </p>
 
-          {submitMessage && (
+          {message && (
             <div className={`mb-6 p-4 rounded-md ${
-              submitMessage.includes('成功') 
+              message.type === 'success' 
                 ? 'bg-green-100 border border-green-400 text-green-700' 
                 : 'bg-red-100 border border-red-400 text-red-700'
             }`}>
-              {submitMessage}
+              {message.text}
             </div>
           )}
 
@@ -304,6 +338,21 @@ export default function ConsultationPage() {
         </div>
       </main>
 
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => {
+          setIsAuthModalOpen(false)
+          setPendingAction(null)
+        }}
+        onSuccess={() => {
+          if (pendingAction) {
+            pendingAction()
+            setPendingAction(null)
+          }
+          setIsAuthModalOpen(false)
+        }}
+      />
+      
       <Footer />
     </div>
   )

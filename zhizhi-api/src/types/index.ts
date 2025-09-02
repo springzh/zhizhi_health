@@ -6,6 +6,19 @@ export interface User {
   nickname?: string;
   avatar_url?: string;
   phone?: string;
+  email?: string;
+  password_hash?: string;
+  salt?: string;
+  province?: string;
+  city?: string;
+  district?: string;
+  address?: string;
+  is_active: boolean;
+  last_login_at?: Date;
+  login_count: number;
+  auth_provider: 'wechat' | 'email' | 'phone';
+  email_verified: boolean;
+  phone_verified: boolean;
   role?: 'user' | 'admin' | 'doctor';
   created_at: Date;
   updated_at: Date;
@@ -17,12 +30,24 @@ export interface CreateUserRequest {
   nickname?: string;
   avatar_url?: string;
   phone?: string;
+  email?: string;
+  password?: string;
+  province?: string;
+  city?: string;
+  district?: string;
+  address?: string;
+  auth_provider?: 'wechat' | 'email' | 'phone';
 }
 
 export interface UpdateUserRequest {
   nickname?: string;
   avatar_url?: string;
   phone?: string;
+  email?: string;
+  province?: string;
+  city?: string;
+  district?: string;
+  address?: string;
 }
 
 // 医生相关类型
@@ -385,6 +410,61 @@ export interface SearchParams {
 export interface DateRangeParams {
   start_date?: string;
   end_date?: string;
+}
+
+// 用户认证相关类型
+export interface UserLoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface UserRegisterRequest {
+  email: string;
+  password: string;
+  phone?: string;
+  nickname?: string;
+  province?: string;
+  city?: string;
+  district?: string;
+  address?: string;
+}
+
+export interface ChangePasswordRequest {
+  current_password: string;
+  new_password: string;
+}
+
+export interface UserSession {
+  id: number;
+  user_id: number;
+  session_token: string;
+  refresh_token?: string;
+  expires_at: Date;
+  created_at: Date;
+  last_accessed: Date;
+  is_active: boolean;
+}
+
+export interface UserLoginLog {
+  id: number;
+  user_id: number;
+  login_type: 'wechat' | 'email' | 'phone';
+  ip_address?: string;
+  user_agent?: string;
+  login_time: Date;
+  login_status: 'success' | 'failed';
+}
+
+// 微信相关类型
+export interface WechatLoginRequest {
+  code: string;
+}
+
+export interface WechatUserInfo {
+  openid: string;
+  unionid?: string;
+  nickname?: string;
+  headimgurl?: string;
 }
 
 // 扩展Express Request类型

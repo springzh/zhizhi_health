@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { Pool } from 'pg';
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 dotenv.config();
 
@@ -449,6 +451,395 @@ const rightsCards = [
   }
 ];
 
+// Helper functions for authentication
+const hashPassword = (password, salt = null) => {
+  const passwordSalt = salt || crypto.randomBytes(16).toString('hex');
+  const hash = crypto.createHash('sha256').update(password + passwordSalt).digest('hex');
+  return { hash, salt: passwordSalt };
+};
+
+const verifyPassword = (password, hash, salt) => {
+  const computedHash = crypto.createHash('sha256').update(password + salt).digest('hex');
+  return computedHash === hash;
+};
+
+const generateToken = (payload) => {
+  return jwt.sign(payload, process.env.JWT_SECRET || 'your-secret-key', {
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+  });
+};
+
+// Authentication Routes
+app.post('/api/auth/register', async (req, res) => {
+  const { email, password, phone, nickname, province, city, district, address } = req.body;
+  
+  try {
+    // Validate required fields
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+        timestamp: new Date()
+      });
+    }
+    
+    // Check if user already exists
+    const existingUser = await pool.query(
+      'SELECT id FROM users WHERE email = $1',
+      [email]
+    );
+    
+    if (existingUser.rows.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: "Email already exists",
+        timestamp: new Date()
+      });
+    }
+    
+    // Hash password
+    const { hash, salt } = hashPassword(password);
+    
+    // Create user
+    const result = await pool.query(
+      `INSERT INTO users (email, password_hash, salt, phone, nickname, province, city, district, address, auth_provider, is_active)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'email', true)
+       RETURNING id, email, phone, nickname, province, city, district, address, created_at`,
+      [email, hash, salt, phone, nickname, province, city, district, address]
+    );
+    
+    const user = result.rows[0];
+    
+    // Log registration
+    await pool.query(
+      `INSERT INTO user_login_logs (user_id, login_type, login_status, ip_address, user_agent)
+       VALUES ($1, 'email', 'success', $2, $3)`,
+      [user.id, req.ip, req.get('User-Agent')]
+    );
+    
+    // Generate token
+    const token = generateToken({ id: user.id, email: user.email });
+    
+    res.status(201).json({
+      success: true,
+      message: "Registration successful",
+      data: {
+        user: {
+          id: user.id,
+          email: user.email,
+          phone: user.phone,
+          nickname: user.nickname,
+          province: user.province,
+          city: user.city,
+          district: user.district,
+          address: user.address
+        },
+        token
+      },
+      timestamp: new Date()
+    });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({
+      success: false,
+      message: "Registration failed",
+      error: error.message,
+      timestamp: new Date()
+    });
+  }
+});
+
+app.post('/api/auth/login', async (req, res) => {
+  const { email, password } = req.body;
+  
+  try {
+    // Validate required fields
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+        timestamp: new Date()
+      });
+    }
+    
+    // Find user
+    const result = await pool.query(
+      'SELECT * FROM users WHERE email = $1 AND is_active = true',
+      [email]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+        timestamp: new Date()
+      });
+    }
+    
+    const user = result.rows[0];
+    
+    // Verify password
+    const isValidPassword = verifyPassword(password, user.password_hash, user.salt);
+    if (!isValidPassword) {
+      // Log failed login
+      await pool.query(
+        `INSERT INTO user_login_logs (user_id, login_type, login_status, ip_address, user_agent)
+         VALUES ($1, 'email', 'failed', $2, $3)`,
+        [user.id, req.ip, req.get('User-Agent')]
+      );
+      
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+        timestamp: new Date()
+      });
+    }
+    
+    // Update login count and last login
+    await pool.query(
+      `UPDATE users SET login_count = COALESCE(login_count, 0) + 1, last_login_at = CURRENT_TIMESTAMP
+       WHERE id = $1`,
+      [user.id]
+    );
+    
+    // Log successful login
+    await pool.query(
+      `INSERT INTO user_login_logs (user_id, login_type, login_status, ip_address, user_agent)
+       VALUES ($1, 'email', 'success', $2, $3)`,
+      [user.id, req.ip, req.get('User-Agent')]
+    );
+    
+    // Generate token
+    const token = generateToken({ id: user.id, email: user.email });
+    
+    res.json({
+      success: true,
+      message: "Login successful",
+      data: {
+        user: {
+          id: user.id,
+          email: user.email,
+          phone: user.phone,
+          nickname: user.nickname,
+          province: user.province,
+          city: user.city,
+          district: user.district,
+          address: user.address,
+          last_login_at: user.last_login_at,
+          login_count: user.login_count,
+          auth_provider: user.auth_provider
+        },
+        token
+      },
+      timestamp: new Date()
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({
+      success: false,
+      message: "Login failed",
+      error: error.message,
+      timestamp: new Date()
+    });
+  }
+});
+
+// Authentication middleware
+const authenticate = async (req, res, next) => {
+  try {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: "No token, authorization denied",
+        timestamp: new Date()
+      });
+    }
+    
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    
+    // Get user from database
+    const result = await pool.query(
+      'SELECT * FROM users WHERE id = $1 AND is_active = true',
+      [decoded.id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(401).json({
+        success: false,
+        message: "Token is not valid",
+        timestamp: new Date()
+      });
+    }
+    
+    req.user = result.rows[0];
+    next();
+  } catch (error) {
+    console.error('Authentication error:', error);
+    res.status(401).json({
+      success: false,
+      message: "Token is not valid",
+      timestamp: new Date()
+    });
+  }
+};
+
+app.get('/api/auth/me', authenticate, async (req, res) => {
+  try {
+    const user = req.user;
+    
+    res.json({
+      success: true,
+      message: "User info retrieved successfully",
+      data: {
+        id: user.id,
+        email: user.email,
+        nickname: user.nickname,
+        phone: user.phone,
+        province: user.province,
+        city: user.city,
+        district: user.district,
+        address: user.address,
+        last_login_at: user.last_login_at,
+        login_count: user.login_count,
+        auth_provider: user.auth_provider
+      },
+      timestamp: new Date()
+    });
+  } catch (error) {
+    console.error('Get user info error:', error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to get user info",
+      error: error.message,
+      timestamp: new Date()
+    });
+  }
+});
+
+app.put('/api/auth/change-password', authenticate, async (req, res) => {
+  const { current_password, new_password } = req.body;
+  
+  try {
+    if (!current_password || !new_password) {
+      return res.status(400).json({
+        success: false,
+        message: "Current password and new password are required",
+        timestamp: new Date()
+      });
+    }
+    
+    if (new_password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "New password must be at least 6 characters",
+        timestamp: new Date()
+      });
+    }
+    
+    const user = req.user;
+    
+    // Verify current password
+    const isValidPassword = verifyPassword(current_password, user.password_hash, user.salt);
+    if (!isValidPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Current password is incorrect",
+        timestamp: new Date()
+      });
+    }
+    
+    // Hash new password
+    const { hash, salt } = hashPassword(new_password);
+    
+    // Update password
+    await pool.query(
+      'UPDATE users SET password_hash = $1, salt = $2 WHERE id = $3',
+      [hash, salt, user.id]
+    );
+    
+    res.json({
+      success: true,
+      message: "Password changed successfully",
+      timestamp: new Date()
+    });
+  } catch (error) {
+    console.error('Change password error:', error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to change password",
+      error: error.message,
+      timestamp: new Date()
+    });
+  }
+});
+
+app.put('/api/auth/profile', authenticate, async (req, res) => {
+  const { nickname, phone, email, province, city, district, address } = req.body;
+  
+  try {
+    const user = req.user;
+    
+    // Check if email is being changed and already exists
+    if (email && email !== user.email) {
+      const existingUser = await pool.query(
+        'SELECT id FROM users WHERE email = $1 AND id != $2',
+        [email, user.id]
+      );
+      
+      if (existingUser.rows.length > 0) {
+        return res.status(409).json({
+          success: false,
+          message: "Email already exists",
+          timestamp: new Date()
+        });
+      }
+    }
+    
+    // Update user profile
+    const result = await pool.query(
+      `UPDATE users SET 
+        nickname = COALESCE($1, nickname),
+        phone = COALESCE($2, phone),
+        email = COALESCE($3, email),
+        province = COALESCE($4, province),
+        city = COALESCE($5, city),
+        district = COALESCE($6, district),
+        address = COALESCE($7, address)
+       WHERE id = $8
+       RETURNING id, email, phone, nickname, province, city, district, address`,
+      [nickname, phone, email, province, city, district, address, user.id]
+    );
+    
+    const updatedUser = result.rows[0];
+    
+    res.json({
+      success: true,
+      message: "Profile updated successfully",
+      data: {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        nickname: updatedUser.nickname,
+        phone: updatedUser.phone,
+        province: updatedUser.province,
+        city: updatedUser.city,
+        district: updatedUser.district,
+        address: updatedUser.address
+      },
+      timestamp: new Date()
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update profile",
+      error: error.message,
+      timestamp: new Date()
+    });
+  }
+});
+
 // API Routes
 app.get('/api/doctors', (req, res) => {
   res.json({
@@ -687,8 +1078,34 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Optional authentication middleware for consultations
+const optionalAuth = async (req, res, next) => {
+  try {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+      
+      // Get user from database
+      const result = await pool.query(
+        'SELECT * FROM users WHERE id = $1 AND is_active = true',
+        [decoded.id]
+      );
+      
+      if (result.rows.length > 0) {
+        req.user = result.rows[0];
+      }
+    }
+    
+    next();
+  } catch (error) {
+    // Optional authentication, continue even if token is invalid
+    next();
+  }
+};
+
 // Consultation Routes
-app.post('/api/consultations', async (req, res) => {
+app.post('/api/consultations', optionalAuth, async (req, res) => {
   const {
     title,
     content,
@@ -732,20 +1149,23 @@ app.post('/api/consultations', async (req, res) => {
     }
     
     // Save consultation to database
+    const user_id = req.user ? req.user.id : null;
+    
     console.log('Inserting consultation with data:', {
       title, content, category, priority, doctor_id,
-      guest_name, guest_phone, guest_email, is_public
+      guest_name, guest_phone, guest_email, is_public, user_id
     });
     
     const result = await pool.query(
       `INSERT INTO consultations (
-        title, content, category, priority, doctor_id, 
+        title, content, category, priority, doctor_id, user_id,
         guest_name, guest_phone, guest_email, is_public, status
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending') 
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'pending') 
       RETURNING *`,
       [
         title, content, category, priority || 'normal', 
         doctor_id ? parseInt(doctor_id) : null,
+        user_id,
         guest_name, guest_phone, guest_email, is_public || false
       ]
     );
