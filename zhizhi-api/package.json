@@ -4,7 +4,7 @@
   "description": "知治健康服务平台后端API",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "nodemon src/server-simple.js",
+    "dev": "nodemon src/server-simple.mjs",
     "build": "tsc",
     "start": "node dist/server.js",
     "start:prod": "node dist/server.js",
